@@ -29,6 +29,22 @@ class LedgerRepositoryTest extends TestCase {
 		$this->assertSame( 1, $wpdb->released_locks );
 	}
 
+	public function test_rolls_back_without_inserting_an_entry_when_the_balance_update_fails(): void {
+		$wpdb       = new LedgerRepositoryWpdb( true, array( null, array( 'available' => '0', 'held' => '0' ) ), true );
+		$repository = new LedgerRepository( $wpdb );
+
+		$this->expectException( \RuntimeException::class );
+		$this->expectExceptionMessage( 'Unable to update ledger balance.' );
+
+		try {
+			$repository->record( $this->entry() );
+		} finally {
+			$this->assertContains( 'ROLLBACK', $wpdb->queries );
+			$this->assertSame( 0, $wpdb->insert_calls );
+			$this->assertSame( 1, $wpdb->released_locks );
+		}
+	}
+
 	/** @return array<string,mixed> */
 	private function entry(): array {
 		return array(
@@ -50,9 +66,18 @@ class LedgerRepositoryWpdb extends \wpdb {
 	public $released_locks = 0;
 	/** @var bool */
 	private $can_acquire_lock;
+	/** @var array<int,array<string,mixed>|null> */
+	private $rows;
+	/** @var bool */
+	private $fail_update;
+	/** @var int */
+	public $insert_calls = 0;
 
-	public function __construct( bool $can_acquire_lock ) {
+	/** @param array<int,array<string,mixed>|null> $rows */
+	public function __construct( bool $can_acquire_lock, array $rows = array( array( 'id' => 99, 'idempotency_key' => 'shared-key' ) ), bool $fail_update = false ) {
 		$this->can_acquire_lock = $can_acquire_lock;
+		$this->rows             = $rows;
+		$this->fail_update      = $fail_update;
 	}
 
 	/** @return string */
@@ -63,6 +88,9 @@ class LedgerRepositoryWpdb extends \wpdb {
 	/** @return int */
 	public function query( $query ) {
 		$this->queries[] = (string) $query;
+		if ( $this->fail_update && 0 === strpos( (string) $query, 'UPDATE ' ) ) {
+			return false;
+		}
 		return 1;
 	}
 
@@ -81,6 +109,12 @@ class LedgerRepositoryWpdb extends \wpdb {
 
 	/** @return array<string,mixed>|null */
 	public function get_row( $query, $output = null ) {
-		return array( 'id' => 99, 'idempotency_key' => 'shared-key' );
+		return array_shift( $this->rows );
+	}
+
+	/** @return int */
+	public function insert( $table, $data, $format ) {
+		++$this->insert_calls;
+		return 1;
 	}
 }

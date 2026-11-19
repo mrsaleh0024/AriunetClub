@@ -17,7 +17,6 @@ require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 if ( ! class_exists( 'wpdb' ) ) {
 	class wpdb {}
 }
-
 if ( ! function_exists( 'wc_get_price_decimals' ) ) {
 	function wc_get_price_decimals() {
 		return 0; }
@@ -25,6 +24,11 @@ if ( ! function_exists( 'wc_get_price_decimals' ) ) {
 if ( ! function_exists( 'number_format_i18n' ) ) {
 	function number_format_i18n( $number, $decimals = 0 ) {
 		return number_format( $number, $decimals, '.', ',' ); }
+}
+if ( ! function_exists( 'current_time' ) ) {
+	function current_time( $type, $gmt = false ) {
+		return '2026-11-19 00:00:00';
+	}
 }
 if ( ! function_exists( 'do_action' ) ) {
 	function do_action( $hook_name, ...$args ) {} // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed

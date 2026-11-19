@@ -25,10 +25,12 @@ class LedgerRepository implements LedgerGateway {
 
 	/** @param array<string,mixed> $entry @return array<string,mixed> */
 	public function record( array $entry ): array {
-		$idempotency_lock = $this->acquire_idempotency_lock( (string) $entry['idempotency_key'] );
-		$this->wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- transaction control is required for atomic balance updates.
+		$idempotency_lock    = $this->acquire_idempotency_lock( (string) $entry['idempotency_key'] );
+		$transaction_started = false;
 		try {
-			$existing = $this->find_by_key( (string) $entry['idempotency_key'] );
+			$this->start_transaction();
+			$transaction_started = true;
+			$existing            = $this->find_by_key( (string) $entry['idempotency_key'] );
 			if ( $existing ) {
 				$this->commit();
 				return $existing;
@@ -94,7 +96,9 @@ class LedgerRepository implements LedgerGateway {
 
 			return $entry;
 		} catch ( \Throwable $error ) {
-			$this->wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- paired transaction rollback.
+			if ( $transaction_started ) {
+				$this->rollback();
+			}
 			throw $error;
 		} finally {
 			$this->release_idempotency_lock( $idempotency_lock );
@@ -167,7 +171,9 @@ class LedgerRepository implements LedgerGateway {
 	private function ensure_balance_row( int $user_id, string $asset ): void {
 		$now = current_time( 'mysql', true );
 		$sql = $this->wpdb->prepare( "INSERT INTO {$this->balances_table} (user_id, asset, available, held, updated_at) VALUES (%d, %s, 0, 0, %s) ON DUPLICATE KEY UPDATE updated_at = updated_at", $user_id, $asset, $now ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is plugin-controlled.
-		$this->wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared -- balance row is prepared above.
+		if ( false === $this->wpdb->query( $sql ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared -- balance row is prepared above.
+			throw new \RuntimeException( 'Unable to ensure ledger balance.' );
+		}
 	}
 
 	/** @return array<string,mixed> */
@@ -181,7 +187,9 @@ class LedgerRepository implements LedgerGateway {
 	private function update_balance( int $user_id, string $asset, float $available, float $held ): void {
 		$now = current_time( 'mysql', true );
 		$sql = $this->wpdb->prepare( "UPDATE {$this->balances_table} SET available = %f, held = %f, updated_at = %s WHERE user_id = %d AND asset = %s", $available, $held, $now, $user_id, $asset ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is plugin-controlled.
-		$this->wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared -- balance update prepared above.
+		if ( false === $this->wpdb->query( $sql ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared -- balance update prepared above.
+			throw new \RuntimeException( 'Unable to update ledger balance.' );
+		}
 	}
 
 	/** @param array<string,mixed> $entry */
@@ -210,6 +218,19 @@ class LedgerRepository implements LedgerGateway {
 	private function require_held( float $held, float $amount ): void {
 		if ( $amount <= 0 || $held + 0.00000001 < $amount ) {
 			throw new InsufficientBalanceException( 'Insufficient held balance.' ); } }
+	private function start_transaction(): void {
+		if ( false === $this->wpdb->query( 'START TRANSACTION' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- transaction control is required for atomic balance updates.
+			throw new \RuntimeException( 'Unable to start ledger transaction.' );
+		}
+	}
+
 	private function commit(): void {
-		$this->wpdb->query( 'COMMIT' ); } // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- paired transaction commit.
+		if ( false === $this->wpdb->query( 'COMMIT' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- paired transaction commit.
+			throw new \RuntimeException( 'Unable to commit ledger transaction.' );
+		}
+	}
+
+	private function rollback(): void {
+		$this->wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- best-effort rollback after a failed transaction.
+	}
 }
