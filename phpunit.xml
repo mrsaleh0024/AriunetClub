@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/bootstrap.php" colors="true">
+  <php><env name="LCLUB_TEST_DB_NAME" value="lclub_test_lclub"/></php>
+  <testsuites><testsuite name="unit"><directory>tests/unit</directory></testsuite></testsuites>
+  <coverage includeUncoveredFiles="true"><include><directory suffix=".php">src</directory></include></coverage>
+</phpunit>

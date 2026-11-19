@@ -1,0 +1,45 @@
+{
+  "name": "ariunetclub/woocommerce-customer-club",
+  "description": "WooCommerce customer club plugin",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "php-stubs/wordpress-stubs": "6.0",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^9.6",
+    "psalm/plugin-phpunit": "^0.19",
+    "vimeo/psalm": "^5.26",
+    "wp-coding-standards/wpcs": "^3.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "LClub\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LClub\\Tests\\": "tests/unit/"
+    }
+  },
+  "scripts": {
+    "test": "@php vendor/bin/phpunit",
+    "lint": "phpcs",
+    "stan": "@php -d memory_limit=512M vendor/bin/phpstan analyse",
+    "psalm": "psalm --taint-analysis",
+    "qa": "@php tools/qa.php",
+    "qa:security": "@php tools/qa.php --security"
+  },
+  "config": {
+	"platform": {
+	  "php": "8.2.0"
+	},
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<psalm errorLevel="4" resolveFromConfigFile="true">
+  <projectFiles><directory name="src" /></projectFiles>
+  <issueHandlers><UndefinedFunction errorLevel="suppress" /><UndefinedConstant errorLevel="suppress" /></issueHandlers>
+</psalm>
