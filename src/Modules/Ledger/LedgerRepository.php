@@ -8,6 +8,8 @@ namespace LClub\Modules\Ledger;
 use LClub\Core\Money;
 
 class LedgerRepository implements LedgerGateway {
+	private const IDEMPOTENCY_LOCK_TIMEOUT = 10;
+
 	/** @var \wpdb */
 	private $wpdb;
 	/** @var string */
@@ -23,6 +25,7 @@ class LedgerRepository implements LedgerGateway {
 
 	/** @param array<string,mixed> $entry @return array<string,mixed> */
 	public function record( array $entry ): array {
+		$idempotency_lock = $this->acquire_idempotency_lock( (string) $entry['idempotency_key'] );
 		$this->wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- transaction control is required for atomic balance updates.
 		try {
 			$existing = $this->find_by_key( (string) $entry['idempotency_key'] );
@@ -93,6 +96,8 @@ class LedgerRepository implements LedgerGateway {
 		} catch ( \Throwable $error ) {
 			$this->wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- paired transaction rollback.
 			throw $error;
+		} finally {
+			$this->release_idempotency_lock( $idempotency_lock );
 		}
 	}
 
@@ -143,6 +148,20 @@ class LedgerRepository implements LedgerGateway {
 	private function find_by_key( string $key ): ?array {
 		$row = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM {$this->ledger_table} WHERE idempotency_key = %s", $key ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; value prepared.
 		return is_array( $row ) ? $row : null;
+	}
+
+	private function acquire_idempotency_lock( string $key ): string {
+		$lock_name = 'lclub:' . sha1( $key );
+		$acquired  = $this->wpdb->get_var( $this->wpdb->prepare( 'SELECT GET_LOCK(%s, %d)', $lock_name, self::IDEMPOTENCY_LOCK_TIMEOUT ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- advisory lock name and timeout are prepared.
+		if ( '1' !== (string) $acquired ) {
+			throw new \RuntimeException( 'Unable to acquire ledger idempotency lock.' );
+		}
+
+		return $lock_name;
+	}
+
+	private function release_idempotency_lock( string $lock_name ): void {
+		$this->wpdb->get_var( $this->wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock_name ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- advisory lock name is prepared.
 	}
 
 	private function ensure_balance_row( int $user_id, string $asset ): void {
