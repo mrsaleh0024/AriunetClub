@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Identity;
+namespace AriunetClub\Modules\Identity;
 
-use LClub\Core\Settings;
+use AriunetClub\Core\Settings;
 
 class IdentityService {
 	/** @var PhoneNormalizer */

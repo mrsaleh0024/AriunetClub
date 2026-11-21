@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules\Conditions;
+namespace AriunetClub\Modules\Rules\Conditions;
 
-use LClub\Modules\Rules\RuleContext;
+use AriunetClub\Modules\Rules\RuleContext;
 
 /**
  * First-order condition. "First order" means the customer has no earlier

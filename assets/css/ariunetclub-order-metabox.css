@@ -1,0 +1,34 @@
+/* AriunetClub phase 3: read-only wallet metabox on the order edit screen. Tokens
+   match the admin palette; scoped under .ariunetclub-scope, logical properties only. */
+.ariunetclub-scope.ariunetclub-metabox {
+	--ariunetclub-deep: #19333a; --ariunetclub-teal: #28515a; --ariunetclub-muted: rgba(25,51,58,.72);
+	--ariunetclub-border: rgba(40,81,90,.16); --ariunetclub-text: #101b20;
+	--ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px;
+	box-sizing: border-box;
+	color: var(--ariunetclub-text);
+	font-family: inherit;
+}
+.ariunetclub-metabox *, .ariunetclub-metabox *::before, .ariunetclub-metabox *::after { box-sizing: inherit; }
+.ariunetclub-metabox dl { display: grid; gap: 10px; margin: 0 0 12px; }
+.ariunetclub-metabox dl div {
+	border-block-end: 1px solid var(--ariunetclub-border);
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+	padding-block-end: 10px;
+}
+.ariunetclub-metabox dl div:last-child { border-block-end: 0; padding-block-end: 0; }
+.ariunetclub-metabox dt { color: var(--ariunetclub-muted); font-size: 12px; }
+.ariunetclub-metabox dd { font-size: 13px; font-weight: 700; margin: 0; white-space: nowrap; }
+.ariunetclub-metabox__link {
+	border: 1px solid var(--ariunetclub-border);
+	border-radius: var(--ariunetclub-radius-sm);
+	color: var(--ariunetclub-teal);
+	display: inline-flex;
+	font-size: 12px;
+	font-weight: 700;
+	min-block-size: 34px;
+	padding-inline: 12px;
+	text-decoration: none;
+}
+.ariunetclub-metabox__link:hover, .ariunetclub-metabox__link:focus-visible { border-color: var(--ariunetclub-teal); outline: 0; }

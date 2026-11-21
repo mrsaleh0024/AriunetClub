@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Core;
+namespace AriunetClub\Core;
 
 use RuntimeException;
 
@@ -33,7 +33,7 @@ class ModuleRegistry {
 		}
 
 		if ( ! isset( $this->modules[ $module_id ] ) ) {
-			throw new RuntimeException( sprintf( 'LClub module "%s" is not registered.', esc_html( $module_id ) ) );
+			throw new RuntimeException( sprintf( 'AriunetClub module "%s" is not registered.', esc_html( $module_id ) ) );
 		}
 
 		foreach ( $this->modules[ $module_id ]->dependencies() as $dependency ) {

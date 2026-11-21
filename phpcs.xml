@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="AriunetClub">
-  <file>src</file><file>lclub.php</file><file>uninstall.php</file>
+  <file>src</file><file>ariunetclub.php</file><file>uninstall.php</file>
   <arg name="basepath" value="./"/><arg name="colors"/>
   <rule ref="WordPress-Extra"/><rule ref="WordPress.Security"/>
   <rule ref="WordPress.Files.FileName">
@@ -9,6 +9,7 @@
   </rule>
   <rule ref="WordPress.WP.Capabilities.Unknown"><severity>0</severity></rule>
   <rule ref="WordPress.DB.PreparedSQL">
+    <exclude-pattern>*/src/Core/Migrator.php</exclude-pattern>
     <exclude-pattern>*/src/Modules/Events/EventRepository.php</exclude-pattern>
     <exclude-pattern>*/src/Modules/Ledger/LedgerRepository.php</exclude-pattern>
     <exclude-pattern>*/src/Modules/Rules/RuleRepository.php</exclude-pattern>

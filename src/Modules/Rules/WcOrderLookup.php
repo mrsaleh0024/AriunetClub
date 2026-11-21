@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\Settings;
+use AriunetClub\Core\Settings;
 
 /**
  * WooCommerce-backed order lookup (works with HPOS and legacy storage).

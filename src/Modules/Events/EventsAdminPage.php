@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
-use LClub\Core\JalaliDate;
-use LClub\Core\Money;
+use AriunetClub\Core\JalaliDate;
+use AriunetClub\Core\Money;
 
 /**
  * Admin log of the event queue: status, attempts, errors and manual requeue.
@@ -25,16 +25,16 @@ class EventsAdminPage {
 
 	public function register(): void {
 			add_action( 'admin_menu', array( $this, 'menu' ), 30 );
-			add_action( 'admin_post_lclub_requeue_event', array( $this, 'requeue' ) );
+			add_action( 'admin_post_ariunetclub_requeue_event', array( $this, 'requeue' ) );
 	}
 
 	public function menu(): void {
 			add_submenu_page(
-				'lclub-settings',
-				__( 'رویدادها', 'lclub' ),
-				__( 'رویدادها', 'lclub' ),
+				'ariunetclub-settings',
+				__( 'رویدادها', 'ariunetclub' ),
+				__( 'رویدادها', 'ariunetclub' ),
 				'manage_woocommerce',
-				'lclub-events',
+				'ariunetclub-events',
 				array( $this, 'render' )
 			);
 	}
@@ -44,20 +44,20 @@ class EventsAdminPage {
 		 */
 	public function requeue(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'lclub' ) );
+				wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'ariunetclub' ) );
 		}
-			check_admin_referer( 'lclub_requeue_event' );
+			check_admin_referer( 'ariunetclub_requeue_event' );
 
 			$event_id = isset( $_POST['event_id'] ) ? absint( wp_unslash( $_POST['event_id'] ) ) : 0;
 		if ( $event_id <= 0 ) {
-				wp_die( esc_html__( 'رویداد نامعتبر است.', 'lclub' ) );
+				wp_die( esc_html__( 'رویداد نامعتبر است.', 'ariunetclub' ) );
 		}
 
 			$this->repository->requeue( $event_id );
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
-				as_enqueue_async_action( 'lclub_process_events', array(), 'lclub' );
-		} elseif ( ! wp_next_scheduled( 'lclub_process_events' ) ) {
-				wp_schedule_single_event( time() + 5, 'lclub_process_events' );
+				as_enqueue_async_action( 'ariunetclub_process_events', array(), 'ariunetclub' );
+		} elseif ( ! wp_next_scheduled( 'ariunetclub_process_events' ) ) {
+				wp_schedule_single_event( time() + 5, 'ariunetclub_process_events' );
 		}
 			// Drain the queue right away so the admin sees the result on this visit.
 			$this->processor->process_pending();
@@ -65,8 +65,8 @@ class EventsAdminPage {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'         => 'lclub-events',
-						'lclub_notice' => 'requeued',
+						'page'         => 'ariunetclub-events',
+						'ariunetclub_notice' => 'requeued',
 					),
 					admin_url( 'admin.php' )
 				)
@@ -79,7 +79,7 @@ class EventsAdminPage {
 		 */
 	public function render(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'lclub' ) );
+				wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'ariunetclub' ) );
 		}
 
 			// Read-only GET filters keep shareable URLs; state changes happen through POST nonces.
@@ -93,59 +93,59 @@ class EventsAdminPage {
 		if ( ! isset( $statuses[ $status ] ) ) {
 				$status = '';
 		}
-			$base_url = add_query_arg( array( 'page' => 'lclub-events' ), admin_url( 'admin.php' ) );
+			$base_url = add_query_arg( array( 'page' => 'ariunetclub-events' ), admin_url( 'admin.php' ) );
 		?>
-				<div class="wrap lclub-scope" dir="rtl">
-						<div class="lclub-admin-shell">
-								<header class="lclub-admin-header">
-										<span class="lclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'lclub' ); ?></span>
-										<h1><?php esc_html_e( 'لاگ رویدادها', 'lclub' ); ?></h1>
-										<p><?php esc_html_e( 'صف رویدادهای باشگاه مشتریان؛ پردازش ناهمزمان با صف برنامه‌ریزی‌شده انجام می‌شود.', 'lclub' ); ?></p>
+				<div class="wrap ariunetclub-scope" dir="rtl">
+						<div class="ariunetclub-admin-shell">
+								<header class="ariunetclub-admin-header">
+										<span class="ariunetclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'ariunetclub' ); ?></span>
+										<h1><?php esc_html_e( 'لاگ رویدادها', 'ariunetclub' ); ?></h1>
+										<p><?php esc_html_e( 'صف رویدادهای باشگاه مشتریان؛ پردازش ناهمزمان با صف برنامه‌ریزی‌شده انجام می‌شود.', 'ariunetclub' ); ?></p>
 								</header>
 
-							<?php if ( isset( $_GET['lclub_notice'] ) && 'requeued' === sanitize_key( wp_unslash( $_GET['lclub_notice'] ) ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message. ?>
-										<div class="lclub-notice lclub-notice--info"><?php esc_html_e( 'رویداد برای پردازش مجدد در صف قرار گرفت.', 'lclub' ); ?></div>
+							<?php if ( isset( $_GET['ariunetclub_notice'] ) && 'requeued' === sanitize_key( wp_unslash( $_GET['ariunetclub_notice'] ) ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message. ?>
+										<div class="ariunetclub-notice ariunetclub-notice--info"><?php esc_html_e( 'رویداد برای پردازش مجدد در صف قرار گرفت.', 'ariunetclub' ); ?></div>
 								<?php endif; ?>
 
-								<section class="lclub-panel lclub-events-summary">
+								<section class="ariunetclub-panel ariunetclub-events-summary">
 									<?php foreach ( $statuses as $key => $label ) : ?>
-												<span class="lclub-events-summary__item lclub-badge lclub-badge--<?php echo esc_attr( $key ); ?>">
+												<span class="ariunetclub-events-summary__item ariunetclub-badge ariunetclub-badge--<?php echo esc_attr( $key ); ?>">
 														<?php echo esc_html( $label ); ?>
 														<strong><?php echo esc_html( Money::to_persian_digits( (string) ( $counts[ $key ] ?? 0 ) ) ); ?></strong>
 												</span>
 										<?php endforeach; ?>
 								</section>
 
-								<section class="lclub-panel">
-										<form method="get" class="lclub-filter">
-												<input type="hidden" name="page" value="lclub-events" />
-												<label for="lclub-event-status"><?php esc_html_e( 'وضعیت', 'lclub' ); ?></label>
-												<select id="lclub-event-status" name="status">
-														<option value=""><?php esc_html_e( 'همه', 'lclub' ); ?></option>
+								<section class="ariunetclub-panel">
+										<form method="get" class="ariunetclub-filter">
+												<input type="hidden" name="page" value="ariunetclub-events" />
+												<label for="ariunetclub-event-status"><?php esc_html_e( 'وضعیت', 'ariunetclub' ); ?></label>
+												<select id="ariunetclub-event-status" name="status">
+														<option value=""><?php esc_html_e( 'همه', 'ariunetclub' ); ?></option>
 													<?php foreach ( $statuses as $key => $label ) : ?>
 																<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $status, $key ); ?>><?php echo esc_html( $label ); ?></option>
 														<?php endforeach; ?>
 												</select>
-												<button class="button button-primary" type="submit"><?php esc_html_e( 'اعمال', 'lclub' ); ?></button>
+												<button class="button button-primary" type="submit"><?php esc_html_e( 'اعمال', 'ariunetclub' ); ?></button>
 										</form>
 
 									<?php if ( empty( $result['items'] ) ) : ?>
-												<div class="lclub-empty">
-														<h2><?php esc_html_e( 'هنوز رویدادی ثبت نشده است', 'lclub' ); ?></h2>
-														<p><?php esc_html_e( 'با اولین سفارش، ثبت‌نام یا دیدگاه تأییدشده، رویدادها این‌جا دیده می‌شوند.', 'lclub' ); ?></p>
+												<div class="ariunetclub-empty">
+														<h2><?php esc_html_e( 'هنوز رویدادی ثبت نشده است', 'ariunetclub' ); ?></h2>
+														<p><?php esc_html_e( 'با اولین سفارش، ثبت‌نام یا دیدگاه تأییدشده، رویدادها این‌جا دیده می‌شوند.', 'ariunetclub' ); ?></p>
 												</div>
 										<?php else : ?>
-												<div class="lclub-table-scroll">
-														<table class="lclub-table lclub-events-table">
+												<div class="ariunetclub-table-scroll">
+														<table class="ariunetclub-table ariunetclub-events-table">
 																<thead>
 																		<tr>
-																				<th><?php esc_html_e( '#', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'رویداد', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'وضعیت', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'تلاش', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'ثبت', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'پردازش', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'جزئیات', 'lclub' ); ?></th>
+																				<th><?php esc_html_e( '#', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'رویداد', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'وضعیت', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'تلاش', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'ثبت', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'پردازش', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'جزئیات', 'ariunetclub' ); ?></th>
 																		</tr>
 																</thead>
 																<tbody>
@@ -169,31 +169,31 @@ class EventsAdminPage {
 																										— <?php echo esc_html( EventLabels::objects()[ $event['object_type'] ] ?? (string) $event['object_type'] ); ?> <?php echo esc_html( Money::to_persian_digits( (string) $event['object_id'] ) ); ?>
 																								<?php endif; ?>
 																								<?php if ( isset( $payload['to'] ) ) : ?>
-																										<br /><span class="lclub-muted"><?php echo esc_html( (string) $payload['from'] ) . ' ← ' . esc_html( EventLabels::order_status( (string) $payload['to'] ) ); ?></span>
+																										<br /><span class="ariunetclub-muted"><?php echo esc_html( (string) $payload['from'] ) . ' ← ' . esc_html( EventLabels::order_status( (string) $payload['to'] ) ); ?></span>
 																								<?php elseif ( isset( $payload['refund_amount'] ) ) : ?>
-																										<br /><span class="lclub-muted"><?php esc_html_e( 'مبلغ مستردشده:', 'lclub' ); ?> <?php echo esc_html( Money::format( (float) $payload['refund_amount'] ) ); ?></span>
+																										<br /><span class="ariunetclub-muted"><?php esc_html_e( 'مبلغ مستردشده:', 'ariunetclub' ); ?> <?php echo esc_html( Money::format( (float) $payload['refund_amount'] ) ); ?></span>
 																								<?php endif; ?>
 																						</td>
-																						<td><span class="lclub-badge lclub-badge--<?php echo esc_attr( $state ); ?>"><?php echo esc_html( $statuses[ $state ] ?? $state ); ?></span></td>
+																						<td><span class="ariunetclub-badge ariunetclub-badge--<?php echo esc_attr( $state ); ?>"><?php echo esc_html( $statuses[ $state ] ?? $state ); ?></span></td>
 																						<td><?php echo esc_html( Money::to_persian_digits( (string) ( $event['attempts'] ?? 0 ) ) . ' / ' . Money::to_persian_digits( (string) Processor::MAX_ATTEMPTS ) ); ?></td>
 																						<td><?php echo esc_html( JalaliDate::format( (string) $event['created_at'] ) ); ?></td>
 																						<td><?php echo esc_html( null === $event['processed_at'] ? '—' : JalaliDate::format( (string) $event['processed_at'] ) ); ?></td>
-																						<td class="lclub-event-details">
+																						<td class="ariunetclub-event-details">
 																								<?php if ( '' !== $error ) : ?>
-																										<span class="lclub-event-error" title="<?php echo esc_attr( $error ); ?>"><?php echo esc_html( $error ); ?></span>
+																										<span class="ariunetclub-event-error" title="<?php echo esc_attr( $error ); ?>"><?php echo esc_html( $error ); ?></span>
 																								<?php endif; ?>
 																								<?php if ( in_array( $state, array( 'failed', 'skipped' ), true ) ) : ?>
 																										<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-																												<input type="hidden" name="action" value="lclub_requeue_event" />
+																												<input type="hidden" name="action" value="ariunetclub_requeue_event" />
 																												<input type="hidden" name="event_id" value="<?php echo esc_attr( (string) $event_id ); ?>" />
-																												<?php wp_nonce_field( 'lclub_requeue_event' ); ?>
-																												<button class="button lclub-button-secondary" type="submit"><?php esc_html_e( 'پردازش مجدد', 'lclub' ); ?></button>
+																												<?php wp_nonce_field( 'ariunetclub_requeue_event' ); ?>
+																												<button class="button ariunetclub-button-secondary" type="submit"><?php esc_html_e( 'پردازش مجدد', 'ariunetclub' ); ?></button>
 																										</form>
 																								<?php endif; ?>
 																								<?php if ( ! empty( $payload ) ) : ?>
 																										<?php $payload_json = (string) wp_json_encode( $payload, JSON_UNESCAPED_UNICODE ); ?>
-																										<details class="lclub-payload">
-																												<summary><?php esc_html_e( 'داده', 'lclub' ); ?></summary>
+																										<details class="ariunetclub-payload">
+																												<summary><?php esc_html_e( 'داده', 'ariunetclub' ); ?></summary>
 																												<code><?php echo esc_html( $payload_json ); ?></code>
 																										</details>
 																								<?php endif; ?>
@@ -238,7 +238,7 @@ class EventsAdminPage {
 		if ( $pages <= 1 ) {
 				return;
 		}
-			echo '<nav class="lclub-pagination" aria-label="' . esc_attr__( 'صفحه‌بندی رویدادها', 'lclub' ) . '">';
+			echo '<nav class="ariunetclub-pagination" aria-label="' . esc_attr__( 'صفحه‌بندی رویدادها', 'ariunetclub' ) . '">';
 		$limit = min( $pages, 10 );
 		for ( $i = 1; $i <= $limit; ++$i ) {
 				$url   = add_query_arg(
@@ -248,7 +248,7 @@ class EventsAdminPage {
 					),
 					$base_url
 				);
-				$class = $i === $page ? ' lclub-pagination-current' : '';
+				$class = $i === $page ? ' ariunetclub-pagination-current' : '';
 				echo '<a class="' . esc_attr( ltrim( $class ) ) . '" href="' . esc_url( $url ) . '">' . esc_html( Money::to_persian_digits( (string) $i ) ) . '</a>';
 		}
 			echo '</nav>';

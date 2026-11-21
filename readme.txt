@@ -1,5 +1,5 @@
 === AriunetClub ===
-Contributors: lclub
+Contributors: ariunetclub
 Tags: woocommerce, customer-club, cashback
 Requires at least: 6.0
 Requires PHP: 7.4

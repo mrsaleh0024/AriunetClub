@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\Settings;
-use LClub\Modules\Events\SkipEventException;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Events\SkipEventException;
 
 /**
  * Builds RuleContext objects from live WooCommerce data.

@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
 /**
  * Thrown by event handlers when an event is intentionally not actionable.

@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules\Conditions;
+namespace AriunetClub\Modules\Rules\Conditions;
 
-use LClub\Modules\Rules\RuleContext;
+use AriunetClub\Modules\Rules\RuleContext;
 
 /**
  * Product include/exclude condition (matches the parent product of line items).

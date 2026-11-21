@@ -1,15 +1,15 @@
 ( function () {
 	'use strict';
 
-	var dialog = document.querySelector( '[data-lclub-adjust-dialog]' );
-	var openButton = document.querySelector( '[data-lclub-open-adjust]' );
-	var form = document.querySelector( '[data-lclub-adjust-form]' );
-	var toast = document.querySelector( '[data-lclub-toast]' );
+	var dialog = document.querySelector( '[data-ariunetclub-adjust-dialog]' );
+	var openButton = document.querySelector( '[data-ariunetclub-open-adjust]' );
+	var form = document.querySelector( '[data-ariunetclub-adjust-form]' );
+	var toast = document.querySelector( '[data-ariunetclub-toast]' );
 
-	if ( dialog && openButton && form && window.lclubAdmin ) {
+	if ( dialog && openButton && form && window.ariunetclubAdmin ) {
 		function showToast( message, type ) {
 			toast.textContent = message;
-			toast.className = 'lclub-toast lclub-toast--' + type;
+			toast.className = 'ariunetclub-toast ariunetclub-toast--' + type;
 			toast.hidden = false;
 			window.setTimeout( function () { toast.hidden = true; }, 5000 );
 		}
@@ -19,19 +19,19 @@
 			dialog.querySelector( '[name="amount"]' ).focus();
 		} );
 
-		document.querySelectorAll( '[data-lclub-close-adjust]' ).forEach( function ( button ) {
+		document.querySelectorAll( '[data-ariunetclub-close-adjust]' ).forEach( function ( button ) {
 			button.addEventListener( 'click', function () { dialog.close(); } );
 		} );
 
 		form.addEventListener( 'submit', function ( event ) {
 			event.preventDefault();
-			var saveButton = form.querySelector( '[data-lclub-save-adjust]' );
+			var saveButton = form.querySelector( '[data-ariunetclub-save-adjust]' );
 			var data = new FormData( form );
-			data.append( 'action', 'lclub_adjust_balance' );
-			data.append( 'nonce', window.lclubAdmin.nonce );
+			data.append( 'action', 'ariunetclub_adjust_balance' );
+			data.append( 'nonce', window.ariunetclubAdmin.nonce );
 			saveButton.disabled = true;
 
-			window.fetch( window.lclubAdmin.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data } )
+			window.fetch( window.ariunetclubAdmin.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data } )
 				.then( function ( response ) { return response.json(); } )
 				.then( function ( response ) {
 					if ( ! response.success ) {
@@ -47,17 +47,17 @@
 	}
 
 	/* Progressive confirm dialogs for destructive actions. */
-	document.querySelectorAll( '[data-lclub-confirm]' ).forEach( function ( element ) {
+	document.querySelectorAll( '[data-ariunetclub-confirm]' ).forEach( function ( element ) {
 		element.addEventListener( 'submit', function ( event ) {
-			if ( ! window.confirm( element.getAttribute( 'data-lclub-confirm' ) ) ) {
+			if ( ! window.confirm( element.getAttribute( 'data-ariunetclub-confirm' ) ) ) {
 				event.preventDefault();
 			}
 		} );
 	} );
 
 	/* Live Persian sentence preview for the rule form. The form works without JS. */
-	var ruleForm = document.querySelector( '.lclub-rule-form' );
-	var preview = document.querySelector( '[data-lclub-rule-preview]' );
+	var ruleForm = document.querySelector( '.ariunetclub-rule-form' );
+	var preview = document.querySelector( '[data-ariunetclub-rule-preview]' );
 	if ( ! ruleForm || ! preview ) {
 		return;
 	}
@@ -89,48 +89,48 @@
 
 	function buildSentence() {
 		var parts = [];
-		var eventSelect = field( 'lclub_rule[event]' );
+		var eventSelect = field( 'ariunetclub_rule[event]' );
 		var when = eventSelect && eventSelect.selectedOptions && eventSelect.selectedOptions[ 0 ]
 			? eventSelect.selectedOptions[ 0 ].textContent.trim() : 'رویداد';
 		var whenParts = [ when ];
 
-		var minAmount = parseFloat( ( field( 'lclub_rule[min_amount]' ) || {} ).value || 0 );
+		var minAmount = parseFloat( ( field( 'ariunetclub_rule[min_amount]' ) || {} ).value || 0 );
 		if ( minAmount > 0 ) { whenParts.push( 'سفارش حداقل ' + money( minAmount ) ); }
 
-		var firstOrder = field( 'lclub_rule[first_order]' );
+		var firstOrder = field( 'ariunetclub_rule[first_order]' );
 		if ( firstOrder && firstOrder.checked ) { whenParts.push( 'اولین سفارش مشتری باشد' ); }
 
-		var categories = selectedLabels( 'lclub_rule[categories][]' );
+		var categories = selectedLabels( 'ariunetclub_rule[categories][]' );
 		if ( categories.length ) {
-			var categoryMode = 'exclude' === checkedValue( 'lclub_rule[categories_mode]' ) ? 'غیر' : '';
+			var categoryMode = 'exclude' === checkedValue( 'ariunetclub_rule[categories_mode]' ) ? 'غیر' : '';
 			whenParts.push( 'دستهٔ ' + categoryMode + categories.join( '، ' ) );
 		}
-		var products = selectedLabels( 'lclub_rule[products][]' );
+		var products = selectedLabels( 'ariunetclub_rule[products][]' );
 		if ( products.length ) {
-			var productMode = 'exclude' === checkedValue( 'lclub_rule[products_mode]' ) ? 'غیر' : '';
+			var productMode = 'exclude' === checkedValue( 'ariunetclub_rule[products_mode]' ) ? 'غیر' : '';
 			whenParts.push( 'محصول ' + productMode + products.join( '، ' ) );
 		}
 
-		var roles = selectedLabels( 'lclub_rule[user_roles][]' );
+		var roles = selectedLabels( 'ariunetclub_rule[user_roles][]' );
 		if ( roles.length ) { whenParts.push( 'نقش ' + roles.join( '، ' ) ); }
-		var methods = selectedLabels( 'lclub_rule[payment_methods][]' );
+		var methods = selectedLabels( 'ariunetclub_rule[payment_methods][]' );
 		if ( methods.length ) { whenParts.push( 'روش پرداخت ' + methods.join( '، ' ) ); }
 
-		var rewardType = 'fixed' === checkedValue( 'lclub_rule[reward_type]' ) ? 'fixed' : 'percent';
-		var rewardValue = parseFloat( ( field( 'lclub_rule[reward_value]' ) || {} ).value || 0 );
+		var rewardType = 'fixed' === checkedValue( 'ariunetclub_rule[reward_type]' ) ? 'fixed' : 'percent';
+		var rewardValue = parseFloat( ( field( 'ariunetclub_rule[reward_value]' ) || {} ).value || 0 );
 		if ( rewardValue > 0 ) {
 			if ( 'fixed' === rewardType ) {
 				parts.push( 'مبلغ ثابت ' + money( rewardValue ) + ' کش‌بک' );
 			} else {
 				var rewardText = faDigits( rewardValue ) + '٪ کش‌بک';
-				var cap = parseFloat( ( field( 'lclub_rule[reward_cap]' ) || {} ).value || 0 );
+				var cap = parseFloat( ( field( 'ariunetclub_rule[reward_cap]' ) || {} ).value || 0 );
 				if ( cap > 0 ) { rewardText += ' با سقف ' + money( cap ); }
 				parts.push( rewardText );
 			}
 		}
 
-		var perCount = parseInt( ( field( 'lclub_rule[per_user_count]' ) || {} ).value || 0, 10 );
-		var perDays = parseInt( ( field( 'lclub_rule[per_user_days]' ) || {} ).value || 0, 10 );
+		var perCount = parseInt( ( field( 'ariunetclub_rule[per_user_count]' ) || {} ).value || 0, 10 );
+		var perDays = parseInt( ( field( 'ariunetclub_rule[per_user_days]' ) || {} ).value || 0, 10 );
 		if ( perCount > 0 && perDays > 0 ) {
 			parts.push( 'حداکثر ' + faDigits( perCount ) + ' بار در ' + faDigits( perDays ) + ' روز' );
 		}

@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
 /**
  * Immutable snapshot of order facts needed by earning and reversal logic.

@@ -1,33 +1,33 @@
-/* LClub phase 3: wallet switch at classic checkout. Progressive enhancement
+/* AriunetClub phase 3: wallet switch at classic checkout. Progressive enhancement
    only — the fee and every amount are computed server-side; without JS the
    order simply completes without the wallet slice. */
 ( function () {
 	'use strict';
 
-	var config = window.lclubCheckout || {};
+	var config = window.ariunetclubCheckout || {};
 
 	function boxOf( input ) {
-		return input.closest ? input.closest( '[data-lclub-wallet-box]' ) : null;
+		return input.closest ? input.closest( '[data-ariunetclub-wallet-box]' ) : null;
 	}
 
 	function note( box, message, tone ) {
 		if ( ! box ) {
 			return;
 		}
-		var element = box.querySelector( '[data-lclub-wallet-note]' );
+		var element = box.querySelector( '[data-ariunetclub-wallet-note]' );
 		if ( ! element ) {
 			return;
 		}
 		element.textContent = message || '';
-		element.className = 'lclub-wallet-toggle__note' + ( tone ? ' lclub-wallet-toggle__note--' + tone : '' );
+		element.className = 'ariunetclub-wallet-toggle__note' + ( tone ? ' ariunetclub-wallet-toggle__note--' + tone : '' );
 	}
 
 	function updateAmounts( box, data ) {
 		if ( ! box ) {
 			return;
 		}
-		var available = box.querySelector( '[data-lclub-wallet-available]' );
-		var spend = box.querySelector( '[data-lclub-wallet-spend]' );
+		var available = box.querySelector( '[data-ariunetclub-wallet-available]' );
+		var spend = box.querySelector( '[data-ariunetclub-wallet-spend]' );
 		if ( available && data.availableFormatted ) {
 			available.textContent = data.availableFormatted;
 		}
@@ -51,7 +51,7 @@
 		note( box, '', '' );
 
 		var body = new FormData();
-		body.append( 'action', 'lclub_toggle_wallet' );
+		body.append( 'action', 'ariunetclub_toggle_wallet' );
 		body.append( 'nonce', config.nonce );
 		body.append( 'use', input.checked ? '1' : '0' );
 
@@ -79,7 +79,7 @@
 
 	document.addEventListener( 'change', function ( event ) {
 		var target = event.target;
-		if ( target && target.matches && target.matches( '[data-lclub-wallet-toggle]' ) ) {
+		if ( target && target.matches && target.matches( '[data-ariunetclub-wallet-toggle]' ) ) {
 			toggle( target );
 		}
 	} );

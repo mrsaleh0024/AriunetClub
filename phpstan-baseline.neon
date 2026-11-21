@@ -1,48 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Binary operation "\." between mixed and ''lclub_balances'' results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Core/Migrator.php
-
-		-
-			message: '#^Binary operation "\." between mixed and ''lclub_events'' results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Core/Migrator.php
-
-		-
-			message: '#^Binary operation "\." between mixed and ''lclub_ledger'' results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Core/Migrator.php
-
-		-
-			message: '#^Binary operation "\." between mixed and ''lclub_rules'' results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Core/Migrator.php
-
-		-
-			message: '#^Cannot access property \$prefix on mixed\.$#'
-			identifier: property.nonObject
-			count: 4
-			path: src/Core/Migrator.php
-
-		-
-			message: '#^Cannot call method get_charset_collate\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Core/Migrator.php
-
-		-
-			message: '#^Part \$charset_collate \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 4
-			path: src/Core/Migrator.php
-
-		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 1
@@ -55,7 +13,7 @@ parameters:
 			path: src/Core/Settings.php
 
 		-
-			message: '#^Method LClub\\Core\\Settings\:\:get\(\) should return array\<string, mixed\> but returns array\.$#'
+			message: '#^Method AriunetClub\\Core\\Settings\:\:get\(\) should return array\<string, mixed\> but returns array\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Core/Settings.php
@@ -91,19 +49,19 @@ parameters:
 			path: src/Modules/Events/EventRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Events\\EventRepository\:\:find_by_key\(\) should return array\<string, mixed\>\|null but returns array\|null\.$#'
+			message: '#^Method AriunetClub\\Modules\\Events\\EventRepository\:\:find_by_key\(\) should return array\<string, mixed\>\|null but returns array\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Events/EventRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Events\\EventRepository\:\:list\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
+			message: '#^Method AriunetClub\\Modules\\Events\\EventRepository\:\:list\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Events/EventRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Events\\EventRepository\:\:pending_batch\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Events\\EventRepository\:\:pending_batch\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Events/EventRepository.php
@@ -169,7 +127,7 @@ parameters:
 			path: src/Modules/Events/EventsAdminPage.php
 
 		-
-			message: '#^Parameter \#1 \$wpdb of class LClub\\Modules\\Events\\EventRepository constructor expects wpdb, mixed given\.$#'
+			message: '#^Parameter \#1 \$wpdb of class AriunetClub\\Modules\\Events\\EventRepository constructor expects wpdb, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Modules/Events/EventsModule.php
@@ -235,13 +193,13 @@ parameters:
 			path: src/Modules/Identity/IdentityService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Identity\\IdentityService\:\:phone_meta_keys\(\) has parameter \$keys with no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Identity\\IdentityService\:\:phone_meta_keys\(\) has parameter \$keys with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Identity/IdentityService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Identity\\IdentityService\:\:phone_meta_keys\(\) should return array\<string\> but returns list\.$#'
+			message: '#^Method AriunetClub\\Modules\\Identity\\IdentityService\:\:phone_meta_keys\(\) should return array\<string\> but returns list\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Identity/IdentityService.php
@@ -259,19 +217,19 @@ parameters:
 			path: src/Modules/Identity/IdentityService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerGateway\:\:balances\(\) has parameter \$user_ids with no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerGateway\:\:balances\(\) has parameter \$user_ids with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerGateway.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerGateway\:\:record\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerGateway\:\:record\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerGateway.php
 
 		-
-			message: '#^Parameter \#1 \$wpdb of class LClub\\Modules\\Ledger\\LedgerRepository constructor expects wpdb, mixed given\.$#'
+			message: '#^Parameter \#1 \$wpdb of class AriunetClub\\Modules\\Ledger\\LedgerRepository constructor expects wpdb, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Modules/Ledger/LedgerModule.php
@@ -301,61 +259,61 @@ parameters:
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:balance\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:balance\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:balances\(\) has parameter \$user_ids with no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:balances\(\) has parameter \$user_ids with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:balances\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:balances\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:entries_for_reference\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:entries_for_reference\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:find_by_key\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:find_by_key\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:history\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:history\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:insert_entry\(\) has parameter \$entry with no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:insert_entry\(\) has parameter \$entry with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:lock_balance\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:lock_balance\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:record\(\) has parameter \$entry with no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:record\(\) has parameter \$entry with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerRepository\:\:record\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:record\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerRepository.php
@@ -397,43 +355,43 @@ parameters:
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:adjust\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:adjust\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:capture\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:capture\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:credit\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:credit\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:debit\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:debit\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:hold\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:hold\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:release\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:release\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
 
 		-
-			message: '#^Method LClub\\Modules\\Ledger\\LedgerService\:\:write\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerService\:\:write\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Ledger/LedgerService.php
@@ -571,13 +529,13 @@ parameters:
 			path: src/Modules/Rules/RuleEngine.php
 
 		-
-			message: '#^Method LClub\\Modules\\Rules\\RuleEngine\:\:json\(\) should return array\<string, mixed\> but returns array\<mixed, mixed\>\.$#'
+			message: '#^Method AriunetClub\\Modules\\Rules\\RuleEngine\:\:json\(\) should return array\<string, mixed\> but returns array\<mixed, mixed\>\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Rules/RuleEngine.php
 
 		-
-			message: '#^Method LClub\\Modules\\Rules\\RuleEngine\:\:json\(\) should return array\<string, mixed\> but returns array\<mixed\>\.$#'
+			message: '#^Method AriunetClub\\Modules\\Rules\\RuleEngine\:\:json\(\) should return array\<string, mixed\> but returns array\<mixed\>\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Rules/RuleEngine.php
@@ -589,19 +547,19 @@ parameters:
 			path: src/Modules/Rules/RuleRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Rules\\RuleRepository\:\:active_for_event\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
+			message: '#^Method AriunetClub\\Modules\\Rules\\RuleRepository\:\:active_for_event\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Rules/RuleRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Rules\\RuleRepository\:\:find\(\) should return array\<string, mixed\>\|null but returns array\|null\.$#'
+			message: '#^Method AriunetClub\\Modules\\Rules\\RuleRepository\:\:find\(\) should return array\<string, mixed\>\|null but returns array\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Rules/RuleRepository.php
 
 		-
-			message: '#^Method LClub\\Modules\\Rules\\RuleRepository\:\:list\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
+			message: '#^Method AriunetClub\\Modules\\Rules\\RuleRepository\:\:list\(\) should return array\{items\: array\<int, array\<string, mixed\>\>, total\: int\} but returns array\{items\: array, total\: int\}\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Modules/Rules/RuleRepository.php
@@ -709,7 +667,7 @@ parameters:
 			path: src/Modules/Rules/RulesAdminPage.php
 
 		-
-			message: '#^Parameter \#1 \$raw of method LClub\\Modules\\Rules\\RulesAdminPage\:\:sanitize_rule\(\) expects array\<string, mixed\>, array\|string given\.$#'
+			message: '#^Parameter \#1 \$raw of method AriunetClub\\Modules\\Rules\\RulesAdminPage\:\:sanitize_rule\(\) expects array\<string, mixed\>, array\|string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Modules/Rules/RulesAdminPage.php
@@ -727,7 +685,7 @@ parameters:
 			path: src/Modules/Rules/RulesAdminPage.php
 
 		-
-			message: '#^Parameter \#1 \$value of method LClub\\Modules\\Rules\\RulesAdminPage\:\:sanitize_datetime\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$value of method AriunetClub\\Modules\\Rules\\RulesAdminPage\:\:sanitize_datetime\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
 			path: src/Modules/Rules/RulesAdminPage.php
@@ -745,13 +703,13 @@ parameters:
 			path: src/Modules/Rules/RulesAdminPage.php
 
 		-
-			message: '#^Parameter \#1 \$wpdb of class LClub\\Modules\\Ledger\\LedgerRepository constructor expects wpdb, mixed given\.$#'
+			message: '#^Parameter \#1 \$wpdb of class AriunetClub\\Modules\\Ledger\\LedgerRepository constructor expects wpdb, mixed given\.$#'
 			identifier: argument.type
 			count: 2
 			path: src/Modules/Rules/RulesModule.php
 
 		-
-			message: '#^Parameter \#1 \$wpdb of class LClub\\Modules\\Rules\\RuleRepository constructor expects wpdb, mixed given\.$#'
+			message: '#^Parameter \#1 \$wpdb of class AriunetClub\\Modules\\Rules\\RuleRepository constructor expects wpdb, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Modules/Rules/RulesModule.php

@@ -2,7 +2,7 @@
 /**
  * ایجاد دادهٔ نمایشی فاز اول؛ فقط از خط فرمان اجرا شود.
  *
- * @package LClub
+ * @package AriunetClub
  */
 
 if ( 'cli' !== PHP_SAPI ) {
@@ -12,15 +12,15 @@ if ( 'cli' !== PHP_SAPI ) {
 $site_path = dirname( __DIR__, 4 );
 require_once $site_path . '/wp-load.php';
 
-if ( empty( $GLOBALS['lclub_ledger_service'] ) || ! $GLOBALS['lclub_ledger_service'] instanceof \LClub\Modules\Ledger\LedgerService ) {
-	fwrite( STDERR, "LClub ledger service is unavailable.\n" );
+if ( empty( $GLOBALS['ariunetclub_ledger_service'] ) || ! $GLOBALS['ariunetclub_ledger_service'] instanceof \AriunetClub\Modules\Ledger\LedgerService ) {
+	fwrite( STDERR, "AriunetClub ledger service is unavailable.\n" );
 	exit( 1 );
 }
 
-$ledger = $GLOBALS['lclub_ledger_service'];
+$ledger = $GLOBALS['ariunetclub_ledger_service'];
 $customers = array(
 	array(
-		'email'        => 'lclub-demo-1@example.test',
+		'email'        => 'ariunetclub-demo-1@example.test',
 		'display_name' => 'مشتری آزمایشی یک',
 		'phone'        => '09121234567',
 		'entries'      => array(
@@ -29,7 +29,7 @@ $customers = array(
 		),
 	),
 	array(
-		'email'        => 'lclub-demo-2@example.test',
+		'email'        => 'ariunetclub-demo-2@example.test',
 		'display_name' => 'مشتری آزمایشی دو',
 		'phone'        => '+989121234568',
 		'entries'      => array(
@@ -38,7 +38,7 @@ $customers = array(
 		),
 	),
 	array(
-		'email'        => 'lclub-demo-3@example.test',
+		'email'        => 'ariunetclub-demo-3@example.test',
 		'display_name' => 'مشتری آزمایشی سه',
 		'phone'        => '۰۹۱۲۱۲۳۴۵۶۹',
 		'entries'      => array(

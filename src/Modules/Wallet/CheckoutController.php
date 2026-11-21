@@ -1,15 +1,15 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Logger;
-use LClub\Core\Money;
-use LClub\Core\Settings;
-use LClub\Modules\Ledger\InsufficientBalanceException;
-use LClub\Modules\Ledger\LedgerService;
+use AriunetClub\Core\Logger;
+use AriunetClub\Core\Money;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Ledger\InsufficientBalanceException;
+use AriunetClub\Modules\Ledger\LedgerService;
 
 /**
  * Phase 3 front end: the wallet switch and the negative fee at classic
@@ -22,10 +22,10 @@ use LClub\Modules\Ledger\LedgerService;
  */
 class CheckoutController {
 
-	const SESSION_FLAG  = 'lclub_use_wallet';
-	const SESSION_SPEND = 'lclub_wallet_spend';
-	const NONCE         = 'lclub_wallet_toggle';
-	const THROTTLE      = 'lclub_toggle_lock_';
+	const SESSION_FLAG  = 'ariunetclub_use_wallet';
+	const SESSION_SPEND = 'ariunetclub_wallet_spend';
+	const NONCE         = 'ariunetclub_wallet_toggle';
+	const THROTTLE      = 'ariunetclub_toggle_lock_';
 
 	/** @var LedgerService */
 	private $ledger;
@@ -54,7 +54,7 @@ class CheckoutController {
 	}
 
 	public function register(): void {
-		add_action( 'wp_ajax_lclub_toggle_wallet', array( $this, 'toggle_wallet' ) );
+		add_action( 'wp_ajax_ariunetclub_toggle_wallet', array( $this, 'toggle_wallet' ) );
 		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'apply_fee' ) );
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_checkout' ), 10, 2 );
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'stamp_order' ), 10, 2 );
@@ -72,12 +72,12 @@ class CheckoutController {
 
 		$wc = function_exists( 'WC' ) ? WC() : null;
 		if ( ! is_user_logged_in() || null === $wc || null === $wc->session || null === $wc->cart ) {
-			wp_send_json_error( array( 'message' => __( 'برای استفاده از کیف پول باید وارد حساب خود شوید.', 'lclub' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'برای استفاده از کیف پول باید وارد حساب خود شوید.', 'ariunetclub' ) ), 403 );
 			return; // wp_send_json_error() terminates execution; kept so the analysis stays sound.
 		}
 		$user_id = get_current_user_id();
 		if ( get_transient( self::THROTTLE . $user_id ) ) {
-			wp_send_json_error( array( 'message' => __( 'درخواست‌های پی‌در‌پی؛ یک لحظه بعد دوباره تلاش کنید.', 'lclub' ) ), 429 );
+			wp_send_json_error( array( 'message' => __( 'درخواست‌های پی‌در‌پی؛ یک لحظه بعد دوباره تلاش کنید.', 'ariunetclub' ) ), 429 );
 		}
 		set_transient( self::THROTTLE . $user_id, 1, 1 );
 
@@ -91,7 +91,7 @@ class CheckoutController {
 		if ( $use && $spend <= 0.0 ) {
 			$wc->session->set( self::SESSION_FLAG, false );
 			$wc->session->set( self::SESSION_SPEND, 0.0 );
-			wp_send_json_error( array( 'message' => __( 'با توجه به تنظیمات، در حال حاضر امکان استفاده از کیف پول برای این سبد نیست.', 'lclub' ) ), 409 );
+			wp_send_json_error( array( 'message' => __( 'با توجه به تنظیمات، در حال حاضر امکان استفاده از کیف پول برای این سبد نیست.', 'ariunetclub' ) ), 409 );
 		}
 
 		$wc->session->set( self::SESSION_FLAG, $use );
@@ -156,18 +156,18 @@ class CheckoutController {
 		$spend     = $this->calculator->max_spend( $available, $base, $due );
 
 		if ( $spend <= 0.0 ) {
-			$errors->add( 'lclub_wallet', __( 'با توجه به شرایط فعلی، استفاده از کیف پول برای این سبد ممکن نیست.', 'lclub' ) );
+			$errors->add( 'ariunetclub_wallet', __( 'با توجه به شرایط فعلی، استفاده از کیف پول برای این سبد ممکن نیست.', 'ariunetclub' ) );
 			return;
 		}
 		if ( $available + 0.001 < $spend ) {
-			$errors->add( 'lclub_wallet', __( 'موجودی کیف پول برای این خرید کافی نیست.', 'lclub' ) );
+			$errors->add( 'ariunetclub_wallet', __( 'موجودی کیف پول برای این خرید کافی نیست.', 'ariunetclub' ) );
 			return;
 		}
 		if ( $spend + 0.001 < $due ) {
 			$raw_method = isset( $data['payment_method'] ) ? $data['payment_method'] : '';
 			$method     = is_string( $raw_method ) ? $raw_method : '';
 			if ( ! $this->gateway_allowed( $method ) ) {
-				$errors->add( 'lclub_wallet', __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'lclub' ) );
+				$errors->add( 'ariunetclub_wallet', __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'ariunetclub' ) );
 			}
 		}
 	}
@@ -230,21 +230,21 @@ class CheckoutController {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order_id,
-					'note'     => __( 'رزرو کیف پول برای سفارش', 'lclub' ),
+					'note'     => __( 'رزرو کیف پول برای سفارش', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::remember_hold( $order, $amount, max( 0.0, OrderMeta::order_total( $order ) ) );
 			$this->holds->schedule_expiry( $order_id );
-			$order->add_order_note( __( 'رزرو کیف پول ثبت شد: ', 'lclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'رزرو کیف پول ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->logger->info( 'Wallet hold placed.', array( 'order_id' => $order_id, 'amount' => $amount ) );
 		} catch ( InsufficientBalanceException $exception ) {
-			$order->update_status( 'failed', __( 'رزرو کیف پول به‌دلیل کافی نبودن موجودی انجام نشد.', 'lclub' ) );
+			$order->update_status( 'failed', __( 'رزرو کیف پول به‌دلیل کافی نبودن موجودی انجام نشد.', 'ariunetclub' ) );
 			$this->logger->error( 'Wallet hold failed: insufficient balance.', array( 'order_id' => $order_id, 'user_id' => $user_id ) );
-			throw new \Exception( __( 'موجودی کیف پول کافی نیست؛ سفارش ثبت نشد.', 'lclub' ) );
+			throw new \Exception( __( 'موجودی کیف پول کافی نیست؛ سفارش ثبت نشد.', 'ariunetclub' ) );
 		} catch ( \Throwable $error ) {
-			$order->update_status( 'failed', __( 'خطا در ثبت رزرو کیف پول؛ سفارش ناموفق شد.', 'lclub' ) );
+			$order->update_status( 'failed', __( 'خطا در ثبت رزرو کیف پول؛ سفارش ناموفق شد.', 'ariunetclub' ) );
 			$this->logger->error( 'Wallet hold failed.', array( 'order_id' => $order_id, 'error' => $error->getMessage() ) );
-			throw new \Exception( __( 'خطا در ثبت رزرو کیف پول؛ سفارش ناموفق شد.', 'lclub' ) );
+			throw new \Exception( __( 'خطا در ثبت رزرو کیف پول؛ سفارش ناموفق شد.', 'ariunetclub' ) );
 		}
 	}
 
@@ -263,17 +263,17 @@ class CheckoutController {
 			return;
 		}
 		?>
-		<div class="lclub-scope lclub-wallet-toggle" data-lclub-wallet-box>
-			<div class="lclub-wallet-toggle__panel">
-				<label class="lclub-wallet-toggle__label" for="lclub-use-wallet">
-					<input type="checkbox" id="lclub-use-wallet" name="lclub_use_wallet" value="1" data-lclub-wallet-toggle <?php checked( $this->flag() ); ?> />
+		<div class="ariunetclub-scope ariunetclub-wallet-toggle" data-ariunetclub-wallet-box>
+			<div class="ariunetclub-wallet-toggle__panel">
+				<label class="ariunetclub-wallet-toggle__label" for="ariunetclub-use-wallet">
+					<input type="checkbox" id="ariunetclub-use-wallet" name="ariunetclub_use_wallet" value="1" data-ariunetclub-wallet-toggle <?php checked( $this->flag() ); ?> />
 					<span><?php echo esc_html( $this->fee_title() ); ?></span>
 				</label>
-				<p class="lclub-wallet-toggle__meta">
-					<span><?php esc_html_e( 'موجودی قابل استفاده:', 'lclub' ); ?> <strong data-lclub-wallet-available><?php echo esc_html( Money::format( $available ) ); ?></strong></span>
-					<span><?php esc_html_e( 'کسر تقریبی از این سفارش:', 'lclub' ); ?> <strong data-lclub-wallet-spend><?php echo esc_html( Money::format( $spend ) ); ?></strong></span>
+				<p class="ariunetclub-wallet-toggle__meta">
+					<span><?php esc_html_e( 'موجودی قابل استفاده:', 'ariunetclub' ); ?> <strong data-ariunetclub-wallet-available><?php echo esc_html( Money::format( $available ) ); ?></strong></span>
+					<span><?php esc_html_e( 'کسر تقریبی از این سفارش:', 'ariunetclub' ); ?> <strong data-ariunetclub-wallet-spend><?php echo esc_html( Money::format( $spend ) ); ?></strong></span>
 				</p>
-				<p class="lclub-wallet-toggle__note" data-lclub-wallet-note aria-live="polite"></p>
+				<p class="ariunetclub-wallet-toggle__note" data-ariunetclub-wallet-note aria-live="polite"></p>
 			</div>
 		</div>
 		<?php
@@ -369,7 +369,7 @@ class CheckoutController {
 		$config = $this->settings->get();
 		$raw_title = isset( $config['wallet_fee_title'] ) ? $config['wallet_fee_title'] : '';
 		$title     = is_string( $raw_title ) ? $raw_title : '';
-		return '' !== $title ? $title : __( 'استفاده از کیف پول', 'lclub' );
+		return '' !== $title ? $title : __( 'استفاده از کیف پول', 'ariunetclub' );
 	}
 
 	/**

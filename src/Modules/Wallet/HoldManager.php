@@ -1,16 +1,16 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Logger;
-use LClub\Core\Money;
-use LClub\Core\Settings;
-use LClub\Modules\Ledger\InsufficientBalanceException;
-use LClub\Modules\Ledger\LedgerGateway;
-use LClub\Modules\Ledger\LedgerService;
+use AriunetClub\Core\Logger;
+use AriunetClub\Core\Money;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Ledger\InsufficientBalanceException;
+use AriunetClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Modules\Ledger\LedgerService;
 
 /**
  * Phase 3 wallet lifecycle: hold on order creation, capture when the order is
@@ -24,7 +24,7 @@ use LClub\Modules\Ledger\LedgerService;
  */
 class HoldManager {
 
-	const EXPIRY_ACTION = 'lclub_release_expired_hold';
+	const EXPIRY_ACTION = 'ariunetclub_release_expired_hold';
 	const REFUND_PREFIX = 'wallet:refund:order:';
 
 	/** @var LedgerService */
@@ -147,14 +147,14 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'برگشت خرج کیف پول — مستردشدهٔ سفارش', 'lclub' ),
+					'note'     => __( 'برگشت خرج کیف پول — مستردشدهٔ سفارش', 'ariunetclub' ),
 				)
 			);
-			$order->add_order_note( __( 'برگشت خرج کیف پول به کیف پول اضافه شد: ', 'lclub' ) . Money::format( $share ) );
+			$order->add_order_note( __( 'برگشت خرج کیف پول به کیف پول اضافه شد: ', 'ariunetclub' ) . Money::format( $share ) );
 			$this->logger->info( 'Wallet refund share returned.', array( 'order_id' => $order->get_id(), 'share' => $share ) );
 		} catch ( \Throwable $error ) {
 			$this->logger->error( 'Wallet refund share failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
-			$order->add_order_note( __( 'خطا در برگشت خرج کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'lclub' ) );
+			$order->add_order_note( __( 'خطا در برگشت خرج کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -184,7 +184,7 @@ class HoldManager {
 		$user_id = (int) $order->get_customer_id();
 		$amount  = OrderMeta::amount( $order );
 		$this->release( $order, $user_id, $amount );
-		$order->add_order_note( __( 'مهلت پرداخت سفارش منقضی و رزرو کیف پول آزاد شد.', 'lclub' ) );
+		$order->add_order_note( __( 'مهلت پرداخت سفارش منقضی و رزرو کیف پول آزاد شد.', 'ariunetclub' ) );
 		$this->logger->info( 'Expired wallet hold released.', array( 'order_id' => $order_id ) );
 	}
 
@@ -233,16 +233,16 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'مصرف کیف پول برای سفارش', 'lclub' ),
+					'note'     => __( 'مصرف کیف پول برای سفارش', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
-			$order->add_order_note( __( 'مصرف کیف پول قطعی شد: ', 'lclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'مصرف کیف پول قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->unschedule( $order->get_id() );
 			$this->logger->info( 'Wallet spend captured.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
 		} catch ( \Throwable $error ) {
 			$this->logger->error( 'Wallet capture failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
-			$order->add_order_note( __( 'خطا در قطعی‌سازی رزرو کیف پول؛ لطفاً از تاریخچهٔ کیف پول بررسی کنید.', 'lclub' ) );
+			$order->add_order_note( __( 'خطا در قطعی‌سازی رزرو کیف پول؛ لطفاً از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -266,7 +266,7 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'رزرو مجدد کیف پول برای پرداخت مجدد سفارش', 'lclub' ),
+					'note'     => __( 'رزرو مجدد کیف پول برای پرداخت مجدد سفارش', 'ariunetclub' ),
 				)
 			);
 			$this->ledger->capture(
@@ -276,11 +276,11 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'مصرف کیف پول برای سفارش', 'lclub' ),
+					'note'     => __( 'مصرف کیف پول برای سفارش', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
-			$order->add_order_note( __( 'مصرف کیف پول پس از پرداخت مجدد سفارش قطعی شد: ', 'lclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'مصرف کیف پول پس از پرداخت مجدد سفارش قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->logger->info( 'Wallet re-held and captured after retry payment.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
 		} catch ( InsufficientBalanceException $exception ) {
 			try {
@@ -291,19 +291,19 @@ class HoldManager {
 					array(
 						'ref_type' => 'order',
 						'ref_id'   => $order->get_id(),
-						'note'     => __( 'بدهی کیف پول — پرداخت مجدد سفارش', 'lclub' ),
+						'note'     => __( 'بدهی کیف پول — پرداخت مجدد سفارش', 'ariunetclub' ),
 					)
 				);
 				OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
-				$order->add_order_note( __( 'موجودی کیف پول کافی نبود؛ مبلغ مصرف به‌صورت بدهی ثبت شد: ', 'lclub' ) . Money::format( $amount ) );
+				$order->add_order_note( __( 'موجودی کیف پول کافی نبود؛ مبلغ مصرف به‌صورت بدهی ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 				$this->logger->error( 'Wallet retry capture created debt.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
 			} catch ( \Throwable $error ) {
 				$this->logger->error( 'Wallet retry capture failed entirely.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
-				$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'lclub' ) );
+				$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 			}
 		} catch ( \Throwable $error ) {
 			$this->logger->error( 'Wallet retry capture failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
-			$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'lclub' ) );
+			$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -325,16 +325,16 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'آزادسازی رزرو کیف پول', 'lclub' ),
+					'note'     => __( 'آزادسازی رزرو کیف پول', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_RELEASED );
-			$order->add_order_note( __( 'رزرو کیف پول آزاد شد: ', 'lclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'رزرو کیف پول آزاد شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->unschedule( $order->get_id() );
 			$this->logger->info( 'Wallet hold released.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
 		} catch ( \Throwable $error ) {
 			$this->logger->error( 'Wallet release failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
-			$order->add_order_note( __( 'خطا در آزادسازی رزرو کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'lclub' ) );
+			$order->add_order_note( __( 'خطا در آزادسازی رزرو کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -355,7 +355,7 @@ class HoldManager {
 	private function schedule_at( int $order_id, int $when ): void {
 		$when = max( time() + 60, $when );
 		if ( function_exists( 'as_schedule_single_action' ) ) {
-			as_schedule_single_action( $when, self::EXPIRY_ACTION, array( $order_id ), 'lclub' );
+			as_schedule_single_action( $when, self::EXPIRY_ACTION, array( $order_id ), 'ariunetclub' );
 			return;
 		}
 		wp_schedule_single_event( $when, self::EXPIRY_ACTION, array( $order_id ) );
@@ -363,7 +363,7 @@ class HoldManager {
 
 	private function unschedule( int $order_id ): void {
 		if ( function_exists( 'as_unschedule_action' ) ) {
-			as_unschedule_action( self::EXPIRY_ACTION, array( $order_id ), 'lclub' );
+			as_unschedule_action( self::EXPIRY_ACTION, array( $order_id ), 'ariunetclub' );
 			return;
 		}
 		$when = wp_next_scheduled( self::EXPIRY_ACTION, array( $order_id ) );

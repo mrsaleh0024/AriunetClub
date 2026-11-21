@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
 /**
  * Storage contract for rules. SQL lives only in the repository.

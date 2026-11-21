@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules\Rewards;
+namespace AriunetClub\Modules\Rules\Rewards;
 
-use LClub\Modules\Rules\RuleContext;
+use AriunetClub\Modules\Rules\RuleContext;
 
 /**
  * Computes one reward from the rule config. Null means "not computable"

@@ -1,8 +1,8 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Rules\ReversalMath;
+use AriunetClub\Modules\Rules\ReversalMath;
 use PHPUnit\Framework\TestCase;
 
 class ReversalMathTest extends TestCase {

@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Modules\Rules\Conditions\ConditionInterface;
-use LClub\Modules\Rules\Rewards\RewardInterface;
+use AriunetClub\Modules\Rules\Conditions\ConditionInterface;
+use AriunetClub\Modules\Rules\Rewards\RewardInterface;
 
 /**
  * Pure rule evaluation: window, conditions and reward computation.

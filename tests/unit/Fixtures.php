@@ -1,21 +1,21 @@
 <?php
 /**
- * Shared in-memory fixtures for LClub unit tests. Loaded by tests/bootstrap.php.
+ * Shared in-memory fixtures for AriunetClub unit tests. Loaded by tests/bootstrap.php.
  *
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Events\EventGateway;
-use LClub\Modules\Events\SkipEventException;
-use LClub\Modules\Ledger\LedgerGateway;
-use LClub\Modules\Rules\ContextFactoryInterface;
-use LClub\Modules\Rules\OrderHistoryInterface;
-use LClub\Modules\Rules\OrderLookupInterface;
-use LClub\Modules\Rules\OrderSnapshot;
-use LClub\Modules\Rules\RuleContext;
-use LClub\Modules\Rules\RuleGateway;
+use AriunetClub\Modules\Events\EventGateway;
+use AriunetClub\Modules\Events\SkipEventException;
+use AriunetClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Modules\Rules\ContextFactoryInterface;
+use AriunetClub\Modules\Rules\OrderHistoryInterface;
+use AriunetClub\Modules\Rules\OrderLookupInterface;
+use AriunetClub\Modules\Rules\OrderSnapshot;
+use AriunetClub\Modules\Rules\RuleContext;
+use AriunetClub\Modules\Rules\RuleGateway;
 
 /**
  * Event queue fake with the same idempotency semantics as the SQL table.

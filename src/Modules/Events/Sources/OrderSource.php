@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events\Sources;
+namespace AriunetClub\Modules\Events\Sources;
 
-use LClub\Modules\Events\EventBus;
+use AriunetClub\Modules\Events\EventBus;
 
 /**
  * Listens to WooCommerce order hooks and records earning-relevant events.

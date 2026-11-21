@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Core;
+namespace AriunetClub\Core;
 
 interface Module {
 	public function id(): string;

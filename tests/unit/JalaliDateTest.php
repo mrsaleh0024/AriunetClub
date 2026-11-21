@@ -1,6 +1,6 @@
 <?php
-namespace LClub\Tests;
-use LClub\Core\JalaliDate;
+namespace AriunetClub\Tests;
+use AriunetClub\Core\JalaliDate;
 use PHPUnit\Framework\TestCase;
 class JalaliDateTest extends TestCase {
 	public function test_converts_nowruz(): void { $this->assertSame( array( 1403, 1, 1 ), JalaliDate::from_gregorian( 2024, 3, 20 ) ); }

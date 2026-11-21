@@ -1,6 +1,6 @@
 <?php
 /**
- * LClub Phase 3 functional tests — real PHP, no WordPress.
+ * AriunetClub Phase 3 functional tests — real PHP, no WordPress.
  *
  * Loads the REAL plugin classes (Money, Settings, Logger, LedgerService,
  * LedgerGateway, OrderMeta, SpendCalculator, HoldManager, CheckoutController)
@@ -17,11 +17,11 @@ error_reporting( E_ALL );
 // 1) WordPress / WooCommerce runtime stubs
 // ---------------------------------------------------------------------------
 
-$GLOBALS['lclub_test_settings']      = array();
-$GLOBALS['lclub_test_orders']        = array();
-$GLOBALS['lclub_test_hooks']         = array();
-$GLOBALS['lclub_test_transients']    = array();
-$GLOBALS['lclub_test_user_logged_in'] = true;
+$GLOBALS['ariunetclub_test_settings']      = array();
+$GLOBALS['ariunetclub_test_orders']        = array();
+$GLOBALS['ariunetclub_test_hooks']         = array();
+$GLOBALS['ariunetclub_test_transients']    = array();
+$GLOBALS['ariunetclub_test_user_logged_in'] = true;
 
 class JsonSentException extends Exception {
         public $payload;
@@ -40,24 +40,24 @@ function esc_html( $text ) { return $text; }
 function esc_url( $url ) { return $url; }
 function esc_attr( $text ) { return $text; }
 function checked( $checked, $current = true, $display = true ) { return $checked === $current ? 'checked' : ''; }
-function add_action( $hook, $cb, $prio = 10, $args = 1 ) { $GLOBALS['lclub_test_hooks'][ $hook ][] = array( $cb, $args ); }
-function add_filter( $hook, $cb, $prio = 10, $args = 1 ) { $GLOBALS['lclub_test_hooks'][ $hook ][] = array( $cb, $args ); }
+function add_action( $hook, $cb, $prio = 10, $args = 1 ) { $GLOBALS['ariunetclub_test_hooks'][ $hook ][] = array( $cb, $args ); }
+function add_filter( $hook, $cb, $prio = 10, $args = 1 ) { $GLOBALS['ariunetclub_test_hooks'][ $hook ][] = array( $cb, $args ); }
 function do_action( $hook, ...$args ) {
-        foreach ( $GLOBALS['lclub_test_hooks'][ $hook ] ?? array() as $pair ) {
+        foreach ( $GLOBALS['ariunetclub_test_hooks'][ $hook ] ?? array() as $pair ) {
                 call_user_func_array( $pair[0], array_slice( $args, 0, $pair[1] ) );
         }
 }
 function apply_filters( $hook, $value, ...$args ) { return $value; }
-function get_option( $name, $default = false ) { return $GLOBALS['lclub_test_settings'][ $name ] ?? $default; }
-function add_option( $name, $value ) { $GLOBALS['lclub_test_settings'][ $name ] = $value; return true; }
-function update_option( $name, $value ) { $GLOBALS['lclub_test_settings'][ $name ] = $value; return true; }
+function get_option( $name, $default = false ) { return $GLOBALS['ariunetclub_test_settings'][ $name ] ?? $default; }
+function add_option( $name, $value ) { $GLOBALS['ariunetclub_test_settings'][ $name ] = $value; return true; }
+function update_option( $name, $value ) { $GLOBALS['ariunetclub_test_settings'][ $name ] = $value; return true; }
 function wp_parse_args( $args, $defaults = array() ) { return array_merge( (array) $defaults, (array) $args ); }
 function wp_unslash( $value ) { return $value; }
 function sanitize_key( $key ) { return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $key ) ); }
 function sanitize_text_field( $str ) { return trim( (string) $str ); }
 function absint( $value ) { return abs( (int) $value ); }
 function get_current_user_id() { return 2; }
-function is_user_logged_in() { return $GLOBALS['lclub_test_user_logged_in']; }
+function is_user_logged_in() { return $GLOBALS['ariunetclub_test_user_logged_in']; }
 function current_time( $type, $gmt = false ) { return $gmt ? gmdate( 'Y-m-d H:i:s' ) : date( 'Y-m-d H:i:s' ); }
 function number_format_i18n( $number, $decimals = 0 ) { return number_format( (float) $number, (int) $decimals, '.', ',' ); }
 function wc_get_price_decimals() { return 0; }
@@ -68,29 +68,29 @@ function check_ajax_referer( $action, $arg = false, $die = true ) { return true;
 function is_checkout() { return true; }
 function is_checkout_pay_page() { return false; }
 function get_transient( $key ) {
-        $stored = $GLOBALS['lclub_test_transients'][ $key ] ?? null;
+        $stored = $GLOBALS['ariunetclub_test_transients'][ $key ] ?? null;
         if ( null === $stored ) { return false; }
-        if ( $stored['expires'] < microtime( true ) ) { unset( $GLOBALS['lclub_test_transients'][ $key ] ); return false; }
+        if ( $stored['expires'] < microtime( true ) ) { unset( $GLOBALS['ariunetclub_test_transients'][ $key ] ); return false; }
         return $stored['value'];
 }
 function set_transient( $key, $value, $seconds = 0 ) {
-        $GLOBALS['lclub_test_transients'][ $key ] = array( 'value' => $value, 'expires' => microtime( true ) + (float) $seconds );
+        $GLOBALS['ariunetclub_test_transients'][ $key ] = array( 'value' => $value, 'expires' => microtime( true ) + (float) $seconds );
         return true;
 }
-function delete_transient( $key ) { unset( $GLOBALS['lclub_test_transients'][ $key ] ); return true; }
+function delete_transient( $key ) { unset( $GLOBALS['ariunetclub_test_transients'][ $key ] ); return true; }
 function wp_upload_dir() { return array( 'error' => 'uploads disabled in tests', 'basedir' => '/tmp' ); }
 function trailingslashit( $value ) { return rtrim( $value, '/\\' ) . '/'; }
 function wp_mkdir_p( $dir ) { return false; }
 function wp_json_encode( $data, $flags = 0 ) { return json_encode( $data, $flags ); }
 function wp_send_json_error( $data = null, $http = null ) { throw new JsonSentException( array( 'success' => false, 'data' => $data ), $http ?: 400 ); }
 function wp_send_json_success( $data = null, $http = null ) { throw new JsonSentException( array( 'success' => true, 'data' => $data ), 200 ); }
-function wp_schedule_single_event( $ts, $hook, $args = array() ) { $GLOBALS['lclub_test_cron'][] = array( $ts, $hook, $args ); return true; }
+function wp_schedule_single_event( $ts, $hook, $args = array() ) { $GLOBALS['ariunetclub_test_cron'][] = array( $ts, $hook, $args ); return true; }
 function wp_next_scheduled( $hook, $args = array() ) { return false; }
 function wp_unschedule_event( $ts, $hook, $args = array() ) { return true; }
-function wc_add_notice( $message, $type = 'notice', $args = array() ) { $GLOBALS['lclub_test_notices'][] = array( $message, $type ); }
+function wc_add_notice( $message, $type = 'notice', $args = array() ) { $GLOBALS['ariunetclub_test_notices'][] = array( $message, $type ); }
 function wc_get_order( $id ) {
         if ( is_object( $id ) ) { return $id; }
-        return $GLOBALS['lclub_test_orders'][ (int) $id ] ?? null;
+        return $GLOBALS['ariunetclub_test_orders'][ (int) $id ] ?? null;
 }
 
 class WP_Error {
@@ -137,12 +137,12 @@ class WC {
 }
 
 function WC() {
-        if ( null === ( $GLOBALS['lclub_test_wc'] ?? null ) ) {
-                $GLOBALS['lclub_test_wc']           = new WC();
-                $GLOBALS['lclub_test_wc']->cart     = new WC_Cart();
-                $GLOBALS['lclub_test_wc']->session  = new WC_Session_Handler();
+        if ( null === ( $GLOBALS['ariunetclub_test_wc'] ?? null ) ) {
+                $GLOBALS['ariunetclub_test_wc']           = new WC();
+                $GLOBALS['ariunetclub_test_wc']->cart     = new WC_Cart();
+                $GLOBALS['ariunetclub_test_wc']->session  = new WC_Session_Handler();
         }
-        return $GLOBALS['lclub_test_wc'];
+        return $GLOBALS['ariunetclub_test_wc'];
 }
 
 class WC_Order {
@@ -155,7 +155,7 @@ class WC_Order {
         public $payment_method = '';
         public function __construct( $id, $customer_id = 0, $total = 0.0 ) {
                 $this->id = (int) $id; $this->customer_id = (int) $customer_id; $this->order_total = (float) $total;
-                $GLOBALS['lclub_test_orders'][ $this->id ] = $this;
+                $GLOBALS['ariunetclub_test_orders'][ $this->id ] = $this;
         }
         public function get_id(): int { return $this->id; }
         public function get_customer_id(): int { return $this->customer_id; }
@@ -208,15 +208,15 @@ class WC_Payment_Gateway extends WC_Settings_API {
 // 2) Load the real plugin classes (before the in-memory ledger)
 // ---------------------------------------------------------------------------
 
-use LClub\Modules\Ledger\InsufficientBalanceException;
-use LClub\Modules\Ledger\LedgerGateway;
-use LClub\Modules\Ledger\LedgerService;
-use LClub\Core\Logger;
-use LClub\Core\Settings;
-use LClub\Modules\Wallet\CheckoutController;
-use LClub\Modules\Wallet\HoldManager;
-use LClub\Modules\Wallet\OrderMeta;
-use LClub\Modules\Wallet\SpendCalculator;
+use AriunetClub\Modules\Ledger\InsufficientBalanceException;
+use AriunetClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Modules\Ledger\LedgerService;
+use AriunetClub\Core\Logger;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Wallet\CheckoutController;
+use AriunetClub\Modules\Wallet\HoldManager;
+use AriunetClub\Modules\Wallet\OrderMeta;
+use AriunetClub\Modules\Wallet\SpendCalculator;
 
 $base = dirname( __DIR__ ) . '/src/';
 require $base . 'Core/Money.php';
@@ -307,12 +307,12 @@ function check( $label, $condition ) {
         else { $FAIL++; echo "  FAIL  $label\n"; }
 }
 function fresh_world( $settings_overrides = array() ) {
-        $GLOBALS['lclub_test_orders']        = array();
-        $GLOBALS['lclub_test_hooks']         = array();
-        $GLOBALS['lclub_test_transients']    = array();
-        $GLOBALS['lclub_test_user_logged_in'] = true;
-        unset( $GLOBALS['lclub_test_wc'] );
-        unset( $GLOBALS['lclub_test_notices'] );
+        $GLOBALS['ariunetclub_test_orders']        = array();
+        $GLOBALS['ariunetclub_test_hooks']         = array();
+        $GLOBALS['ariunetclub_test_transients']    = array();
+        $GLOBALS['ariunetclub_test_user_logged_in'] = true;
+        unset( $GLOBALS['ariunetclub_test_wc'] );
+        unset( $GLOBALS['ariunetclub_test_notices'] );
 
         $settings                     = new Settings();
         $calculator                   = new SpendCalculator( $settings );
@@ -324,7 +324,7 @@ function fresh_world( $settings_overrides = array() ) {
         $checkout                     = new CheckoutController( $ledger_service, $calculator, $settings, $holds, $logger );
         $checkout->register();
 
-        $GLOBALS['lclub_test_settings']['lclub_settings'] = array_merge( array(
+        $GLOBALS['ariunetclub_test_settings']['ariunetclub_settings'] = array_merge( array(
                 'wallet_fee_title'        => 'استفاده از کیف پول',
                 'wallet_max_percent'      => 100.0,
                 'wallet_min_order'        => 0.0,
@@ -522,7 +522,7 @@ WC()->session->set( CheckoutController::SESSION_SPEND, 7000.0 );
 $order = new WC_Order( 130, 2, 0.0 );
 $checkout->stamp_order( $order, array() );
 check( 'amount meta stamped', 7000.0 === OrderMeta::amount( $order ) );
-check( 'zero-total order stamped as wallet payment', 'lclub_wallet' === $order->get_payment_method() );
+check( 'zero-total order stamped as wallet payment', 'ariunetclub_wallet' === $order->get_payment_method() );
 check( 'order total snapshot stored', 0.0 === OrderMeta::order_total( $order ) );
 
 echo "=== 11) Hold failure marks order failed and surfaces an error ===\n";

@@ -2,14 +2,14 @@
 /**
  * Refuse to run against the Local site database. Integration tests may truncate tables.
  */
-$lclub_test_db_name = defined( 'DB_NAME' ) ? DB_NAME : getenv( 'LCLUB_TEST_DB_NAME' );
-if ( ! is_string( $lclub_test_db_name ) || 0 !== strpos( $lclub_test_db_name, 'lclub_test_' ) ) {
-        throw new RuntimeException( 'LClub tests require a database whose name starts with lclub_test_.' );
+$ariunetclub_test_db_name = defined( 'DB_NAME' ) ? DB_NAME : getenv( 'ARIUNETCLUB_TEST_DB_NAME' );
+if ( ! is_string( $ariunetclub_test_db_name ) || 0 !== strpos( $ariunetclub_test_db_name, 'ariunetclub_test_' ) ) {
+        throw new RuntimeException( 'AriunetClub tests require a database whose name starts with ariunetclub_test_.' );
 }
 
-define( 'LCLUB_VERSION', '0.1.0' );
-define( 'LCLUB_FILE', __DIR__ . '/../lclub.php' );
-define( 'LCLUB_URL', 'https://example.test/wp-content/plugins/lclub/' );
+define( 'ARIUNETCLUB_VERSION', '0.1.0' );
+define( 'ARIUNETCLUB_FILE', __DIR__ . '/../ariunetclub.php' );
+define( 'ARIUNETCLUB_URL', 'https://example.test/wp-content/plugins/ariunetclub/' );
 define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' );
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 

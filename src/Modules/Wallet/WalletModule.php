@@ -1,21 +1,21 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Logger;
-use LClub\Core\Module;
-use LClub\Core\Settings;
-use LClub\Modules\Ledger\LedgerRepository;
-use LClub\Modules\Ledger\LedgerService;
+use AriunetClub\Core\Logger;
+use AriunetClub\Core\Module;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Ledger\LedgerRepository;
+use AriunetClub\Modules\Ledger\LedgerService;
 
 /**
  * Phase 3 module: wallet spend at classic checkout with the reservation
  * model (hold on order creation, capture on payment, release on cancel or
  * expiry). Wires the checkout controller, the hold lifecycle, the order
- * metabox, the lclub_wallet gateway and the front-end assets together.
+ * metabox, the ariunetclub_wallet gateway and the front-end assets together.
  */
 class WalletModule implements Module {
 
@@ -36,8 +36,8 @@ class WalletModule implements Module {
 			return; // no database handle, nothing safe to wire.
 		}
 
-		$ledger_service = isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService
-			? $GLOBALS['lclub_ledger_service']
+		$ledger_service = isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService
+			? $GLOBALS['ariunetclub_ledger_service']
 			: new LedgerService( new LedgerRepository( $wpdb ) );
 		$ledger_gateway = new LedgerRepository( $wpdb );
 		$settings       = new Settings();
@@ -53,11 +53,11 @@ class WalletModule implements Module {
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateway' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_checkout_assets' ) );
 
-		$GLOBALS['lclub_wallet_calculator'] = $calculator;
+		$GLOBALS['ariunetclub_wallet_calculator'] = $calculator;
 	}
 
 	/**
-	 * Registers the lclub_wallet payment gateway with the WooCommerce filter.
+	 * Registers the ariunetclub_wallet payment gateway with the WooCommerce filter.
 	 *
 	 * @param array<string,\WC_Payment_Gateway> $gateways Registered gateways.
 	 * @return array<string,\WC_Payment_Gateway>
@@ -68,8 +68,8 @@ class WalletModule implements Module {
 			return $gateways;
 		}
 
-		$ledger_service = isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService
-			? $GLOBALS['lclub_ledger_service']
+		$ledger_service = isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService
+			? $GLOBALS['ariunetclub_ledger_service']
 			: new LedgerService( new LedgerRepository( $wpdb ) );
 		$settings = new Settings();
 
@@ -89,25 +89,25 @@ class WalletModule implements Module {
 			return;
 		}
 
-		wp_enqueue_style( 'lclub-checkout', LCLUB_URL . 'assets/css/lclub-checkout.css', array(), LCLUB_VERSION );
-		wp_enqueue_script( 'lclub-checkout', LCLUB_URL . 'assets/js/lclub-checkout.js', array(), LCLUB_VERSION, true );
+		wp_enqueue_style( 'ariunetclub-checkout', ARIUNETCLUB_URL . 'assets/css/ariunetclub-checkout.css', array(), ARIUNETCLUB_VERSION );
+		wp_enqueue_script( 'ariunetclub-checkout', ARIUNETCLUB_URL . 'assets/js/ariunetclub-checkout.js', array(), ARIUNETCLUB_VERSION, true );
 
 		$available = 0.0;
-		if ( isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService ) {
-			$balance  = $GLOBALS['lclub_ledger_service']->balance( get_current_user_id() );
+		if ( isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService ) {
+			$balance  = $GLOBALS['ariunetclub_ledger_service']->balance( get_current_user_id() );
 			$available = isset( $balance['available'] ) && is_numeric( $balance['available'] ) ? (float) $balance['available'] : 0.0;
 		}
 
 		wp_localize_script(
-			'lclub-checkout',
-			'lclubCheckout',
+			'ariunetclub-checkout',
+			'ariunetclubCheckout',
 			array(
 				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
 				'nonce'      => wp_create_nonce( CheckoutController::NONCE ),
 				'available'  => $available,
 				'strings'    => array(
-					'error'   => __( 'خطا در به‌روزرسانی کیف پول؛ دوباره تلاش کنید.', 'lclub' ),
-					'blocked' => __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'lclub' ),
+					'error'   => __( 'خطا در به‌روزرسانی کیف پول؛ دوباره تلاش کنید.', 'ariunetclub' ),
+					'blocked' => __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'ariunetclub' ),
 				),
 			)
 		);

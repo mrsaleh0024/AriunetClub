@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
 /**
- * wpdb-backed repository for the lclub_rules table. All rule SQL lives here.
+ * wpdb-backed repository for the ariunetclub_rules table. All rule SQL lives here.
  */
 class RuleRepository implements RuleGateway {
 	/** @var \wpdb */
@@ -17,7 +17,7 @@ class RuleRepository implements RuleGateway {
 
 	public function __construct( \wpdb $wpdb ) {
 		$this->wpdb  = $wpdb;
-		$this->table = $wpdb->prefix . 'lclub_rules';
+		$this->table = $wpdb->prefix . 'ariunetclub_rules';
 	}
 
 	/** @return array<int,array<string,mixed>> */

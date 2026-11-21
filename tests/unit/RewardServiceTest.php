@@ -1,22 +1,22 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Events\SkipEventException;
-use LClub\Modules\Ledger\LedgerService;
-use LClub\Modules\Rules\LimitChecker;
-use LClub\Modules\Rules\OrderSnapshot;
-use LClub\Modules\Rules\RewardService;
-use LClub\Modules\Rules\RuleContext;
-use LClub\Modules\Rules\RuleEngine;
-use LClub\Modules\Rules\Conditions\Category;
-use LClub\Modules\Rules\Conditions\FirstOrder;
-use LClub\Modules\Rules\Conditions\MinAmount;
-use LClub\Modules\Rules\Conditions\PaymentMethod;
-use LClub\Modules\Rules\Conditions\Product;
-use LClub\Modules\Rules\Conditions\UserRole;
-use LClub\Modules\Rules\Rewards\FixedReward;
-use LClub\Modules\Rules\Rewards\PercentageReward;
+use AriunetClub\Modules\Events\SkipEventException;
+use AriunetClub\Modules\Ledger\LedgerService;
+use AriunetClub\Modules\Rules\LimitChecker;
+use AriunetClub\Modules\Rules\OrderSnapshot;
+use AriunetClub\Modules\Rules\RewardService;
+use AriunetClub\Modules\Rules\RuleContext;
+use AriunetClub\Modules\Rules\RuleEngine;
+use AriunetClub\Modules\Rules\Conditions\Category;
+use AriunetClub\Modules\Rules\Conditions\FirstOrder;
+use AriunetClub\Modules\Rules\Conditions\MinAmount;
+use AriunetClub\Modules\Rules\Conditions\PaymentMethod;
+use AriunetClub\Modules\Rules\Conditions\Product;
+use AriunetClub\Modules\Rules\Conditions\UserRole;
+use AriunetClub\Modules\Rules\Rewards\FixedReward;
+use AriunetClub\Modules\Rules\Rewards\PercentageReward;
 use PHPUnit\Framework\TestCase;
 
 class RewardServiceTest extends TestCase {

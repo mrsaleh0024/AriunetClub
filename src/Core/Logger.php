@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Core;
+namespace AriunetClub\Core;
 
 class Logger {
 	/** @param array<string,mixed> $context */
@@ -23,7 +23,7 @@ class Logger {
 			return;
 		}
 
-		$directory = trailingslashit( $upload['basedir'] ) . 'lclub-logs';
+		$directory = trailingslashit( $upload['basedir'] ) . 'ariunetclub-logs';
 		if ( ! wp_mkdir_p( $directory ) ) {
 			return;
 		}
@@ -38,7 +38,7 @@ class Logger {
 			)
 		);
 		if ( false !== $line ) {
-			file_put_contents( trailingslashit( $directory ) . 'lclub-' . gmdate( 'Y-m' ) . '.log', $line . PHP_EOL, FILE_APPEND | LOCK_EX ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			file_put_contents( trailingslashit( $directory ) . 'ariunetclub-' . gmdate( 'Y-m' ) . '.log', $line . PHP_EOL, FILE_APPEND | LOCK_EX ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		}
 	}
 

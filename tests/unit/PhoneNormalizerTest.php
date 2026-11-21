@@ -1,8 +1,8 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Identity\PhoneNormalizer;
+use AriunetClub\Modules\Identity\PhoneNormalizer;
 use PHPUnit\Framework\TestCase;
 
 class PhoneNormalizerTest extends TestCase {

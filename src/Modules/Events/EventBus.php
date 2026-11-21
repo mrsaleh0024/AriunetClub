@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
 /**
  * Turns WordPress/WooCommerce hooks into unique, idempotent queue events.
@@ -80,11 +80,11 @@ class EventBus {
 	 */
 	private function schedule_processing(): void {
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
-			as_enqueue_async_action( 'lclub_process_events', array(), 'lclub' );
+			as_enqueue_async_action( 'ariunetclub_process_events', array(), 'ariunetclub' );
 			return;
 		}
-		if ( ! wp_next_scheduled( 'lclub_process_events' ) ) {
-			wp_schedule_single_event( time() + 5, 'lclub_process_events' );
+		if ( ! wp_next_scheduled( 'ariunetclub_process_events' ) ) {
+			wp_schedule_single_event( time() + 5, 'ariunetclub_process_events' );
 		}
 	}
 }

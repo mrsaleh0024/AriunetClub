@@ -1,9 +1,9 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Ledger\LedgerGateway;
-use LClub\Modules\Ledger\LedgerService;
+use AriunetClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Modules\Ledger\LedgerService;
 use PHPUnit\Framework\TestCase;
 
 class LedgerServiceTest extends TestCase {

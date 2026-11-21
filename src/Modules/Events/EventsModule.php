@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
-use LClub\Core\Module;
+use AriunetClub\Core\Module;
 
 /**
  * Phase 2 module: turns hooks into queue events and processes them async.
@@ -35,10 +35,10 @@ class EventsModule implements Module {
 		( new EventsAdminPage( $repository, $processor ) )->register();
 
 		// Cron entry point for both Action Scheduler and WP-Cron callbacks.
-		add_action( 'lclub_process_events', array( $processor, 'process_pending' ) );
+		add_action( 'ariunetclub_process_events', array( $processor, 'process_pending' ) );
 		$this->schedule();
 
-		$GLOBALS['lclub_event_bus'] = $bus;
+		$GLOBALS['ariunetclub_event_bus'] = $bus;
 	}
 
 	/**
@@ -46,15 +46,15 @@ class EventsModule implements Module {
 	 */
 	private function schedule(): void {
 		if ( function_exists( 'as_schedule_recurring_action' ) && function_exists( 'as_next_scheduled_action' ) ) {
-			if ( false === as_next_scheduled_action( 'lclub_process_events', array(), 'lclub' ) ) {
-				as_schedule_recurring_action( time() + 60, 60, 'lclub_process_events', array(), 'lclub' );
+			if ( false === as_next_scheduled_action( 'ariunetclub_process_events', array(), 'ariunetclub' ) ) {
+				as_schedule_recurring_action( time() + 60, 60, 'ariunetclub_process_events', array(), 'ariunetclub' );
 			}
 			return;
 		}
 
 		add_filter( 'cron_schedules', array( $this, 'add_cron_schedule' ) ); // phpcs:ignore WordPress.WP.CronInterval.CronSchedulesInterval -- minute cadence is intentional and AS is preferred.
-		if ( ! wp_next_scheduled( 'lclub_process_events' ) ) {
-			wp_schedule_event( time() + 60, 'lclub_minutely', 'lclub_process_events' );
+		if ( ! wp_next_scheduled( 'ariunetclub_process_events' ) ) {
+			wp_schedule_event( time() + 60, 'ariunetclub_minutely', 'ariunetclub_process_events' );
 		}
 	}
 
@@ -63,10 +63,10 @@ class EventsModule implements Module {
 	 * @return array<string,array<string,mixed>>
 	 */
 	public function add_cron_schedule( array $schedules ): array {
-		if ( ! isset( $schedules['lclub_minutely'] ) ) {
-			$schedules['lclub_minutely'] = array(
+		if ( ! isset( $schedules['ariunetclub_minutely'] ) ) {
+			$schedules['ariunetclub_minutely'] = array(
 				'interval' => 60,
-				'display'  => esc_html__( 'هر یک دقیقه (باشگاه مشتریان)', 'lclub' ),
+				'display'  => esc_html__( 'هر یک دقیقه (باشگاه مشتریان)', 'ariunetclub' ),
 			);
 		}
 		return $schedules;

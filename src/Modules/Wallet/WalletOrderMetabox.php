@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Money;
-use LClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Core\Money;
+use AriunetClub\Modules\Ledger\LedgerGateway;
 
 /**
  * Phase 3 admin metabox on the order edit screen: wallet amount consumed,
@@ -29,8 +29,8 @@ class WalletOrderMetabox {
 
 	public function register_boxes(): void {
 		add_meta_box(
-			'lclub_wallet',
-			__( 'کیف پول باشگاه', 'lclub' ),
+			'ariunetclub_wallet',
+			__( 'کیف پول باشگاه', 'ariunetclub' ),
 			array( $this, 'render' ),
 			array( 'shop_order', 'woocommerce_page_wc-orders' ),
 			'side',
@@ -50,7 +50,7 @@ class WalletOrderMetabox {
 		if ( ! $is_legacy_order && false === strpos( (string) $hook . ' ' . $screen->id, 'wc-orders' ) ) {
 			return;
 		}
-		wp_enqueue_style( 'lclub-order-metabox', LCLUB_URL . 'assets/css/lclub-order-metabox.css', array(), LCLUB_VERSION );
+		wp_enqueue_style( 'ariunetclub-order-metabox', ARIUNETCLUB_URL . 'assets/css/ariunetclub-order-metabox.css', array(), ARIUNETCLUB_VERSION );
 	}
 
 	/**
@@ -78,22 +78,22 @@ class WalletOrderMetabox {
 		$cashback  = $this->cashback_for( (int) $order->get_id() );
 		$history   = add_query_arg(
 			array(
-				'page'    => 'lclub-wallet-history',
+				'page'    => 'ariunetclub-wallet-history',
 				'user_id' => (int) $order->get_customer_id(),
 			),
 			admin_url( 'admin.php' )
 		);
 		?>
-		<div class="lclub-scope lclub-metabox" dir="rtl">
+		<div class="ariunetclub-scope ariunetclub-metabox" dir="rtl">
 			<dl>
-				<div><dt><?php esc_html_e( 'مبلغ مصرف‌شده', 'lclub' ); ?></dt><dd><?php echo esc_html( Money::format( $amount ) ); ?></dd></div>
-				<div><dt><?php esc_html_e( 'وضعیت', 'lclub' ); ?></dt><dd><?php echo esc_html( $this->state_label( OrderMeta::state( $order ) ) ); ?></dd></div>
+				<div><dt><?php esc_html_e( 'مبلغ مصرف‌شده', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( Money::format( $amount ) ); ?></dd></div>
+				<div><dt><?php esc_html_e( 'وضعیت', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( $this->state_label( OrderMeta::state( $order ) ) ); ?></dd></div>
 				<?php if ( $returned > 0.0 ) : ?>
-					<div><dt><?php esc_html_e( 'برگشت مستردشده', 'lclub' ); ?></dt><dd><?php echo esc_html( Money::format( $returned ) ); ?></dd></div>
+					<div><dt><?php esc_html_e( 'برگشت مستردشده', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( Money::format( $returned ) ); ?></dd></div>
 				<?php endif; ?>
-				<div><dt><?php esc_html_e( 'کش‌بک کسب‌شده', 'lclub' ); ?></dt><dd><?php echo esc_html( Money::format( $cashback ) ); ?></dd></div>
+				<div><dt><?php esc_html_e( 'کش‌بک کسب‌شده', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( Money::format( $cashback ) ); ?></dd></div>
 			</dl>
-			<a class="lclub-metabox__link" href="<?php echo esc_url( $history ); ?>"><?php esc_html_e( 'تاریخچهٔ کیف پول مشتری', 'lclub' ); ?></a>
+			<a class="ariunetclub-metabox__link" href="<?php echo esc_url( $history ); ?>"><?php esc_html_e( 'تاریخچهٔ کیف پول مشتری', 'ariunetclub' ); ?></a>
 		</div>
 		<?php
 	}
@@ -103,9 +103,9 @@ class WalletOrderMetabox {
 	 */
 	private function state_label( string $state ): string {
 		$labels = array(
-			OrderMeta::STATE_HELD     => __( 'رزرو شده', 'lclub' ),
-			OrderMeta::STATE_CAPTURED => __( 'مصرف شده', 'lclub' ),
-			OrderMeta::STATE_RELEASED => __( 'آزاد شده', 'lclub' ),
+			OrderMeta::STATE_HELD     => __( 'رزرو شده', 'ariunetclub' ),
+			OrderMeta::STATE_CAPTURED => __( 'مصرف شده', 'ariunetclub' ),
+			OrderMeta::STATE_RELEASED => __( 'آزاد شده', 'ariunetclub' ),
 		);
 		return isset( $labels[ $state ] ) ? $labels[ $state ] : $state;
 	}

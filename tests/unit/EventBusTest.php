@@ -1,8 +1,8 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Events\EventBus;
+use AriunetClub\Modules\Events\EventBus;
 use PHPUnit\Framework\TestCase;
 
 class EventBusTest extends TestCase {

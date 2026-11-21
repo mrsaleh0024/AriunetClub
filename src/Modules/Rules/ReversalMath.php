@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\Money;
+use AriunetClub\Core\Money;
 
 /**
  * Pure math for compensating reversals. Reversals never exceed what was earned

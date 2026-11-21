@@ -1,8 +1,8 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Rules\LimitChecker;
+use AriunetClub\Modules\Rules\LimitChecker;
 use PHPUnit\Framework\TestCase;
 
 class LimitCheckerTest extends TestCase {

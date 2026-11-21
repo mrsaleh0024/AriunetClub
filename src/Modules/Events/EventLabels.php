@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
 /**
  * Persian display labels for event types, statuses and object families.

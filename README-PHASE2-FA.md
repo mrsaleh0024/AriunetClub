@@ -1,6 +1,6 @@
-# فاز ۲ — رویداد و قوانین (کسب) | AriunetClub / lclub
+# فاز ۲ — رویداد و قوانین (کسب) | AriunetClub / ariunetclub
 
-این بسته، فاز ۲ سند معماری MVP را کامل پیاده‌سازی می‌کند. همه‌ی قراردادهای بخش ۵ سند رعایت شده: namespace برابر `LClub\`، SQL فقط داخل Repositoryها و همیشه با `$wpdb->prepare`، دفتر کل فقط‌الحاقی، idempotency_key یکتا برای هر رکورد، پردازش ناهمزمان با Action Scheduler و fallback به WP-Cron، همه‌ی فرم‌ها با nonce و همه‌ی خروجی‌ها escape.
+این بسته، فاز ۲ سند معماری MVP را کامل پیاده‌سازی می‌کند. همه‌ی قراردادهای بخش ۵ سند رعایت شده: namespace برابر `AriunetClub\`، SQL فقط داخل Repositoryها و همیشه با `$wpdb->prepare`، دفتر کل فقط‌الحاقی، idempotency_key یکتا برای هر رکورد، پردازش ناهمزمان با Action Scheduler و fallback به WP-Cron، همه‌ی فرم‌ها با nonce و همه‌ی خروجی‌ها escape.
 
 ---
 
@@ -10,16 +10,16 @@
 
 | فایل | تغییر نسبت به فاز ۱ |
 |---|---|
-| `lclub.php` | نسخه 0.3.0 |
+| `ariunetclub.php` | نسخه 0.3.0 |
 | `src/Core/Plugin.php` | ثبت ماژول‌های `events` و `rules` + پاک‌سازی Action Scheduler در deactivate |
 | `src/Core/Settings.php` | تنظیمات جدید «وضعیت پیش‌فرض کسب» و «حذف مالیات از مبنا» + ماژول‌های جدید در لیست |
-| `src/Core/Migrator.php` | ستون `attempts` در `lclub_events` و DB_VERSION نسخه 1.2.0 |
+| `src/Core/Migrator.php` | ستون `attempts` در `ariunetclub_events` و DB_VERSION نسخه 1.2.0 |
 | `src/Modules/Ledger/LedgerGateway.php` | ۳ متد جدید: `entries_for_reference`، `count_for_rule`، `sum_for_rule` |
 | `src/Modules/Ledger/LedgerRepository.php` | پیاده‌سازی ۳ متد جدید + اصلاح PHPDoc |
 | `tests/bootstrap.php` | stubهای جدید (`apply_filters`، `wp_json_encode`، transientها، `wp_parse_args`، `get_option`) و لود Fixtures |
 | `tests/unit/LedgerServiceTest.php` | اینترفیس گسترش‌یافته در fake + تست جدید «بدهی با adjust منفی» |
-| `assets/css/lclub-admin.css` | استایل صفحات قوانین/رویدادها (بدون گرادیان، RTL، زیر `.lclub-scope`) |
-| `assets/js/lclub-admin.js` | پیش‌نمایش زنده‌ی فرم قانون + تأیید حذف (JS فقط بهبود تدریجی است) |
+| `assets/css/ariunetclub-admin.css` | استایل صفحات قوانین/رویدادها (بدون گرادیان، RTL، زیر `.ariunetclub-scope`) |
+| `assets/js/ariunetclub-admin.js` | پیش‌نمایش زنده‌ی فرم قانون + تأیید حذف (JS فقط بهبود تدریجی است) |
 | `CHANGELOG.md` | ثبت نسخه 0.3.0 |
 
 ### ب) فایل‌های «جدول» — فقط کپی کنید، فایل قبلی ندارند
@@ -114,7 +114,7 @@ composer qa
 composer qa
 ```
 
-مایگریشن دیتابیس **خودکار** است: با اولین بوتِ افزونه، `Migrator::maybe_migrate()` نسخه را می‌بیند و ستون `attempts` را با `dbDelta` اضافه می‌کند. جدول‌های `lclub_events` و `lclub_rules` از فاز ۰ وجود داشتند و ساختارشان تغییر اساسی نکرده.
+مایگریشن دیتابیس **خودکار** است: با اولین بوتِ افزونه، `Migrator::maybe_migrate()` نسخه را می‌بیند و ستون `attempts` را با `dbDelta` اضافه می‌کند. جدول‌های `ariunetclub_events` و `ariunetclub_rules` از فاز ۰ وجود داشتند و ساختارشان تغییر اساسی نکرده.
 
 ---
 
@@ -144,7 +144,7 @@ composer qa
 | وضعیت کسب: هر قانون + پیش‌فرض سراسری | فیلد رویداد در فرم قانون؛ تنظیمات فقط پیش‌فرض فرم را می‌سازد |
 | مبنای مبلغ: کل منهای حمل + سوییچ مالیات | `CashbackBase::from_order()` — تنها منبع حقیقتِ فرمول |
 | اولین سفارش = نبودن سفارش قبلی پردازش‌شده/تکمیل‌شده | `WcOrderHistory` با `wc_get_orders` (سازگار با HPOS) |
-| جدول‌های ادمین هم‌سبک فاز ۱ | جدول‌های اختصاصی با کلاس‌های `lclub-table` و توکن‌های فعلی |
+| جدول‌های ادمین هم‌سبک فاز ۱ | جدول‌های اختصاصی با کلاس‌های `ariunetclub-table` و توکن‌های فعلی |
 | بازه‌ی سقف: پنجره‌ی لغزان | شمارش رکوردهای اعتبار قانون در `N` روز گذشته از دفتر کل |
 | رویداد خطادار: ۳ retry + دکمه | ستون `attempts`، وضعیت بعد از تلاش سوم = failed، «پردازش مجدد» در لاگ |
 | دامنه‌ی رویداد: فقط وضعیت‌های کلیدی | `processing, completed, cancelled, refunded, failed` در `OrderSource::KEY_STATUSES` |
@@ -159,7 +159,7 @@ composer qa
 - برگشت می‌تواند موجودی را منفی کند (بدهی) — طبق پیش‌فرض بخش ۹ سند؛ برگشت با رکورد جبرانی `adjust` منفی ثبت می‌شود، نه با debit (که گارد موجودی دارد).
 - پاداش درصدی برای رویدادهای بدون سفارش (ثبت‌نام/دیدگاه) قابل محاسبه نیست و آن قانون نادیده گرفته می‌شود؛ برای این رویدادها «مبلغ ثابت» استفاده کنید.
 - برگشت‌ها با کلیدهای `order:{id}:refund:{refund_id}:reversal` و `order:{id}:reversal` از خرج‌کردن‌های فاز ۳ جدا می‌مانند.
-- نقاط توسعه‌ی عمومی فقط همان دو مورد سند است: اکشن `lclub_ledger_entry_created` و فیلتر `lclub_rule_reward_amount`. اکشن داخلی `lclub_event_processed` فقط ارتباط ماژول به ماژول است.
+- نقاط توسعه‌ی عمومی فقط همان دو مورد سند است: اکشن `ariunetclub_ledger_entry_created` و فیلتر `ariunetclub_rule_reward_amount`. اکشن داخلی `ariunetclub_event_processed` فقط ارتباط ماژول به ماژول است.
 - حدود ایمنی: `per_page` سقف ۱۰۰ دارد، شرط‌های JSON با عمق حداکثر ۱۶ decode می‌شوند، متن خطا تا ۳۰۰ نویسه با ماسک در لاگ می‌نشیند، موبایل در لاگ‌ها ماسک است (میراث Logger فاز ۰).
 
 ---

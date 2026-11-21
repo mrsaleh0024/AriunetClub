@@ -17,12 +17,12 @@
   },
   "autoload": {
     "psr-4": {
-      "LClub\\": "src/"
+      "AriunetClub\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "LClub\\Tests\\": "tests/unit/"
+      "AriunetClub\\Tests\\": "tests/unit/"
     }
   },
   "scripts": {

@@ -1,13 +1,13 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Ledger;
+namespace AriunetClub\Modules\Ledger;
 
-use LClub\Core\Module;
-use LClub\Modules\Identity\IdentityService;
-use LClub\Modules\Identity\PhoneNormalizer;
+use AriunetClub\Core\Module;
+use AriunetClub\Modules\Identity\IdentityService;
+use AriunetClub\Modules\Identity\PhoneNormalizer;
 
 class LedgerModule implements Module {
 	public function id(): string {
@@ -18,8 +18,8 @@ class LedgerModule implements Module {
 		global $wpdb;
 		$repository = new LedgerRepository( $wpdb );
 		$service    = new LedgerService( $repository );
-		$identity   = isset( $GLOBALS['lclub_identity_service'] ) && $GLOBALS['lclub_identity_service'] instanceof IdentityService ? $GLOBALS['lclub_identity_service'] : new IdentityService( new PhoneNormalizer() );
+		$identity   = isset( $GLOBALS['ariunetclub_identity_service'] ) && $GLOBALS['ariunetclub_identity_service'] instanceof IdentityService ? $GLOBALS['ariunetclub_identity_service'] : new IdentityService( new PhoneNormalizer() );
 		( new WalletAdminPage( $repository, $service, $identity ) )->register();
-		$GLOBALS['lclub_ledger_service'] = $service;
+		$GLOBALS['ariunetclub_ledger_service'] = $service;
 	}
 }

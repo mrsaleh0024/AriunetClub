@@ -1,14 +1,14 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\JalaliDate;
-use LClub\Core\Money;
-use LClub\Core\Settings;
-use LClub\Modules\Events\EventLabels;
+use AriunetClub\Core\JalaliDate;
+use AriunetClub\Core\Money;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Events\EventLabels;
 
 /**
  * Admin CRUD for earning rules: readable sentence-style PHP form (works
@@ -28,25 +28,25 @@ class RulesAdminPage {
 
 	public function register(): void {
 			add_action( 'admin_menu', array( $this, 'menu' ), 20 );
-			add_action( 'admin_post_lclub_save_rule', array( $this, 'save' ) );
-			add_action( 'admin_post_lclub_rule_action', array( $this, 'rule_action' ) );
+			add_action( 'admin_post_ariunetclub_save_rule', array( $this, 'save' ) );
+			add_action( 'admin_post_ariunetclub_rule_action', array( $this, 'rule_action' ) );
 	}
 
 	public function menu(): void {
 			add_submenu_page(
-				'lclub-settings',
-				__( 'قوانین کش‌بک', 'lclub' ),
-				__( 'قوانین کش‌بک', 'lclub' ),
+				'ariunetclub-settings',
+				__( 'قوانین کش‌بک', 'ariunetclub' ),
+				__( 'قوانین کش‌بک', 'ariunetclub' ),
 				'manage_woocommerce',
-				'lclub-rules',
+				'ariunetclub-rules',
 				array( $this, 'render_list' )
 			);
 			add_submenu_page(
 				null,
-				__( 'ویرایش قانون', 'lclub' ),
-				__( 'ویرایش قانون', 'lclub' ),
+				__( 'ویرایش قانون', 'ariunetclub' ),
+				__( 'ویرایش قانون', 'ariunetclub' ),
 				'manage_woocommerce',
-				'lclub-rule-edit',
+				'ariunetclub-rule-edit',
 				array( $this, 'render_form' )
 			);
 	}
@@ -56,7 +56,7 @@ class RulesAdminPage {
 		 */
 	private function guard(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'lclub' ) );
+				wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -65,13 +65,13 @@ class RulesAdminPage {
 		 */
 	public function rule_action(): void {
 			$this->guard();
-			check_admin_referer( 'lclub_rule_action' );
+			check_admin_referer( 'ariunetclub_rule_action' );
 
 			$rule_id = isset( $_POST['rule_id'] ) ? absint( wp_unslash( $_POST['rule_id'] ) ) : 0;
 			$kind    = isset( $_POST['kind'] ) ? sanitize_key( wp_unslash( $_POST['kind'] ) ) : '';
 			$rule    = $rule_id > 0 ? $this->repository->find( $rule_id ) : null;
 		if ( $rule_id <= 0 || null === $rule ) {
-				wp_die( esc_html__( 'قانون مورد نظر پیدا نشد.', 'lclub' ) );
+				wp_die( esc_html__( 'قانون مورد نظر پیدا نشد.', 'ariunetclub' ) );
 		}
 
 		if ( 'delete' === $kind ) {
@@ -82,14 +82,14 @@ class RulesAdminPage {
 				$this->repository->set_status( $rule_id, array( $next ) );
 				$notice = 'toggled';
 		} else {
-				wp_die( esc_html__( 'عملیات نامعتبر است.', 'lclub' ) );
+				wp_die( esc_html__( 'عملیات نامعتبر است.', 'ariunetclub' ) );
 		}
 
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'         => 'lclub-rules',
-						'lclub_notice' => $notice,
+						'page'         => 'ariunetclub-rules',
+						'ariunetclub_notice' => $notice,
 					),
 					admin_url( 'admin.php' )
 				)
@@ -102,15 +102,15 @@ class RulesAdminPage {
 		 */
 	public function save(): void {
 			$this->guard();
-			check_admin_referer( 'lclub_save_rule', 'lclub_nonce' );
+			check_admin_referer( 'ariunetclub_save_rule', 'ariunetclub_nonce' );
 
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- every field is sanitized below.
-			$raw     = isset( $_POST['lclub_rule'] ) && is_array( $_POST['lclub_rule'] ) ? wp_unslash( $_POST['lclub_rule'] ) : array();
+			$raw     = isset( $_POST['ariunetclub_rule'] ) && is_array( $_POST['ariunetclub_rule'] ) ? wp_unslash( $_POST['ariunetclub_rule'] ) : array();
 			$rule    = $this->sanitize_rule( $raw );
 			$rule_id = isset( $_POST['rule_id'] ) ? absint( wp_unslash( $_POST['rule_id'] ) ) : 0;
 
 		if ( '' === $rule['title'] ) {
-				wp_die( esc_html__( 'عنوان قانون الزامی است.', 'lclub' ) );
+				wp_die( esc_html__( 'عنوان قانون الزامی است.', 'ariunetclub' ) );
 		}
 
 		if ( $rule_id > 0 && $this->repository->find( $rule_id ) ) {
@@ -122,9 +122,9 @@ class RulesAdminPage {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'         => 'lclub-rule-edit',
+						'page'         => 'ariunetclub-rule-edit',
 						'rule_id'      => $rule_id,
-						'lclub_notice' => 'saved',
+						'ariunetclub_notice' => 'saved',
 					),
 					admin_url( 'admin.php' )
 				)
@@ -233,56 +233,56 @@ class RulesAdminPage {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- sanitized read-only input.
 			$page   = isset( $_GET['paged'] ) ? max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) : 1;
 			$result = $this->repository->list( $page, 20 );
-			$base   = add_query_arg( array( 'page' => 'lclub-rules' ), admin_url( 'admin.php' ) );
-			$edit   = add_query_arg( array( 'page' => 'lclub-rule-edit' ), admin_url( 'admin.php' ) );
+			$base   = add_query_arg( array( 'page' => 'ariunetclub-rules' ), admin_url( 'admin.php' ) );
+			$edit   = add_query_arg( array( 'page' => 'ariunetclub-rule-edit' ), admin_url( 'admin.php' ) );
 		?>
-				<div class="wrap lclub-scope" dir="rtl">
-						<div class="lclub-admin-shell">
-								<header class="lclub-admin-header">
-										<span class="lclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'lclub' ); ?></span>
-										<h1><?php esc_html_e( 'قوانین کش‌بک', 'lclub' ); ?></h1>
-										<p><?php esc_html_e( 'قوانین «رویداد ← شرط ← پاداش» را این‌جا تعریف کنید؛ هر قانون برای رویدادِ خودش اعتبار صادر می‌کند.', 'lclub' ); ?></p>
+				<div class="wrap ariunetclub-scope" dir="rtl">
+						<div class="ariunetclub-admin-shell">
+								<header class="ariunetclub-admin-header">
+										<span class="ariunetclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'ariunetclub' ); ?></span>
+										<h1><?php esc_html_e( 'قوانین کش‌بک', 'ariunetclub' ); ?></h1>
+										<p><?php esc_html_e( 'قوانین «رویداد ← شرط ← پاداش» را این‌جا تعریف کنید؛ هر قانون برای رویدادِ خودش اعتبار صادر می‌کند.', 'ariunetclub' ); ?></p>
 								</header>
 
 								<?php
 								// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message.
-								if ( isset( $_GET['lclub_notice'] ) ) :
+								if ( isset( $_GET['ariunetclub_notice'] ) ) :
 									// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message.
-									$notice = sanitize_key( wp_unslash( $_GET['lclub_notice'] ) );
+									$notice = sanitize_key( wp_unslash( $_GET['ariunetclub_notice'] ) );
 
 									if ( 'deleted' === $notice ) :
 								?>
-										<div class="lclub-notice lclub-notice-info"><?php esc_html_e( 'کاربر با موفقیت حذف شد.', 'lclub' ); ?></div>
+										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'کاربر با موفقیت حذف شد.', 'ariunetclub' ); ?></div>
 									<?php elseif ( 'toggled' === $notice ) : ?>
-										<div class="lclub-notice lclub-notice-info"><?php esc_html_e( 'وضعیت کاربر تغییر کرد.', 'lclub' ); ?></div>
+										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'وضعیت کاربر تغییر کرد.', 'ariunetclub' ); ?></div>
 									<?php endif; ?>
 								<?php endif; ?>
 
-								<section class="lclub-panel">
-										<div class="lclub-section-heading">
+								<section class="ariunetclub-panel">
+										<div class="ariunetclub-section-heading">
 												<div>
-														<h2><?php esc_html_e( 'قوانین تعریف‌شده', 'lclub' ); ?></h2>
-														<p><?php esc_html_e( 'اولویت کمتر، اجرای زودتر. قانون «انحصاری» بقیهٔ قوانین هم‌رویداد را متوقف می‌کند.', 'lclub' ); ?></p>
+														<h2><?php esc_html_e( 'قوانین تعریف‌شده', 'ariunetclub' ); ?></h2>
+														<p><?php esc_html_e( 'اولویت کمتر، اجرای زودتر. قانون «انحصاری» بقیهٔ قوانین هم‌رویداد را متوقف می‌کند.', 'ariunetclub' ); ?></p>
 												</div>
-												<a class="button button-primary" href="<?php echo esc_url( add_query_arg( 'rule_id', 0, $edit ) ); ?>"><?php esc_html_e( 'قانون جدید', 'lclub' ); ?></a>
+												<a class="button button-primary" href="<?php echo esc_url( add_query_arg( 'rule_id', 0, $edit ) ); ?>"><?php esc_html_e( 'قانون جدید', 'ariunetclub' ); ?></a>
 										</div>
 
 									<?php if ( empty( $result['items'] ) ) : ?>
-												<div class="lclub-empty">
-														<h2><?php esc_html_e( 'هنوز قانونی ندارید', 'lclub' ); ?></h2>
-														<p><?php esc_html_e( 'با اولین قانون، کش‌بک پس از رسیدن سفارش‌ها به وضعیت مبنای آن به‌صورت خودکار در کیف پول مشتری نشسته می‌شود.', 'lclub' ); ?></p>
+												<div class="ariunetclub-empty">
+														<h2><?php esc_html_e( 'هنوز قانونی ندارید', 'ariunetclub' ); ?></h2>
+														<p><?php esc_html_e( 'با اولین قانون، کش‌بک پس از رسیدن سفارش‌ها به وضعیت مبنای آن به‌صورت خودکار در کیف پول مشتری نشسته می‌شود.', 'ariunetclub' ); ?></p>
 												</div>
 										<?php else : ?>
-												<div class="lclub-table-scroll">
-														<table class="lclub-table lclub-rules-table">
+												<div class="ariunetclub-table-scroll">
+														<table class="ariunetclub-table ariunetclub-rules-table">
 																<thead>
 																		<tr>
-																				<th><?php esc_html_e( 'قانون', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'رویداد', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'وضعیت', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'اولویت', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'بازه', 'lclub' ); ?></th>
-																				<th><?php esc_html_e( 'عملیات', 'lclub' ); ?></th>
+																				<th><?php esc_html_e( 'قانون', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'رویداد', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'وضعیت', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'اولویت', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'بازه', 'ariunetclub' ); ?></th>
+																				<th><?php esc_html_e( 'عملیات', 'ariunetclub' ); ?></th>
 																		</tr>
 																</thead>
 																<tbody>
@@ -299,27 +299,27 @@ class RulesAdminPage {
 																				<tr>
 																						<td>
 																								<strong><?php echo esc_html( (string) $rule['title'] ); ?></strong><br />
-																								<span class="lclub-muted"><?php echo esc_html( $this->summary( (array) $rule ) ); ?></span>
+																								<span class="ariunetclub-muted"><?php echo esc_html( $this->summary( (array) $rule ) ); ?></span>
 																						</td>
 																						<td><?php echo esc_html( EventLabels::type( (string) $rule['event_type'] ) ); ?></td>
-																						<td><span class="lclub-badge lclub-badge--<?php echo esc_attr( $is_active ? 'active' : 'draft' ); ?>"><?php echo esc_html( $is_active ? 'فعال' : 'پیش‌نویس' ); ?></span></td>
+																						<td><span class="ariunetclub-badge ariunetclub-badge--<?php echo esc_attr( $is_active ? 'active' : 'draft' ); ?>"><?php echo esc_html( $is_active ? 'فعال' : 'پیش‌نویس' ); ?></span></td>
 																						<td><?php echo esc_html( Money::to_persian_digits( (string) ( $rule['priority'] ?? 10 ) ) ); ?></td>
 																						<td><?php echo esc_html( '' !== $window_text ? $window_text : '—' ); ?></td>
 																						<td>
-																								<a href="<?php echo esc_url( add_query_arg( 'rule_id', $rule_id, $edit ) ); ?>"><?php esc_html_e( 'ویرایش', 'lclub' ); ?></a>
-																								<form method="post" action="<?php echo esc_url( $toggle_url ); ?>" class="lclub-inline-form">
-																										<input type="hidden" name="action" value="lclub_rule_action" />
+																								<a href="<?php echo esc_url( add_query_arg( 'rule_id', $rule_id, $edit ) ); ?>"><?php esc_html_e( 'ویرایش', 'ariunetclub' ); ?></a>
+																								<form method="post" action="<?php echo esc_url( $toggle_url ); ?>" class="ariunetclub-inline-form">
+																										<input type="hidden" name="action" value="ariunetclub_rule_action" />
 																										<input type="hidden" name="rule_id" value="<?php echo esc_attr( (string) $rule_id ); ?>" />
 																										<input type="hidden" name="kind" value="toggle" />
-																										<?php wp_nonce_field( 'lclub_rule_action' ); ?>
-																										<button class="button lclub-button-secondary" type="submit"><?php echo esc_html( $is_active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ); ?></button>
+																										<?php wp_nonce_field( 'ariunetclub_rule_action' ); ?>
+																										<button class="button ariunetclub-button-secondary" type="submit"><?php echo esc_html( $is_active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ); ?></button>
 																								</form>
-																								<form method="post" action="<?php echo esc_url( $toggle_url ); ?>" class="lclub-inline-form" data-lclub-confirm="<?php esc_attr_e( 'این قانون برای همیشه حذف شود؟ اعتبارهای صادرشدهٔ قبلی باقی می‌مانند.', 'lclub' ); ?>">
-																										<input type="hidden" name="action" value="lclub_rule_action" />
+																								<form method="post" action="<?php echo esc_url( $toggle_url ); ?>" class="ariunetclub-inline-form" data-ariunetclub-confirm="<?php esc_attr_e( 'این قانون برای همیشه حذف شود؟ اعتبارهای صادرشدهٔ قبلی باقی می‌مانند.', 'ariunetclub' ); ?>">
+																										<input type="hidden" name="action" value="ariunetclub_rule_action" />
 																										<input type="hidden" name="rule_id" value="<?php echo esc_attr( (string) $rule_id ); ?>" />
 																										<input type="hidden" name="kind" value="delete" />
-																										<?php wp_nonce_field( 'lclub_rule_action' ); ?>
-																										<button class="button lclub-button-secondary" type="submit"><?php esc_html_e( 'حذف', 'lclub' ); ?></button>
+																										<?php wp_nonce_field( 'ariunetclub_rule_action' ); ?>
+																										<button class="button ariunetclub-button-secondary" type="submit"><?php esc_html_e( 'حذف', 'ariunetclub' ); ?></button>
 																								</form>
 																						</td>
 																				</tr>
@@ -358,192 +358,192 @@ class RulesAdminPage {
 			$methods    = $this->payment_options();
 
 			$form_action = admin_url( 'admin-post.php' );
-			$list_url    = add_query_arg( array( 'page' => 'lclub-rules' ), admin_url( 'admin.php' ) );
+			$list_url    = add_query_arg( array( 'page' => 'ariunetclub-rules' ), admin_url( 'admin.php' ) );
 			$starts      = '' === (string) ( $rule['starts_at'] ?? '' ) ? '' : $this->local_datetime( (string) $rule['starts_at'] );
 			$ends        = '' === (string) ( $rule['ends_at'] ?? '' ) ? '' : $this->local_datetime( (string) $rule['ends_at'] );
 		?>
-				<div class="wrap lclub-scope" dir="rtl">
-						<div class="lclub-admin-shell">
-								<header class="lclub-admin-header">
-										<span class="lclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'lclub' ); ?></span>
+				<div class="wrap ariunetclub-scope" dir="rtl">
+						<div class="ariunetclub-admin-shell">
+								<header class="ariunetclub-admin-header">
+										<span class="ariunetclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'ariunetclub' ); ?></span>
 										<h1><?php echo esc_html( $rule_id > 0 ? 'ویرایش قانون' : 'قانون جدید' ); ?></h1>
-										<p><?php esc_html_e( 'فرم را مثل یک جمله‌ی ساده پر کنید؛ خلاصه‌ی قانون زیر فرم به‌صورت زنده ساخته می‌شود.', 'lclub' ); ?></p>
+										<p><?php esc_html_e( 'فرم را مثل یک جمله‌ی ساده پر کنید؛ خلاصه‌ی قانون زیر فرم به‌صورت زنده ساخته می‌شود.', 'ariunetclub' ); ?></p>
 								</header>
 
-							<?php if ( isset( $_GET['lclub_notice'] ) && 'saved' === sanitize_key( wp_unslash( $_GET['lclub_notice'] ) ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message. ?>
-										<div class="lclub-notice lclub-notice--info"><?php esc_html_e( 'قانون با موفقیت ذخیره شد.', 'lclub' ); ?></div>
+							<?php if ( isset( $_GET['ariunetclub_notice'] ) && 'saved' === sanitize_key( wp_unslash( $_GET['ariunetclub_notice'] ) ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message. ?>
+										<div class="ariunetclub-notice ariunetclub-notice--info"><?php esc_html_e( 'قانون با موفقیت ذخیره شد.', 'ariunetclub' ); ?></div>
 								<?php endif; ?>
 
-								<form method="post" action="<?php echo esc_url( $form_action ); ?>" class="lclub-panel lclub-rule-form">
-										<input type="hidden" name="action" value="lclub_save_rule" />
+								<form method="post" action="<?php echo esc_url( $form_action ); ?>" class="ariunetclub-panel ariunetclub-rule-form">
+										<input type="hidden" name="action" value="ariunetclub_save_rule" />
 										<input type="hidden" name="rule_id" value="<?php echo esc_attr( (string) $rule_id ); ?>" />
-									<?php wp_nonce_field( 'lclub_save_rule', 'lclub_nonce' ); ?>
+									<?php wp_nonce_field( 'ariunetclub_save_rule', 'ariunetclub_nonce' ); ?>
 
-										<section class="lclub-rule-section">
-												<h2><?php esc_html_e( 'شناسنامهٔ قانون', 'lclub' ); ?></h2>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-title"><?php esc_html_e( 'عنوان قانون', 'lclub' ); ?></label>
-																<input id="lclub-rule-title" name="lclub_rule[title]" type="text" required value="<?php echo esc_attr( (string) ( $rule['title'] ?? '' ) ); ?>" />
+										<section class="ariunetclub-rule-section">
+												<h2><?php esc_html_e( 'شناسنامهٔ قانون', 'ariunetclub' ); ?></h2>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-title"><?php esc_html_e( 'عنوان قانون', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-title" name="ariunetclub_rule[title]" type="text" required value="<?php echo esc_attr( (string) ( $rule['title'] ?? '' ) ); ?>" />
 														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-status"><?php esc_html_e( 'وضعیت', 'lclub' ); ?></label>
-																<select id="lclub-rule-status" name="lclub_rule[status]">
-																		<option value="draft" <?php selected( (string) ( $rule['status'] ?? 'draft' ), 'draft' ); ?>><?php esc_html_e( 'پیش‌نویس', 'lclub' ); ?></option>
-																		<option value="active" <?php selected( (string) ( $rule['status'] ?? '' ), 'active' ); ?>><?php esc_html_e( 'فعال', 'lclub' ); ?></option>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-status"><?php esc_html_e( 'وضعیت', 'ariunetclub' ); ?></label>
+																<select id="ariunetclub-rule-status" name="ariunetclub_rule[status]">
+																		<option value="draft" <?php selected( (string) ( $rule['status'] ?? 'draft' ), 'draft' ); ?>><?php esc_html_e( 'پیش‌نویس', 'ariunetclub' ); ?></option>
+																		<option value="active" <?php selected( (string) ( $rule['status'] ?? '' ), 'active' ); ?>><?php esc_html_e( 'فعال', 'ariunetclub' ); ?></option>
 																</select>
 														</p>
 												</div>
 										</section>
 
-										<section class="lclub-rule-section">
-												<h2><?php esc_html_e( '۱. وقتی که...', 'lclub' ); ?></h2>
-												<p class="lclub-field">
-														<label for="lclub-rule-event"><?php esc_html_e( 'رویداد', 'lclub' ); ?></label>
-														<select id="lclub-rule-event" name="lclub_rule[event]" data-lclub-rule-event>
+										<section class="ariunetclub-rule-section">
+												<h2><?php esc_html_e( '۱. وقتی که...', 'ariunetclub' ); ?></h2>
+												<p class="ariunetclub-field">
+														<label for="ariunetclub-rule-event"><?php esc_html_e( 'رویداد', 'ariunetclub' ); ?></label>
+														<select id="ariunetclub-rule-event" name="ariunetclub_rule[event]" data-ariunetclub-rule-event>
 															<?php foreach ( $events as $value => $label ) : ?>
 																		<option value="<?php echo esc_attr( $value ); ?>" <?php selected( (string) ( $rule['event_type'] ?? '' ), $value ); ?>><?php echo esc_html( $label ); ?></option>
 																<?php endforeach; ?>
 														</select>
-														<span class="description"><?php esc_html_e( 'پیش‌فرض از تنظیمات باشگاه می‌آید؛ هر قانون می‌تواند وضعیت سفارش خودش را داشته باشد.', 'lclub' ); ?></span>
+														<span class="description"><?php esc_html_e( 'پیش‌فرض از تنظیمات باشگاه می‌آید؛ هر قانون می‌تواند وضعیت سفارش خودش را داشته باشد.', 'ariunetclub' ); ?></span>
 												</p>
 										</section>
 
-										<section class="lclub-rule-section">
-												<h2><?php esc_html_e( '۲. و شرط‌ها این بود که...', 'lclub' ); ?></h2>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-min"><?php esc_html_e( 'حداقل مبلغ سفارش (تومان)', 'lclub' ); ?></label>
-																<input id="lclub-rule-min" name="lclub_rule[min_amount]" type="number" step="any" min="0" value="<?php echo esc_attr( (string) ( $conditions['min_amount'] ?? '' ) ); ?>" />
-																<span class="description"><?php esc_html_e( 'خالی یا صفر یعنی بدون شرط مبلغ.', 'lclub' ); ?></span>
+										<section class="ariunetclub-rule-section">
+												<h2><?php esc_html_e( '۲. و شرط‌ها این بود که...', 'ariunetclub' ); ?></h2>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-min"><?php esc_html_e( 'حداقل مبلغ سفارش (تومان)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-min" name="ariunetclub_rule[min_amount]" type="number" step="any" min="0" value="<?php echo esc_attr( (string) ( $conditions['min_amount'] ?? '' ) ); ?>" />
+																<span class="description"><?php esc_html_e( 'خالی یا صفر یعنی بدون شرط مبلغ.', 'ariunetclub' ); ?></span>
 														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-first"><?php esc_html_e( 'فقط اولین سفارش مشتری', 'lclub' ); ?></label>
-																<span class="lclub-check"><input id="lclub-rule-first" name="lclub_rule[first_order]" type="checkbox" value="1" <?php checked( ! empty( $conditions['first_order'] ) ); ?> /> <?php esc_html_e( 'این پاداش فقط به اولین سفارش پرداخت‌شدهٔ مشتری تعلق می‌گیرد.', 'lclub' ); ?></span>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-first"><?php esc_html_e( 'فقط اولین سفارش مشتری', 'ariunetclub' ); ?></label>
+																<span class="ariunetclub-check"><input id="ariunetclub-rule-first" name="ariunetclub_rule[first_order]" type="checkbox" value="1" <?php checked( ! empty( $conditions['first_order'] ) ); ?> /> <?php esc_html_e( 'این پاداش فقط به اولین سفارش پرداخت‌شدهٔ مشتری تعلق می‌گیرد.', 'ariunetclub' ); ?></span>
 														</p>
 												</div>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-cats"><?php esc_html_e( 'دسته‌بندی‌ها', 'lclub' ); ?></label>
-																<select id="lclub-rule-cats" name="lclub_rule[categories][]" multiple size="6">
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-cats"><?php esc_html_e( 'دسته‌بندی‌ها', 'ariunetclub' ); ?></label>
+																<select id="ariunetclub-rule-cats" name="ariunetclub_rule[categories][]" multiple size="6">
 																	<?php foreach ( $categories as $id => $label ) : ?>
 																				<option value="<?php echo esc_attr( (string) $id ); ?>" <?php selected( true, in_array( (int) $id, isset( $conditions['categories']['ids'] ) && is_array( $conditions['categories']['ids'] ) ? array_map( 'intval', $conditions['categories']['ids'] ) : array(), true ) ); ?>><?php echo esc_html( $label ); ?></option>
 																		<?php endforeach; ?>
 																</select>
-																<span class="lclub-mode">
-																		<label><input type="radio" name="lclub_rule[categories_mode]" value="include" <?php checked( 'include', $conditions['categories']['mode'] ?? 'include' ); ?> /> <?php esc_html_e( 'شامل', 'lclub' ); ?></label>
-																		<label><input type="radio" name="lclub_rule[categories_mode]" value="exclude" <?php checked( 'exclude', $conditions['categories']['mode'] ?? '' ); ?> /> <?php esc_html_e( 'مستثنا', 'lclub' ); ?></label>
+																<span class="ariunetclub-mode">
+																		<label><input type="radio" name="ariunetclub_rule[categories_mode]" value="include" <?php checked( 'include', $conditions['categories']['mode'] ?? 'include' ); ?> /> <?php esc_html_e( 'شامل', 'ariunetclub' ); ?></label>
+																		<label><input type="radio" name="ariunetclub_rule[categories_mode]" value="exclude" <?php checked( 'exclude', $conditions['categories']['mode'] ?? '' ); ?> /> <?php esc_html_e( 'مستثنا', 'ariunetclub' ); ?></label>
 																</span>
-																<span class="description"><?php esc_html_e( 'با کلید Ctrl چند مورد را انتخاب کنید؛ خالی یعنی همهٔ دسته‌ها.', 'lclub' ); ?></span>
+																<span class="description"><?php esc_html_e( 'با کلید Ctrl چند مورد را انتخاب کنید؛ خالی یعنی همهٔ دسته‌ها.', 'ariunetclub' ); ?></span>
 														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-products"><?php esc_html_e( 'محصولات', 'lclub' ); ?></label>
-																<select id="lclub-rule-products" name="lclub_rule[products][]" multiple size="6">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-products"><?php esc_html_e( 'محصولات', 'ariunetclub' ); ?></label>
+																<select id="ariunetclub-rule-products" name="ariunetclub_rule[products][]" multiple size="6">
 																	<?php foreach ( $products as $id => $label ) : ?>
 																				<option value="<?php echo esc_attr( (string) $id ); ?>" <?php selected( true, in_array( (int) $id, isset( $conditions['products']['ids'] ) && is_array( $conditions['products']['ids'] ) ? array_map( 'intval', $conditions['products']['ids'] ) : array(), true ) ); ?>><?php echo esc_html( $label ); ?></option>
 																		<?php endforeach; ?>
 																</select>
-																<span class="lclub-mode">
-																		<label><input type="radio" name="lclub_rule[products_mode]" value="include" <?php checked( 'include', $conditions['products']['mode'] ?? 'include' ); ?> /> <?php esc_html_e( 'شامل', 'lclub' ); ?></label>
-																		<label><input type="radio" name="lclub_rule[products_mode]" value="exclude" <?php checked( 'exclude', $conditions['products']['mode'] ?? '' ); ?> /> <?php esc_html_e( 'مستثنا', 'lclub' ); ?></label>
+																<span class="ariunetclub-mode">
+																		<label><input type="radio" name="ariunetclub_rule[products_mode]" value="include" <?php checked( 'include', $conditions['products']['mode'] ?? 'include' ); ?> /> <?php esc_html_e( 'شامل', 'ariunetclub' ); ?></label>
+																		<label><input type="radio" name="ariunetclub_rule[products_mode]" value="exclude" <?php checked( 'exclude', $conditions['products']['mode'] ?? '' ); ?> /> <?php esc_html_e( 'مستثنا', 'ariunetclub' ); ?></label>
 																</span>
 														</p>
 												</div>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-roles"><?php esc_html_e( 'نقش کاربر', 'lclub' ); ?></label>
-																<select id="lclub-rule-roles" name="lclub_rule[user_roles][]" multiple size="5">
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-roles"><?php esc_html_e( 'نقش کاربر', 'ariunetclub' ); ?></label>
+																<select id="ariunetclub-rule-roles" name="ariunetclub_rule[user_roles][]" multiple size="5">
 																	<?php foreach ( $roles as $slug => $label ) : ?>
 																				<option value="<?php echo esc_attr( (string) $slug ); ?>" <?php selected( true, in_array( (string) $slug, isset( $conditions['user_roles'] ) && is_array( $conditions['user_roles'] ) ? array_map( 'strval', $conditions['user_roles'] ) : array(), true ) ); ?>><?php echo esc_html( $label ); ?></option>
 																		<?php endforeach; ?>
 																</select>
-																<span class="description"><?php esc_html_e( 'خالی یعنی همهٔ نقش‌ها.', 'lclub' ); ?></span>
+																<span class="description"><?php esc_html_e( 'خالی یعنی همهٔ نقش‌ها.', 'ariunetclub' ); ?></span>
 														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-methods"><?php esc_html_e( 'روش پرداخت', 'lclub' ); ?></label>
-																<select id="lclub-rule-methods" name="lclub_rule[payment_methods][]" multiple size="5">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-methods"><?php esc_html_e( 'روش پرداخت', 'ariunetclub' ); ?></label>
+																<select id="ariunetclub-rule-methods" name="ariunetclub_rule[payment_methods][]" multiple size="5">
 																	<?php foreach ( $methods as $slug => $label ) : ?>
 																				<option value="<?php echo esc_attr( (string) $slug ); ?>" <?php selected( true, in_array( (string) $slug, isset( $conditions['payment_methods'] ) && is_array( $conditions['payment_methods'] ) ? array_map( 'strval', $conditions['payment_methods'] ) : array(), true ) ); ?>><?php echo esc_html( $label ); ?></option>
 																		<?php endforeach; ?>
 																</select>
-																<span class="description"><?php esc_html_e( 'خالی یعنی همهٔ درگاه‌ها.', 'lclub' ); ?></span>
+																<span class="description"><?php esc_html_e( 'خالی یعنی همهٔ درگاه‌ها.', 'ariunetclub' ); ?></span>
 														</p>
 												</div>
 										</section>
 
-										<section class="lclub-rule-section">
-												<h2><?php esc_html_e( '۳. این پاداش را بده...', 'lclub' ); ?></h2>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label><?php esc_html_e( 'نوع پاداش', 'lclub' ); ?></label>
-																<span class="lclub-mode">
-																		<label><input type="radio" name="lclub_rule[reward_type]" value="percent" data-lclub-reward="percent" <?php checked( 'percent', $reward['type'] ?? 'percent' ); ?> /> <?php esc_html_e( 'درصد کش‌بک', 'lclub' ); ?></label>
-																		<label><input type="radio" name="lclub_rule[reward_type]" value="fixed" data-lclub-reward="fixed" <?php checked( 'fixed', $reward['type'] ?? '' ); ?> /> <?php esc_html_e( 'مبلغ ثابت', 'lclub' ); ?></label>
+										<section class="ariunetclub-rule-section">
+												<h2><?php esc_html_e( '۳. این پاداش را بده...', 'ariunetclub' ); ?></h2>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label><?php esc_html_e( 'نوع پاداش', 'ariunetclub' ); ?></label>
+																<span class="ariunetclub-mode">
+																		<label><input type="radio" name="ariunetclub_rule[reward_type]" value="percent" data-ariunetclub-reward="percent" <?php checked( 'percent', $reward['type'] ?? 'percent' ); ?> /> <?php esc_html_e( 'درصد کش‌بک', 'ariunetclub' ); ?></label>
+																		<label><input type="radio" name="ariunetclub_rule[reward_type]" value="fixed" data-ariunetclub-reward="fixed" <?php checked( 'fixed', $reward['type'] ?? '' ); ?> /> <?php esc_html_e( 'مبلغ ثابت', 'ariunetclub' ); ?></label>
 																</span>
 														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-reward-value"><?php esc_html_e( 'مقدار پاداش', 'lclub' ); ?></label>
-																<input id="lclub-rule-reward-value" name="lclub_rule[reward_value]" type="number" step="any" min="0" value="<?php echo esc_attr( isset( $reward['value'] ) ? (string) $reward['value'] : '' ); ?>" />
-																<span class="description"><?php esc_html_e( 'در حالت درصد: درصد از مبنای کش‌بک. در حالت ثابت: مبلغ به تومان.', 'lclub' ); ?></span>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-reward-value"><?php esc_html_e( 'مقدار پاداش', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-reward-value" name="ariunetclub_rule[reward_value]" type="number" step="any" min="0" value="<?php echo esc_attr( isset( $reward['value'] ) ? (string) $reward['value'] : '' ); ?>" />
+																<span class="description"><?php esc_html_e( 'در حالت درصد: درصد از مبنای کش‌بک. در حالت ثابت: مبلغ به تومان.', 'ariunetclub' ); ?></span>
 														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-reward-cap"><?php esc_html_e( 'سقف پاداش (تومان، فقط درصد)', 'lclub' ); ?></label>
-																<input id="lclub-rule-reward-cap" name="lclub_rule[reward_cap]" type="number" step="any" min="0" value="<?php echo esc_attr( isset( $reward['max_cap'] ) && (float) $reward['max_cap'] > 0 ? (string) $reward['max_cap'] : '' ); ?>" />
-																<span class="description"><?php esc_html_e( 'حداکثر کش‌بک برای یک سفارش؛ خالی یعنی بدون سقف.', 'lclub' ); ?></span>
-														</p>
-												</div>
-										</section>
-
-										<section class="lclub-rule-section">
-												<h2><?php esc_html_e( '۴. محدودیت‌ها و برنامه', 'lclub' ); ?></h2>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-per-count"><?php esc_html_e( 'حداکثر بهره‌مندی هر مشتری (بار)', 'lclub' ); ?></label>
-																<input id="lclub-rule-per-count" name="lclub_rule[per_user_count]" type="number" step="1" min="0" value="<?php echo esc_attr( isset( $limits['per_user_count'] ) && (int) $limits['per_user_count'] > 0 ? (string) $limits['per_user_count'] : '' ); ?>" />
-														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-per-days"><?php esc_html_e( 'در بازه (روز)', 'lclub' ); ?></label>
-																<input id="lclub-rule-per-days" name="lclub_rule[per_user_days]" type="number" step="1" min="0" value="<?php echo esc_attr( isset( $limits['per_user_days'] ) && (int) $limits['per_user_days'] > 0 ? (string) $limits['per_user_days'] : '' ); ?>" />
-																<span class="description"><?php esc_html_e( 'پنجره‌ی لغزان؛ مثلاً «۳ بار در ۳۰ روز». برای بی‌نهایت خالی بگذارید.', 'lclub' ); ?></span>
-														</p>
-												</div>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-total-times"><?php esc_html_e( 'سقف کل دفعات (همهٔ مشتری‌ها)', 'lclub' ); ?></label>
-																<input id="lclub-rule-total-times" name="lclub_rule[total_times]" type="number" step="1" min="0" value="<?php echo esc_attr( isset( $limits['total_times'] ) && (int) $limits['total_times'] > 0 ? (string) $limits['total_times'] : '' ); ?>" />
-														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-total-amount"><?php esc_html_e( 'سقف کل مبلغ صادرشده (تومان)', 'lclub' ); ?></label>
-																<input id="lclub-rule-total-amount" name="lclub_rule[total_amount]" type="number" step="any" min="0" value="<?php echo esc_attr( isset( $limits['total_amount'] ) && (float) $limits['total_amount'] > 0 ? (string) $limits['total_amount'] : '' ); ?>" />
-														</p>
-												</div>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-priority"><?php esc_html_e( 'اولویت', 'lclub' ); ?></label>
-																<input id="lclub-rule-priority" name="lclub_rule[priority]" type="number" step="1" value="<?php echo esc_attr( (string) ( $rule['priority'] ?? 10 ) ); ?>" />
-																<span class="description"><?php esc_html_e( 'عدد کوچک‌تر زودتر اجرا می‌شود.', 'lclub' ); ?></span>
-														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-exclusive"><?php esc_html_e( 'قانون انحصاری', 'lclub' ); ?></label>
-																<span class="lclub-check"><input id="lclub-rule-exclusive" name="lclub_rule[exclusive]" type="checkbox" value="1" <?php checked( ! empty( $rule['exclusive'] ) ); ?> /> <?php esc_html_e( 'اگر این قانون اعمال شود، قوانین بعدی همان رویداد اجرا نمی‌شوند.', 'lclub' ); ?></span>
-														</p>
-												</div>
-												<div class="lclub-rule-grid">
-														<p class="lclub-field">
-																<label for="lclub-rule-starts"><?php esc_html_e( 'شروع (ساعت سایت)', 'lclub' ); ?></label>
-																<input id="lclub-rule-starts" name="lclub_rule[starts_at]" type="datetime-local" value="<?php echo esc_attr( $starts ); ?>" />
-														</p>
-														<p class="lclub-field">
-																<label for="lclub-rule-ends"><?php esc_html_e( 'پایان (ساعت سایت)', 'lclub' ); ?></label>
-																<input id="lclub-rule-ends" name="lclub_rule[ends_at]" type="datetime-local" value="<?php echo esc_attr( $ends ); ?>" />
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-reward-cap"><?php esc_html_e( 'سقف پاداش (تومان، فقط درصد)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-reward-cap" name="ariunetclub_rule[reward_cap]" type="number" step="any" min="0" value="<?php echo esc_attr( isset( $reward['max_cap'] ) && (float) $reward['max_cap'] > 0 ? (string) $reward['max_cap'] : '' ); ?>" />
+																<span class="description"><?php esc_html_e( 'حداکثر کش‌بک برای یک سفارش؛ خالی یعنی بدون سقف.', 'ariunetclub' ); ?></span>
 														</p>
 												</div>
 										</section>
 
-										<div class="lclub-rule-preview" data-lclub-rule-preview aria-live="polite"></div>
-										<div class="lclub-rule-actions">
-												<button class="button button-primary" type="submit"><?php esc_html_e( 'ذخیرهٔ قانون', 'lclub' ); ?></button>
-												<a class="button lclub-button-secondary" href="<?php echo esc_url( $list_url ); ?>"><?php esc_html_e( 'بازگشت', 'lclub' ); ?></a>
+										<section class="ariunetclub-rule-section">
+												<h2><?php esc_html_e( '۴. محدودیت‌ها و برنامه', 'ariunetclub' ); ?></h2>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-per-count"><?php esc_html_e( 'حداکثر بهره‌مندی هر مشتری (بار)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-per-count" name="ariunetclub_rule[per_user_count]" type="number" step="1" min="0" value="<?php echo esc_attr( isset( $limits['per_user_count'] ) && (int) $limits['per_user_count'] > 0 ? (string) $limits['per_user_count'] : '' ); ?>" />
+														</p>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-per-days"><?php esc_html_e( 'در بازه (روز)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-per-days" name="ariunetclub_rule[per_user_days]" type="number" step="1" min="0" value="<?php echo esc_attr( isset( $limits['per_user_days'] ) && (int) $limits['per_user_days'] > 0 ? (string) $limits['per_user_days'] : '' ); ?>" />
+																<span class="description"><?php esc_html_e( 'پنجره‌ی لغزان؛ مثلاً «۳ بار در ۳۰ روز». برای بی‌نهایت خالی بگذارید.', 'ariunetclub' ); ?></span>
+														</p>
+												</div>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-total-times"><?php esc_html_e( 'سقف کل دفعات (همهٔ مشتری‌ها)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-total-times" name="ariunetclub_rule[total_times]" type="number" step="1" min="0" value="<?php echo esc_attr( isset( $limits['total_times'] ) && (int) $limits['total_times'] > 0 ? (string) $limits['total_times'] : '' ); ?>" />
+														</p>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-total-amount"><?php esc_html_e( 'سقف کل مبلغ صادرشده (تومان)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-total-amount" name="ariunetclub_rule[total_amount]" type="number" step="any" min="0" value="<?php echo esc_attr( isset( $limits['total_amount'] ) && (float) $limits['total_amount'] > 0 ? (string) $limits['total_amount'] : '' ); ?>" />
+														</p>
+												</div>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-priority"><?php esc_html_e( 'اولویت', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-priority" name="ariunetclub_rule[priority]" type="number" step="1" value="<?php echo esc_attr( (string) ( $rule['priority'] ?? 10 ) ); ?>" />
+																<span class="description"><?php esc_html_e( 'عدد کوچک‌تر زودتر اجرا می‌شود.', 'ariunetclub' ); ?></span>
+														</p>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-exclusive"><?php esc_html_e( 'قانون انحصاری', 'ariunetclub' ); ?></label>
+																<span class="ariunetclub-check"><input id="ariunetclub-rule-exclusive" name="ariunetclub_rule[exclusive]" type="checkbox" value="1" <?php checked( ! empty( $rule['exclusive'] ) ); ?> /> <?php esc_html_e( 'اگر این قانون اعمال شود، قوانین بعدی همان رویداد اجرا نمی‌شوند.', 'ariunetclub' ); ?></span>
+														</p>
+												</div>
+												<div class="ariunetclub-rule-grid">
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-starts"><?php esc_html_e( 'شروع (ساعت سایت)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-starts" name="ariunetclub_rule[starts_at]" type="datetime-local" value="<?php echo esc_attr( $starts ); ?>" />
+														</p>
+														<p class="ariunetclub-field">
+																<label for="ariunetclub-rule-ends"><?php esc_html_e( 'پایان (ساعت سایت)', 'ariunetclub' ); ?></label>
+																<input id="ariunetclub-rule-ends" name="ariunetclub_rule[ends_at]" type="datetime-local" value="<?php echo esc_attr( $ends ); ?>" />
+														</p>
+												</div>
+										</section>
+
+										<div class="ariunetclub-rule-preview" data-ariunetclub-rule-preview aria-live="polite"></div>
+										<div class="ariunetclub-rule-actions">
+												<button class="button button-primary" type="submit"><?php esc_html_e( 'ذخیرهٔ قانون', 'ariunetclub' ); ?></button>
+												<a class="button ariunetclub-button-secondary" href="<?php echo esc_url( $list_url ); ?>"><?php esc_html_e( 'بازگشت', 'ariunetclub' ); ?></a>
 										</div>
 								</form>
 						</div>
@@ -764,11 +764,11 @@ class RulesAdminPage {
 		if ( $pages <= 1 ) {
 				return;
 		}
-			echo '<nav class="lclub-pagination" aria-label="' . esc_attr__( 'صفحه‌بندی قوانین', 'lclub' ) . '">';
+			echo '<nav class="ariunetclub-pagination" aria-label="' . esc_attr__( 'صفحه‌بندی قوانین', 'ariunetclub' ) . '">';
 		$total = count( $rows );
 		for ( $i = 0; $i < $total; $i++ ) {
 				$url   = add_query_arg( 'paged', $i, $base );
-				$class = $i === $page ? ' lclub-pagination-current' : '';
+				$class = $i === $page ? ' ariunetclub-pagination-current' : '';
 				echo '<a class="' . esc_attr( ltrim( $class ) ) . '" href="' . esc_url( $url ) . '">' . esc_html( Money::to_persian_digits( (string) $i ) ) . '</a>';
 		}
 			echo '</nav>';

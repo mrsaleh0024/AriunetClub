@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Identity;
+namespace AriunetClub\Modules\Identity;
 
 class PhoneNormalizer {
 	/**

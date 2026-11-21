@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Ledger;
+namespace AriunetClub\Modules\Ledger;
 
-use LClub\Core\Money;
+use AriunetClub\Core\Money;
 
 class LedgerRepository implements LedgerGateway {
 		/** @var \wpdb */
@@ -19,8 +19,8 @@ class LedgerRepository implements LedgerGateway {
 
 	public function __construct( \wpdb $wpdb ) {
 			$this->wpdb           = $wpdb;
-			$this->ledger_table   = $wpdb->prefix . 'lclub_ledger';
-			$this->balances_table = $wpdb->prefix . 'lclub_balances';
+			$this->ledger_table   = $wpdb->prefix . 'ariunetclub_ledger';
+			$this->balances_table = $wpdb->prefix . 'ariunetclub_balances';
 	}
 
 		/** @param array $entry @return array */

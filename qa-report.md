@@ -1,4 +1,4 @@
-# LClub QA Report
+# AriunetClub QA Report
 
 Generated: 2026-11-21T05:33:35+00:00
 
@@ -34,8 +34,8 @@ Time: 10.39 secs; Memory: 26MB
 
 ### "C:\Users\ariunetpc6\AppData\Local\Microsoft\WinGet\Packages\PHP.PHP.8.4_Microsoft.Winget.Source_8wekyb3d8bbwe\php.exe" -d memory_limit=512M vendor/bin/phpstan analyse
 ```text
-Note: Using configuration file C:\Users\ariunetpc6\Local Sites\legion\app\public\wp-content\plugins\lclub\phpstan.neon.
-  0/56 [>---------------------------]   0%RuntimeException thrown in C:\Users\ariunetpc6\Local Sites\legion\app\public\wp-content\plugins\lclub\tests\bootstrap.php on line 7 while loading bootstrap file C:\Users\ariunetpc6\Local Sites\legion\app\public\wp-content\plugins\lclub\tests\bootstrap.php: LClub tests require a database whose name starts with lclub_test_.
+Note: Using configuration file C:\Users\ariunetpc6\Local Sites\legion\app\public\wp-content\plugins\ariunetclub\phpstan.neon.
+  0/56 [>---------------------------]   0%RuntimeException thrown in C:\Users\ariunetpc6\Local Sites\legion\app\public\wp-content\plugins\ariunetclub\tests\bootstrap.php on line 7 while loading bootstrap file C:\Users\ariunetpc6\Local Sites\legion\app\public\wp-content\plugins\ariunetclub\tests\bootstrap.php: AriunetClub tests require a database whose name starts with ariunetclub_test_.
 
 In CommandHelper.php line 514:
 

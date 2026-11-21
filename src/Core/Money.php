@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Core;
+namespace AriunetClub\Core;
 
 class Money {
 	public static function decimals(): int {

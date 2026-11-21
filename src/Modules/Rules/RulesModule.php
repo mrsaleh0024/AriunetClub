@@ -1,22 +1,22 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\Module;
-use LClub\Core\Settings;
-use LClub\Modules\Ledger\LedgerRepository;
-use LClub\Modules\Ledger\LedgerService;
-use LClub\Modules\Rules\Conditions\Category;
-use LClub\Modules\Rules\Conditions\FirstOrder;
-use LClub\Modules\Rules\Conditions\MinAmount;
-use LClub\Modules\Rules\Conditions\PaymentMethod;
-use LClub\Modules\Rules\Conditions\Product;
-use LClub\Modules\Rules\Conditions\UserRole;
-use LClub\Modules\Rules\Rewards\FixedReward;
-use LClub\Modules\Rules\Rewards\PercentageReward;
+use AriunetClub\Core\Module;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Ledger\LedgerRepository;
+use AriunetClub\Modules\Ledger\LedgerService;
+use AriunetClub\Modules\Rules\Conditions\Category;
+use AriunetClub\Modules\Rules\Conditions\FirstOrder;
+use AriunetClub\Modules\Rules\Conditions\MinAmount;
+use AriunetClub\Modules\Rules\Conditions\PaymentMethod;
+use AriunetClub\Modules\Rules\Conditions\Product;
+use AriunetClub\Modules\Rules\Conditions\UserRole;
+use AriunetClub\Modules\Rules\Rewards\FixedReward;
+use AriunetClub\Modules\Rules\Rewards\PercentageReward;
 
 /**
  * Phase 2 module: evaluates "event → conditions → reward" rules on the ledger.
@@ -38,8 +38,8 @@ class RulesModule implements Module {
 
 			$repository = new RuleRepository( $wpdb );
 
-			$ledger_service = isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService
-					? $GLOBALS['lclub_ledger_service']
+			$ledger_service = isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService
+					? $GLOBALS['ariunetclub_ledger_service']
 					: new LedgerService( new LedgerRepository( $wpdb ) );
 			$ledger_gateway = new LedgerRepository( $wpdb );
 
@@ -70,9 +70,9 @@ class RulesModule implements Module {
 				new WcOrderLookup( $settings )
 			);
 
-			add_action( 'lclub_event_processed', array( $service, 'handle_event' ) );
+			add_action( 'ariunetclub_event_processed', array( $service, 'handle_event' ) );
 			( new RulesAdminPage( $repository, $settings ) )->register();
 
-			$GLOBALS['lclub_rule_service'] = $service;
+			$GLOBALS['ariunetclub_rule_service'] = $service;
 	}
 }

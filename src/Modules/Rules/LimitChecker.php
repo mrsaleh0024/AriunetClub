@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Modules\Ledger\LedgerGateway;
 
 /**
  * Usage limits for a rule: per-user rolling window, total count and total amount.

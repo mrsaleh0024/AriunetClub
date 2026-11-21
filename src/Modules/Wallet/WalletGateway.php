@@ -1,22 +1,22 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Settings;
-use LClub\Modules\Ledger\LedgerService;
+use AriunetClub\Core\Settings;
+use AriunetClub\Modules\Ledger\LedgerService;
 
 /**
- * The "lclub_wallet" payment method. It only becomes available when the
+ * The "ariunetclub_wallet" payment method. It only becomes available when the
  * wallet switch already covers the whole order (the amount due is then
  * zero), so a full-coverage order completes without a bank gateway and
- * records lclub_wallet as its payment method.
+ * records ariunetclub_wallet as its payment method.
  */
 class WalletGateway extends \WC_Payment_Gateway {
 
-	const GATEWAY_ID = 'lclub_wallet';
+	const GATEWAY_ID = 'ariunetclub_wallet';
 
 	/** @var LedgerService */
 	private $ledger;
@@ -38,17 +38,17 @@ class WalletGateway extends \WC_Payment_Gateway {
 		$this->club_settings = $settings;
 
 		$this->id                 = self::GATEWAY_ID;
-		$this->method_title       = __( 'کیف پول باشگاه مشتریان', 'lclub' );
-		$this->method_description = __( 'پرداخت کامل مبلغ سفارش از موجودی کیف پول؛ فقط وقتی سوییچ کیف پول کل سبد را پوشش داده باشد در دسترس قرار می‌گیرد.', 'lclub' );
-		$this->title              = __( 'کیف پول', 'lclub' );
+		$this->method_title       = __( 'کیف پول باشگاه مشتریان', 'ariunetclub' );
+		$this->method_description = __( 'پرداخت کامل مبلغ سفارش از موجودی کیف پول؛ فقط وقتی سوییچ کیف پول کل سبد را پوشش داده باشد در دسترس قرار می‌گیرد.', 'ariunetclub' );
+		$this->title              = __( 'کیف پول', 'ariunetclub' );
 		$this->has_fields         = false;
 		$this->enabled            = 'yes';
 
 		$this->form_fields = array(
 			'enabled' => array(
-				'title'   => __( 'فعال‌سازی', 'lclub' ),
+				'title'   => __( 'فعال‌سازی', 'ariunetclub' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'فعال باشد', 'lclub' ),
+				'label'   => __( 'فعال باشد', 'ariunetclub' ),
 				'default' => 'yes',
 			),
 		);
@@ -103,7 +103,7 @@ class WalletGateway extends \WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 		$order = function_exists( 'wc_get_order' ) ? wc_get_order( (int) $order_id ) : null;
 		if ( ! $order instanceof \WC_Order ) {
-			wc_add_notice( __( 'سفارش برای پرداخت با کیف پول پیدا نشد.', 'lclub' ), 'error' );
+			wc_add_notice( __( 'سفارش برای پرداخت با کیف پول پیدا نشد.', 'ariunetclub' ), 'error' );
 			return array(
 				'result'   => 'failure',
 				'redirect' => '',

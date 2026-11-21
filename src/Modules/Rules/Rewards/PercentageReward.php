@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules\Rewards;
+namespace AriunetClub\Modules\Rules\Rewards;
 
-use LClub\Core\Money;
-use LClub\Modules\Rules\RuleContext;
+use AriunetClub\Core\Money;
+use AriunetClub\Modules\Rules\RuleContext;
 
 /**
  * Percentage cashback of the order cashback base, with an optional cap.

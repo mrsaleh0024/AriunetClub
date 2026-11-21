@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Modules\Events\SkipEventException;
+use AriunetClub\Modules\Events\SkipEventException;
 
 /**
  * Builds a RuleContext from an event row. Implementations may read live

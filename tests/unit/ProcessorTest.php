@@ -1,9 +1,9 @@
 <?php
 
-namespace LClub\Tests;
+namespace AriunetClub\Tests;
 
-use LClub\Modules\Events\Processor;
-use LClub\Modules\Events\SkipEventException;
+use AriunetClub\Modules\Events\Processor;
+use AriunetClub\Modules\Events\SkipEventException;
 use PHPUnit\Framework\TestCase;
 
 class ProcessorTest extends TestCase {

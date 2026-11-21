@@ -1,6 +1,6 @@
-# فاز ۳ — خرج کیف پول در چک‌اوت | AriunetClub / lclub
+# فاز ۳ — خرج کیف پول در چک‌اوت | AriunetClub / ariunetclub
 
-این بسته، فاز ۳ سند معماری MVP را کامل پیاده‌سازی می‌کند: سوییچ استفاده از کیف پول در چک‌اوت کلاسیک با fee منفیِ غیرمشمول مالیات و عنوان قابل تنظیم، مدل رزرو (hold در ایجاد سفارش، capture با پرداخت، release با لغو/ناموفق/انقضای سفارش pending)، پوشش کامل مبلغ بدون درگاه، متاباکس سفارش و برگشت پول خرج‌شده هنگام مرجوعی (طبق تأیید شما). همه‌ی قراردادهای بخش ۵ سند رعایت شده: namespace `LClub\`، پيشوند `lclub_`، مبلغ‌ها فقط از `Money`، متای سفارش فقط با `$order->update_meta_data()` (سازگار HPOS)، دفتر کل فقط‌الحاقی با کلید ایدمپوتنت یکتا، تغییر موجودی داخل تراکنش با قفل ردیف (میراث فاز ۱)، همه‌ی فرم‌ها و AJAXها با nonce و همه‌ی خروجی‌ها escape.
+این بسته، فاز ۳ سند معماری MVP را کامل پیاده‌سازی می‌کند: سوییچ استفاده از کیف پول در چک‌اوت کلاسیک با fee منفیِ غیرمشمول مالیات و عنوان قابل تنظیم، مدل رزرو (hold در ایجاد سفارش، capture با پرداخت، release با لغو/ناموفق/انقضای سفارش pending)، پوشش کامل مبلغ بدون درگاه، متاباکس سفارش و برگشت پول خرج‌شده هنگام مرجوعی (طبق تأیید شما). همه‌ی قراردادهای بخش ۵ سند رعایت شده: namespace `AriunetClub\`، پيشوند `ariunetclub_`، مبلغ‌ها فقط از `Money`، متای سفارش فقط با `$order->update_meta_data()` (سازگار HPOS)، دفتر کل فقط‌الحاقی با کلید ایدمپوتنت یکتا، تغییر موجودی داخل تراکنش با قفل ردیف (میراث فاز ۱)، همه‌ی فرم‌ها و AJAXها با nonce و همه‌ی خروجی‌ها escape.
 
 ماژول جدید `wallet` به لیست `enabled_modules` پیش‌فرض اضافه شده و چون `Settings::enabled_modules()` پیش‌فرض‌ها را با مقدار ذخیره‌شده merge می‌کند، روی نصب فعلی شما **خودکار فعال** می‌شود؛ نیازی به تغییر دیتابیس یا مایگریشن نیست (هیچ جدول جدیدی ندارد و `DB_VERSION` سر جایش است).
 
@@ -8,7 +8,7 @@
 
 ## ۱) نقشه‌ی فایل‌ها
 
-مسیر پایه روی سیستم شما: `C:\Users\<you>\Local Sites\legion\app\public\wp-content\plugins\lclub` (ریشه‌ی افزونه = ریشه‌ی ریپو). ساختار این بسته دقیقاً همان ساختار ریشه‌ی افزونه است.
+مسیر پایه روی سیستم شما: `C:\Users\<you>\Local Sites\legion\app\public\wp-content\plugins\ariunetclub` (ریشه‌ی افزونه = ریشه‌ی ریپو). ساختار این بسته دقیقاً همان ساختار ریشه‌ی افزونه است.
 
 ### الف) فایل‌های «جایگزین» — نسخه‌ی فعلی را با این‌ها overwrite کنید
 
@@ -29,21 +29,21 @@ src/Modules/Wallet/SpendCalculator.php      — محاسبه سقف خرج (در
 src/Modules/Wallet/OrderMeta.php            — متای HPOS-safe سفارش (state/amount/total/held_at)
 src/Modules/Wallet/CheckoutController.php   — سوییچ + fee منفی + اعتبارسنجی + ثبت متا + hold
 src/Modules/Wallet/HoldManager.php           — ماشین وضعیت hold/capture/release + انقضا + مرجوعی
-src/Modules/Wallet/WalletGateway.php         — درگاه lclub_wallet برای پوشش کامل مبلغ
+src/Modules/Wallet/WalletGateway.php         — درگاه ariunetclub_wallet برای پوشش کامل مبلغ
 src/Modules/Wallet/WalletOrderMetabox.php    — متاباکس ادمین روی صفحه سفارش (HPOS و legacy)
 ```
 
 **Assetها و ابزار (۵ فایل):**
 ```
-assets/js/lclub-checkout.js                 — سوییچ AJAAX با nonce (بهبود تدریجی)
-assets/css/lclub-checkout.css                — استایل سوییچ (توکن‌های فعلی، بدون گرادیان، RTL)
-assets/css/lclub-order-metabox.css           — استایل متاباکس سفارش
+assets/js/ariunetclub-checkout.js                 — سوییچ AJAAX با nonce (بهبود تدریجی)
+assets/css/ariunetclub-checkout.css                — استایل سوییچ (توکن‌های فعلی، بدون گرادیان، RTL)
+assets/css/ariunetclub-order-metabox.css           — استایل متاباکس سفارش
 tools/phpstan-bootstrap.php                 — stubهای ایستا برای PHPStan (فقط تحلیل؛ runtime لود نمی‌شود)
 README-PHASE3-FA.md                          — همین راهنما (در ریشه‌ی افزونه کنار README-PHASE2-FA.md)
 ```
 
 ### ج) فایل‌هایی که دست نخورده‌اند
-`lclub.php` (نسخه طبق انتخاب شما ۰.۳.۰ ماند)، `uninstall.php`، `readme.txt`، `composer.json` (بدون وابستگی جدید)، `phpcs.xml`، `psalm.xml`، `phpunit.xml`، `CHANGELOG.md`، `languages/lclub-fa_IR.po`، ماژول‌های Core/Identity/Ledger/Events/Rules (به‌جز دو فیکس phpcs فوق)، `tests/*`، `tools/qa.php`.
+`ariunetclub.php` (نسخه طبق انتخاب شما ۰.۳.۰ ماند)، `uninstall.php`، `readme.txt`، `composer.json` (بدون وابستگی جدید)، `phpcs.xml`، `psalm.xml`، `phpunit.xml`، `CHANGELOG.md`، `languages/ariunetclub-fa_IR.po`، ماژول‌های Core/Identity/Ledger/Events/Rules (به‌جز دو فیکس phpcs فوق)، `tests/*`، `tools/qa.php`.
 
 ---
 
@@ -52,7 +52,7 @@ README-PHASE3-FA.md                          — همین راهنما (در ر�
 در ترمینال PowerShell، داخل پوشه‌ی افزونه (که همان ریپوی گیت شماست):
 
 ```powershell
-cd "C:\Users\<you>\Local Sites\legion\app\public\wp-content\plugins\lclub"
+cd "C:\Users\<you>\Local Sites\legion\app\public\wp-content\plugins\ariunetclub"
 
 # ۱) شاخه‌ی فاز ۳ (طبق قاعده‌ی «هر فاز یک branch»)
 git checkout -b phase3
@@ -63,7 +63,7 @@ git am phase3.patch
 #    روش B (کپی دستی): محتوای این بسته را داخل پوشه‌ی افزونه بریزید و overwrite را تأیید کنید
 #    (فایل‌های «جایگزین» را overwrite کنید و «جدید»ها را در مسیرهایشان بسازید)، سپس:
 git add -A
-git commit -m "feat: complete phase 3 - wallet spend at checkout (lclub)"
+git commit -m "feat: complete phase 3 - wallet spend at checkout (ariunetclub)"
 
 # ۳) autoload (کلاس‌های جدید PSR-4 هستند؛ dump برای اطمینان)
 composer dump-autoload
@@ -86,7 +86,7 @@ notepad "<مسیر php.ini>"       # خط ;extension=mbstring را از کامن
 php -m | findstr mbstring      # باید mbstring نمایش داده شود
 ```
 
-**۲) PHPStan دیگر به دیتابیس تست نیاز ندارد** — قبلاً `tests/bootstrap.php` (که فقط برای PHPUnit معنا دارد) به‌عنوان bootstrap استفاده می‌شد و چون نام دیتابیس شما با `lclub_test_` شروع نمی‌شد، phpstan قبل از تحلیل کرش می‌کرد (در qa-report فعلی شما هم دیده می‌شود). حالا bootstrap به `tools/phpstan-bootstrap.php` تغییر کرده که stubهای ووکامرس/Action Scheduler را هم تعریف می‌کند؛ پس phpstan بدون هیچ متغیر محیطی اجرا می‌شود.
+**۲) PHPStan دیگر به دیتابیس تست نیاز ندارد** — قبلاً `tests/bootstrap.php` (که فقط برای PHPUnit معنا دارد) به‌عنوان bootstrap استفاده می‌شد و چون نام دیتابیس شما با `ariunetclub_test_` شروع نمی‌شد، phpstan قبل از تحلیل کرش می‌کرد (در qa-report فعلی شما هم دیده می‌شود). حالا bootstrap به `tools/phpstan-bootstrap.php` تغییر کرده که stubهای ووکامرس/Action Scheduler را هم تعریف می‌کند؛ پس phpstan بدون هیچ متغیر محیطی اجرا می‌شود.
 
 ---
 
@@ -125,7 +125,7 @@ git push -u origin phase3
 ۳. **رزرو و قطعی‌سازی**: سفارش را ثبت کنید → در «کیف پول‌ها ← تاریخچه» رکورد `رزرو` (کلید `wallet:hold:order:{id}`) و ستون «رزروشده» ببینید. سفارش را در ادمین به «در حال پردازش/تکمیل‌شده» ببرید → رکورد `ثبت مصرف` (capture) و کاهش قطعی موجودی. متاباکس «کیف پول باشگاه» روی صفحه‌ی سفارش مبلغ مصرف‌شده/وضعیت/کش‌بک کسب‌شده را نشان می‌دهد (هم HPOS خاموش، هم روشن — بخش «پیشرفته ووکامرس ← انبارهای سفارش با صفحه‌ی سفارش» را تست کنید).
 ۴. **لغو/ناموفق → آزادسازی**: سفارش pending دیگری با سوییچ بسازید و لغو کنید → رکورد `آزادسازی` (release) و بازگشت موجودی. وضعیت ناموفق هم همینطور.
 
-۵. **انقضای pending**: در تنظیمات «مهلت رزرو» را روی ۱ ساعت بگذارید، سفارش pending با سوییچ بسازید و صبر کنید (یا از WP-CLI `wp cron event run` / پنل Action Scheduler در «ووکامرس ← وضعیت ← Scheduled Actions ← گروه lclub» اجرا کنید) → رزرو خودکار آزاد و یادداشت روی سفارش ثبت می‌شود.
+۵. **انقضای pending**: در تنظیمات «مهلت رزرو» را روی ۱ ساعت بگذارید، سفارش pending با سوییچ بسازید و صبر کنید (یا از WP-CLI `wp cron event run` / پنل Action Scheduler در «ووکامرس ← وضعیت ← Scheduled Actions ← گروه ariunetclub» اجرا کنید) → رزرو خودکار آزاد و یادداشت روی سفارش ثبت می‌شود.
 
 ۶. **دو تب همزمان**: دو صفحه‌ی چک‌اوت با سوییچ روشن باز کنید و هر دو را تقریباً هم‌زمان ثبت کنید — دومی موجودی کافی ندارد و سفارشش failed می‌شود با پیام فارسی؛ **موجودی هرگز منفی نمی‌شود** (قفل ردیف دفتر کل فاز ۱).
 
@@ -148,7 +148,7 @@ git push -u origin phase3
 | مبنای سقف درصدی = اقلام + مالیات، بدون حمل | `SpendCalculator::max_spend` — منبع یکتای فرمول |
 | درگاه‌های مجاز پیش‌فرض = همه به‌جز COD | `CheckoutController::gateway_allowed` — لیست خالی یعنی همه‌به‌جز COD؛ تیک‌خوردنی در تنظیمات |
 | برگشت خرج کیف پول هنگام مرجوعی، در همین فاز | `HoldManager::on_refunded` — نسبت `مبلغ مسترد × کیف‌پول ÷ کلِ ثبت‌شده` با رکورد جبرانی `adjust` مثبت، سقف‌دار به مبلغ مصرف‌شده |
-| تحویل = کد + راهنما (بدون تست واحد، بدون bump نسخه) | بدون تغییر `lclub.php`/`CHANGELOG.md`؛ بلوک پیشنهادی CHANGELOG در پای همین راهنما |
+| تحویل = کد + راهنما (بدون تست واحد، بدون bump نسخه) | بدون تغییر `ariunetclub.php`/`CHANGELOG.md`؛ بلوک پیشنهادی CHANGELOG در پای همین راهنما |
 | محیط = Local WP | دستورات PowerShell در همین راهنما |
 | بدون سرویس بیرونی | هیچ درخواست شبکه‌ای جدید نیست؛ composer.json دست‌نخورده |
 
@@ -174,7 +174,7 @@ git push -u origin phase3
 - ردیف‌های کیف پول از برگشت‌های کش‌بک فاز ۲ جدا هستند (`RewardService::reversed_for_order` فقط کلیدهای `order:{id}:reversal` و `order:{id}:refund:...` را می‌شمارد و `capture` اساساً در فیلترش نیست).
 - وضعیت `refunded` وقتی سفارش هنوز held باشد → آزادسازی (مسیر خیلی نادر مرجوعی سفارش پرداخت‌نشده).
 - AJAX سوییچ برای هر کاربر ۱ ثانیه throttle دارد (S14) و با nonce+لاگین گارد شده (S4). مهمان سوییچی نمی‌بیند (طبق سند).
-- عمومی‌های سند دست‌نخورده ماندند: فقط اکشن `lclub_ledger_entry_created` و فیلتر `lclub_rule_reward_amount`. هوک داخلی جدید `lclub_release_expired_hold` فقط همان الگوی زمان‌بندی ماژول events است.
+- عمومی‌های سند دست‌نخورده ماندند: فقط اکشن `ariunetclub_ledger_entry_created` و فیلتر `ariunetclub_rule_reward_amount`. هوک داخلی جدید `ariunetclub_release_expired_hold` فقط همان الگوی زمان‌بندی ماژول events است.
 
 ---
 
@@ -202,7 +202,7 @@ git push -u origin phase3
 | PHPStan سطح max روی کل `src` | **No errors** (فایل‌های فاز ۳ صفر خطا؛ بدهی قدیمی فاز ۱/۲ در baseline ثبت شد) |
 | تست عملکردی واقعی: `tools/wallet-functional-tests.php` (کلاس‌های واقعی افزونه + دفتر کل درون‌حافظه‌ای با سمانتیک `LedgerRepository` واقعی) | **۵۶ از ۵۶ پاس** — شامل hold→capture، idempotency، ریفاند متناسب با سقف، release در لغو، بدهی، انقضای pending، فیس کش‌بک منفی، گارد درگاه‌ها، throttle سوییچ |
 | PHPCS | در sandbox من قابل اجرا نیست (با باینری استاتیک PHP معلق می‌شود)؛ روی سیستم خودت `composer lint` بزن |
-| PHPUnit (تست‌های WP) | نیاز به MySQL با نام `lclub_test_*` دارد — روی سیستم خودت طبق بخش ۳ |
+| PHPUnit (تست‌های WP) | نیاز به MySQL با نام `ariunetclub_test_*` دارد — روی سیستم خودت طبق بخش ۳ |
 
 روی سیستم خودت این‌ها را به همین ترتیب اجرا کن و هر خطایی را برایم بفرست:
 
@@ -225,7 +225,7 @@ phpunit                # بعد از فعال‌سازی mbstring (بخش ۳)
 ## 0.4.0 — فاز ۳: خرج کیف پول در چک‌اوت
 - سوییچ کیف پول در چک‌اوت کلاسیک با fee منفی غیرمشمول مالیات و عنوان قابل تنظیم؛ سوییچ AJAX با nonce و محاسبه‌ی همیشه‌سروِرم.
 - مدل رزرو: hold هنگام ایجاد سفارش، capture با processing/completed، release با لغو/ناموفق/انقضای pending (پیش‌فرض ۴۸ ساعت، قابل تنظیم) با Action Scheduler و fallback WP-Cron.
-- پوشش کامل مبلغ بدون درگاه با روش پرداخت lclub_wallet.
+- پوشش کامل مبلغ بدون درگاه با روش پرداخت ariunetclub_wallet.
 - تنظیمات: سقف درصدی (مبنا اقلام+مالیات)، حداقل سفارش، درگاه‌های مجاز (پیش‌فرض همه به‌جز COD)، مهلت رزرو، پوشش کامل.
 - متاباکس سفارش (HPOS و legacy): مبلغ مصرف‌شده، وضعیت، برگشت مستردشده و کش‌بک کسب‌شده.
 - برگشت متناسب پول خرج‌شده هنگام مرجوعی با رکورد جبرانی.

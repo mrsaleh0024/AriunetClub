@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Money;
+use AriunetClub\Core\Money;
 
 /**
  * Phase 3 order meta: wallet state, spend amount and the order-total
@@ -14,10 +14,10 @@ use LClub\Core\Money;
  */
 class OrderMeta {
 
-	const STATE        = '_lclub_wallet_state';
-	const AMOUNT       = '_lclub_wallet_amount';
-	const ORDER_TOTAL  = '_lclub_wallet_order_total';
-	const HELD_AT      = '_lclub_wallet_held_at';
+	const STATE        = '_ariunetclub_wallet_state';
+	const AMOUNT       = '_ariunetclub_wallet_amount';
+	const ORDER_TOTAL  = '_ariunetclub_wallet_order_total';
+	const HELD_AT      = '_ariunetclub_wallet_held_at';
 
 	const STATE_HELD     = 'held';
 	const STATE_CAPTURED = 'captured';

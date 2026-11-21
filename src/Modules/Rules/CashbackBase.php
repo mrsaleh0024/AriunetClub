@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\Money;
-use LClub\Core\Settings;
+use AriunetClub\Core\Money;
+use AriunetClub\Core\Settings;
 
 /**
  * Single source of truth for the cashback base amount:

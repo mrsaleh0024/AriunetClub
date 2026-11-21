@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
 /**
- * wpdb-backed repository for the lclub_events table. All SQL for events lives here.
+ * wpdb-backed repository for the ariunetclub_events table. All SQL for events lives here.
  */
 class EventRepository implements EventGateway {
 		/** @var \wpdb */
@@ -20,7 +20,7 @@ class EventRepository implements EventGateway {
 
 	public function __construct( \wpdb $wpdb, int $max_attempts = 3 ) {
 			$this->wpdb         = $wpdb;
-			$this->table        = $wpdb->prefix . 'lclub_events';
+			$this->table        = $wpdb->prefix . 'ariunetclub_events';
 			$this->max_attempts = max( 1, $max_attempts );
 	}
 

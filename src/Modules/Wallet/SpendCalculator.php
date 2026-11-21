@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Wallet;
+namespace AriunetClub\Modules\Wallet;
 
-use LClub\Core\Money;
-use LClub\Core\Settings;
+use AriunetClub\Core\Money;
+use AriunetClub\Core\Settings;
 
 /**
  * Phase 3 helper: computes how much wallet balance may be spent on one cart.

@@ -1,16 +1,16 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
 /**
  * Processes the pending event queue. Handlers are attached to the internal
- * action `lclub_event_processed`; the processor itself knows nothing about rules.
+ * action `ariunetclub_event_processed`; the processor itself knows nothing about rules.
  */
 class Processor {
-	const LOCK_TRANSIENT = 'lclub_process_lock';
+	const LOCK_TRANSIENT = 'ariunetclub_process_lock';
 	const LOCK_SECONDS   = 45;
 	const MAX_ATTEMPTS   = 3;
 
@@ -80,6 +80,6 @@ class Processor {
 			( $this->dispatcher )( $event );
 			return;
 		}
-		do_action( 'lclub_event_processed', $event ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- lclub_ prefixed internal hook.
+		do_action( 'ariunetclub_event_processed', $event ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- ariunetclub_ prefixed internal hook.
 	}
 }

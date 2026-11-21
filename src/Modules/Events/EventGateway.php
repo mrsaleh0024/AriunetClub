@@ -1,12 +1,12 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Events;
+namespace AriunetClub\Modules\Events;
 
 /**
- * Storage contract for the lclub_events queue. SQL lives only in the repository.
+ * Storage contract for the ariunetclub_events queue. SQL lives only in the repository.
  */
 interface EventGateway {
 	/**

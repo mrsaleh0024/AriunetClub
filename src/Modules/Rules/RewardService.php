@@ -1,14 +1,14 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Rules;
+namespace AriunetClub\Modules\Rules;
 
-use LClub\Core\Money;
-use LClub\Modules\Events\SkipEventException;
-use LClub\Modules\Ledger\LedgerGateway;
-use LClub\Modules\Ledger\LedgerService;
+use AriunetClub\Core\Money;
+use AriunetClub\Modules\Events\SkipEventException;
+use AriunetClub\Modules\Ledger\LedgerGateway;
+use AriunetClub\Modules\Ledger\LedgerService;
 
 /**
  * Handles processed club events: applies earning rules and compensating reversals.
@@ -65,7 +65,7 @@ class RewardService {
 	}
 
 		/**
-		 * Entry point wired to the internal action `lclub_event_processed`.
+		 * Entry point wired to the internal action `ariunetclub_event_processed`.
 		 *
 		 * @param array<string,mixed> $event Event row.
 		 * @return array<string,mixed> Summary for logging.
@@ -150,7 +150,7 @@ class RewardService {
 			if ( $this->limits->exhausted( $rule, $context->user_id, time() ) ) {
 					continue;
 			}
-				$amount = (float) apply_filters( 'lclub_rule_reward_amount', $amount, $rule, $context );
+				$amount = (float) apply_filters( 'ariunetclub_rule_reward_amount', $amount, $rule, $context );
 				$amount = Money::round( $amount );
 			if ( $amount <= 0.0 ) {
 					continue;
