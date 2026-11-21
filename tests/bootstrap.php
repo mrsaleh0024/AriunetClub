@@ -51,6 +51,27 @@ if ( ! function_exists( 'delete_transient' ) ) {
         function delete_transient( $transient ) {
                 return true; }
 }
+if ( ! function_exists( 'as_enqueue_async_action' ) ) {
+        $GLOBALS['ariunetclub_test_async_actions'] = array();
+        function as_enqueue_async_action( $hook, $args = array(), $group = '', $unique = false ) {
+                if ( ! isset( $GLOBALS['ariunetclub_test_async_actions'] ) || ! is_array( $GLOBALS['ariunetclub_test_async_actions'] ) ) {
+                        $GLOBALS['ariunetclub_test_async_actions'] = array();
+                }
+                foreach ( $GLOBALS['ariunetclub_test_async_actions'] as $call ) {
+                        $same = isset( $call['hook'], $call['args'], $call['group'], $call['unique'] ) && $call['hook'] === $hook && $call['args'] === $args && $call['group'] === $group;
+                        if ( $same && $unique && $call['unique'] ) {
+                                return 0; // Action Scheduler refuses a duplicate unique action.
+                        }
+                }
+                $GLOBALS['ariunetclub_test_async_actions'][] = array(
+                        'hook'   => $hook,
+                        'args'   => $args,
+                        'group'  => $group,
+                        'unique' => $unique,
+                );
+                return count( $GLOBALS['ariunetclub_test_async_actions'] );
+        }
+}
 if ( ! function_exists( 'wp_parse_args' ) ) {
         function wp_parse_args( $args, $defaults = array() ) {
                 if ( is_object( $args ) ) {

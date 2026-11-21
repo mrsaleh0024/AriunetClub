@@ -77,10 +77,13 @@ class EventBus {
 
 	/**
 	 * Queues one processing tick. Action Scheduler is primary, WP-Cron is the fallback.
+	 * The kick is enqueued with the unique flag (Action Scheduler 3.4+), so a burst of
+	 * events cannot flood the actions table with duplicate ticks; older versions simply
+	 * ignore the extra argument and behave as before.
 	 */
 	private function schedule_processing(): void {
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
-			as_enqueue_async_action( 'ariunetclub_process_events', array(), 'ariunetclub' );
+			as_enqueue_async_action( 'ariunetclub_process_events', array(), 'ariunetclub', true );
 			return;
 		}
 		if ( ! wp_next_scheduled( 'ariunetclub_process_events' ) ) {

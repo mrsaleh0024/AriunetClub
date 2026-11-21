@@ -318,7 +318,8 @@ function is_checkout_pay_page(): bool {
 function wc_add_notice( string $message, string $notice_type = 'notice', array $args = array() ): void {
 }
 
-function as_enqueue_async_action( string $hook, array $args = array(), string $group = '' ): int {
+// Action Scheduler 3.4+ accepts a $unique flag; older versions ignore the extra argument.
+function as_enqueue_async_action( string $hook, array $args = array(), string $group = '', bool $unique = false ): int {
         return 0;
 }
 

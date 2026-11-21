@@ -37,4 +37,21 @@ class EventBusTest extends TestCase {
 		$this->assertTrue( $result['recorded'] );
 		$this->assertSame( 0, (int) $result['event']['user_id'] );
 	}
+
+	public function test_a_burst_of_events_enqueues_a_single_unique_queue_kick(): void {
+		$gateway = new InMemoryEventGateway();
+		$GLOBALS['ariunetclub_test_async_actions'] = array();
+		$bus = new EventBus( $gateway, true );
+
+		$bus->record( 'order.status.completed', 7, 'order', 12, 'order:12:status:completed', array() );
+		$bus->record( 'user.registered', 7, 'user', 7, 'user:7:registered', array() );
+		$bus->record( 'order.status.completed', 8, 'order', 13, 'order:13:status:completed', array() );
+
+		$kicks = $GLOBALS['ariunetclub_test_async_actions'];
+		$this->assertCount( 1, $kicks );
+		$this->assertSame( 'ariunetclub_process_events', $kicks[0]['hook'] );
+		$this->assertSame( 'ariunetclub', $kicks[0]['group'] );
+		$this->assertTrue( $kicks[0]['unique'] );
+		$GLOBALS['ariunetclub_test_async_actions'] = array();
+	}
 }
