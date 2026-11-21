@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AriunetClub
  * Description: باشگاه مشتریان ووکامرس با معماری رویدادمحور و دفتر کل.
- * Version: 0.4.1
+ * Version: 0.4.2
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@
  * @package AriunetClub
  */
 defined( 'ABSPATH' ) || exit;
-define( 'ARIUNETCLUB_VERSION', '0.4.1' );
+define( 'ARIUNETCLUB_VERSION', '0.4.2' );
 define( 'ARIUNETCLUB_FILE', __FILE__ );
 define( 'ARIUNETCLUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ARIUNETCLUB_URL', plugin_dir_url( __FILE__ ) );

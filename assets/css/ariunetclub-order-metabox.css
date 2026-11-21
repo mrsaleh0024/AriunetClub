@@ -1,34 +1,61 @@
-/* AriunetClub phase 3: read-only wallet metabox on the order edit screen. Tokens
-   match the admin palette; scoped under .ariunetclub-scope, logical properties only. */
+/* AriunetClub phase 3: read-only wallet metabox on the order edit screen.
+   Unified light palette via :root tokens (duplicated per stylesheet so each
+   file is standalone); scoped under .ariunetclub-scope, logical properties only. */
+:root {
+        /* Light mode only - no dark variant. Raw colors live here and only here. */
+        --ariunetclub-bg: #F4F7FF;
+        --ariunetclub-surface: rgba(255, 255, 255, 0.72);
+        --ariunetclub-surface-border: rgba(7, 26, 61, 0.10);
+        --ariunetclub-text: #071A3D;
+        --ariunetclub-text-muted: rgba(7, 26, 61, 0.68);
+        --ariunetclub-primary: #2563EB;
+        --ariunetclub-primary-hover: #1D4ED8;
+        --ariunetclub-on-primary: #FFFFFF;
+        --ariunetclub-accent: #60A5FA;
+        --ariunetclub-warning: #FAB561;
+        /* Success adjusted from #16A34A to #15803D for 4.5:1 text contrast;
+           danger #DC2626 validated as proposed. See ariunetclub-account.css. */
+        --ariunetclub-success: #15803D;
+        --ariunetclub-danger: #DC2626;
+        /* Derived tints: backgrounds, borders and focus halos only. */
+        --ariunetclub-surface-solid: #FFFFFF;
+        --ariunetclub-backdrop: rgba(7, 26, 61, 0.46);
+        --ariunetclub-primary-soft: rgba(37, 99, 235, 0.10);
+        --ariunetclub-accent-soft: rgba(96, 165, 250, 0.24);
+        --ariunetclub-success-soft: rgba(21, 128, 61, 0.12);
+        --ariunetclub-danger-soft: rgba(220, 38, 38, 0.10);
+        --ariunetclub-warning-soft: rgba(250, 181, 97, 0.20);
+        --ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px; --ariunetclub-radius-lg: 28px;
+        --ariunetclub-blur: 12px;
+        --ariunetclub-shadow: 0 20px 60px rgba(7, 26, 61, 0.10);
+}
 .ariunetclub-scope.ariunetclub-metabox {
-	--ariunetclub-deep: #19333a; --ariunetclub-teal: #28515a; --ariunetclub-muted: rgba(25,51,58,.72);
-	--ariunetclub-border: rgba(40,81,90,.16); --ariunetclub-text: #101b20;
-	--ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px;
-	box-sizing: border-box;
-	color: var(--ariunetclub-text);
-	font-family: inherit;
+        box-sizing: border-box;
+        color: var(--ariunetclub-text);
+        font-family: inherit;
 }
 .ariunetclub-metabox *, .ariunetclub-metabox *::before, .ariunetclub-metabox *::after { box-sizing: inherit; }
 .ariunetclub-metabox dl { display: grid; gap: 10px; margin: 0 0 12px; }
 .ariunetclub-metabox dl div {
-	border-block-end: 1px solid var(--ariunetclub-border);
-	display: flex;
-	gap: 8px;
-	justify-content: space-between;
-	padding-block-end: 10px;
+        border-block-end: 1px solid var(--ariunetclub-surface-border);
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        padding-block-end: 10px;
 }
 .ariunetclub-metabox dl div:last-child { border-block-end: 0; padding-block-end: 0; }
-.ariunetclub-metabox dt { color: var(--ariunetclub-muted); font-size: 12px; }
-.ariunetclub-metabox dd { font-size: 13px; font-weight: 700; margin: 0; white-space: nowrap; }
+.ariunetclub-metabox dt { color: var(--ariunetclub-text-muted); font-size: 12px; }
+.ariunetclub-metabox dd { color: var(--ariunetclub-text); font-size: 13px; font-weight: 700; margin: 0; white-space: nowrap; }
 .ariunetclub-metabox__link {
-	border: 1px solid var(--ariunetclub-border);
-	border-radius: var(--ariunetclub-radius-sm);
-	color: var(--ariunetclub-teal);
-	display: inline-flex;
-	font-size: 12px;
-	font-weight: 700;
-	min-block-size: 34px;
-	padding-inline: 12px;
-	text-decoration: none;
+        border: 1px solid var(--ariunetclub-surface-border);
+        border-radius: var(--ariunetclub-radius-sm);
+        color: var(--ariunetclub-primary);
+        display: inline-flex;
+        font-size: 12px;
+        font-weight: 700;
+        min-block-size: 34px;
+        padding-inline: 12px;
+        text-decoration: none;
 }
-.ariunetclub-metabox__link:hover, .ariunetclub-metabox__link:focus-visible { border-color: var(--ariunetclub-teal); outline: 0; }
+.ariunetclub-metabox__link:hover { border-color: var(--ariunetclub-primary); }
+.ariunetclub-metabox__link:focus-visible { border-color: var(--ariunetclub-primary); outline: 2px solid var(--ariunetclub-accent); outline-offset: 2px; }

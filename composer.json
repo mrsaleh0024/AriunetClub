@@ -29,6 +29,7 @@
     "test": "@php vendor/bin/phpunit",
     "test:wallet": "@php tools/wallet-functional-tests.php",
     "lint": "phpcs",
+    "lint:css": "npm run --silent lint:css",
     "stan": "@php -d memory_limit=512M vendor/bin/phpstan analyse",
     "psalm": "psalm --taint-analysis",
     "qa": "@php tools/qa.php",

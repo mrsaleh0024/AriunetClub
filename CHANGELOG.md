@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.4.2 — پالت رنگی واحد و روشن (فقط ظاهر، بدون تغییر منطق PHP یا دیتابیس)
+
+### پالت واحد روی `:root`
+- هر چهار استایل‌شیت (`ariunetclub-admin.css`، `ariunetclub-account.css`، `ariunetclub-checkout.css`، `ariunetclub-order-metabox.css`) از یک پالت واحد استفاده می‌کنند که فقط روی `:root` و با پیشوند `--ariunetclub-` تعریف شده است (بلوک توکن عمداً در هر فایل تکرار می‌شود تا هر استایل‌شیت مستقل بارگذاری شود).
+- توکن‌های الزامی: `--ariunetclub-bg: #F4F7FF`، `--ariunetclub-surface: rgba(255,255,255,0.72)`، `--ariunetclub-surface-border: rgba(7,26,61,0.10)`، `--ariunetclub-text: #071A3D`، `--ariunetclub-text-muted: rgba(7,26,61,0.68)`، `--ariunetclub-primary: #2563EB`، `--ariunetclub-primary-hover: #1D4ED8`، `--ariunetclub-on-primary: #FFFFFF`، `--ariunetclub-accent: #60A5FA`، `--ariunetclub-warning: #FAB561`، `--ariunetclub-success`، `--ariunetclub-danger`. هیچ رنگ خام HEX/rgb بیرون از `:root` باقی نمانده است.
+- فقط حالت روشن؛ حالت تیره وجود ندارد. هیچ گرادیانی وجود ندارد. گلس‌مورفیزم فقط با blur ملایم (`12px`) روی سطح‌ها.
+- توکن‌های مشتق (فقط پس‌زمینه/حاشیه/هالهٔ فوکوس): `--ariunetclub-surface-solid` (سطح کاملاً مات برای حالت‌های کاهش شفافیت)، `--ariunetclub-backdrop`، و تینت‌های `-soft` برای primary/accent/success/danger/warning.
+
+### کنتراست و دسترس‌پذیری
+- accent (`#60A5FA`) و warning (`#FAB561`) هرگز رنگ متن نیستند (کنتراست روی سطح: ۲٫۵۰:۱ و ۱٫۷۴:۱)؛ فقط پس‌زمینه، حاشیه و حلقهٔ فوکوس. متن روی آن‌ها همیشه `var(--ariunetclub-text)` (۶٫۷۵:۱ و ۹٫۶۸:۱).
+- دکمهٔ اصلی: پس‌زمینهٔ `primary`، متن `on-primary` (۵٫۱۷:۱)، hover با `primary-hover` (۶٫۷۰:۱)؛ حلقهٔ فوکوس `accent` با ضخامت ۲px در همهٔ اسکوپ‌ها.
+- چیپ‌های وضعیت (success/danger/warning): تینت + حاشیهٔ رنگی + متن `--ariunetclub-text`، چون متنِ رنگ وضعیت روی تینتِ خودش به ۴٫۵:۱ نمی‌رسد؛ رنگ‌های وضعیت به‌عنوان متن فقط روی سطح روشن (مبالغ، خطاهای رویداد، پاداش قوانین).
+- `success` از `#16A34A` به `#15803D` تغییر کرد: به‌عنوان متن روی سطح فقط ۳٫۲۴:۱ می‌داد (WCAG AA: ۴٫۵:۱)؛ `#15803D` به ۴٫۹۳:۱ می‌رسد. `danger` پیشنهادی `#DC2626` تأیید شد (۴٫۷۵:۱) و تغییر نکرد.
+- رفتار `prefers-reduced-transparency` و `forced-colors` حفظ شد و `prefers-contrast: more` هم اضافه شد: سطح کاملاً مات (`surface-solid`)، حذف بلور و اشکال تزئینی، ورودی‌ها و کارت دیالوگ هم مات.
+
+### گیت استایل (stylelint سفارشی)
+- پلاگین stylelint اختصاصی در `tools/stylelint/plugin.cjs` با چهار قانون: ممنوعیت گرادیان، ممنوعیت رنگ خام بیرون از `:root`، ممنوعیت accent/warning به‌عنوان رنگ متن، و ممنوعیت تعریف توکن‌های `--ariunetclub-*` خارج از `:root`.
+- اجرا با `npm run lint:css` و به‌صورت خودکار در `composer qa` (از طریق `tools/qa.php`).
+
 ## 0.4.1 — شاخهٔ phase4-fixes: بازبینی عمیق و رفع همهٔ مشکلات فاز ۰ تا ۴
 
 ### امنیت و یکپارچگی پول (منتقل از شاخهٔ fix/critical-ledger-identity-integrity و تطبیق‌داده‌شده)

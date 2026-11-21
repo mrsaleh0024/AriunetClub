@@ -3,7 +3,7 @@ Contributors: ariunetclub
 Tags: woocommerce, customer-club, cashback, wallet, loyalty
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.4.1
+Stable tag: 0.4.2
 License: GPLv2 or later
 
 باشگاه مشتریان ووکامرس: کش‌بک رویدادمحور، کیف پول با رزرو اتمیک و تب «باشگاه» در حساب کاربری.
@@ -27,6 +27,13 @@ AriunetClub یک باشگاه مشتریان کامل برای ووکامرس ا
 3. تب «باشگاه» به‌صورت خودکار به «حساب من» اضافه می‌شود.
 
 == Changelog ==
+
+= 0.4.2 =
+
+* پالت رنگی واحد و روشن در هر چهار استایل‌شیت (ادمین، حساب کاربری، چک‌اوت، متاباکس سفارش): توکن‌ها فقط روی `:root` با پیشوند `--ariunetclub-`، بدون گرادیان، گلس با blur ملایم، دکمهٔ اصلی با primary/on-primary و حلقهٔ فوکوس accent (حداقل ۲px)؛ فقط تغییر ظاهر بدون هیچ تغییر منطق PHP یا دیتابیس.
+* کنتراست: رنگ‌های accent (#60A5FA) و warning (#FAB561) هرگز رنگ متن نیستند (۲٫۵۰:۱ و ۱٫۷۴:۱)؛ متن روی آن‌ها همیشه `--ariunetclub-text`. success از #16A34A به #15803D تغییر کرد تا به‌عنوان متن به ۴٫۵:۱ برسد (#16A34A فقط ۳٫۲۴:۱ بود)؛ danger #DC2626 همان‌طور که پیشنهاد شد تأیید شد (۴٫۷۵:۱).
+* حالت `prefers-contrast: more` در کنار `prefers-reduced-transparency` و `forced-colors`: سطح کاملاً مات و حذف بلور/اشکال تزئینی.
+* گیت استایل سفارشی (stylelint) با چهار قانون اختصاصی (ممنوعیت گرادیان، رنگ خام بیرون از `:root`، accent/warning به‌عنوان رنگ متن، تعریف توکن خارج از `:root`) که در `composer qa` اجرا می‌شود.
 
 = 0.4.1 =
 

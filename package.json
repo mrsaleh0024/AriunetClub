@@ -1,0 +1,11 @@
+{
+  "name": "ariunetclub-dev-tools",
+  "private": true,
+  "description": "Dev toolchain for the AriunetClub plugin stylesheets (custom stylelint gate).",
+  "scripts": {
+    "lint:css": "stylelint \"assets/css/*.css\""
+  },
+  "devDependencies": {
+    "stylelint": "^16.19.1"
+  }
+}

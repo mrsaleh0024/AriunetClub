@@ -10,6 +10,7 @@ $commands = $security
 	? array( $php . ' vendor/bin/psalm --taint-analysis' )
 	: array(
 		$php . ' vendor/bin/phpcs',
+		'npm run --silent lint:css',
 		$php . ' -d memory_limit=512M vendor/bin/phpstan analyse',
 		$php . ' vendor/bin/phpunit',
 		$php . ' tools/wallet-functional-tests.php',

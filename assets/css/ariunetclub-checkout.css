@@ -1,76 +1,96 @@
-/* AriunetClub phase 3: wallet switch at checkout. Light, low-chroma glass matching
-   the admin tokens; scoped under .ariunetclub-scope only, logical properties only. */
+/* AriunetClub phase 3: wallet switch at checkout. Unified light palette via
+   :root tokens (duplicated per stylesheet so each file is standalone);
+   scoped under .ariunetclub-scope only, logical properties only, no gradients. */
+:root {
+        /* Light mode only - no dark variant. Raw colors live here and only here. */
+        --ariunetclub-bg: #F4F7FF;
+        --ariunetclub-surface: rgba(255, 255, 255, 0.72);
+        --ariunetclub-surface-border: rgba(7, 26, 61, 0.10);
+        --ariunetclub-text: #071A3D;
+        --ariunetclub-text-muted: rgba(7, 26, 61, 0.68);
+        --ariunetclub-primary: #2563EB;
+        --ariunetclub-primary-hover: #1D4ED8;
+        --ariunetclub-on-primary: #FFFFFF;
+        --ariunetclub-accent: #60A5FA;
+        --ariunetclub-warning: #FAB561;
+        /* Success adjusted from #16A34A to #15803D for 4.5:1 text contrast;
+           danger #DC2626 validated as proposed. See ariunetclub-account.css. */
+        --ariunetclub-success: #15803D;
+        --ariunetclub-danger: #DC2626;
+        /* Derived tints: backgrounds, borders and focus halos only. */
+        --ariunetclub-surface-solid: #FFFFFF;
+        --ariunetclub-backdrop: rgba(7, 26, 61, 0.46);
+        --ariunetclub-primary-soft: rgba(37, 99, 235, 0.10);
+        --ariunetclub-accent-soft: rgba(96, 165, 250, 0.24);
+        --ariunetclub-success-soft: rgba(21, 128, 61, 0.12);
+        --ariunetclub-danger-soft: rgba(220, 38, 38, 0.10);
+        --ariunetclub-warning-soft: rgba(250, 181, 97, 0.20);
+        --ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px; --ariunetclub-radius-lg: 28px;
+        --ariunetclub-blur: 12px;
+        --ariunetclub-shadow: 0 20px 60px rgba(7, 26, 61, 0.10);
+}
 .ariunetclub-scope.ariunetclub-wallet-toggle {
-	--ariunetclub-ink: #101b20; --ariunetclub-deep: #19333a; --ariunetclub-teal: #28515a;
-	--ariunetclub-accent: #47777b; --ariunetclub-mist: #91aaa0; --ariunetclub-white: #dce2d5;
-	--ariunetclub-surface: rgba(255,255,255,.58);
-	--ariunetclub-border: rgba(40,81,90,.16); --ariunetclub-text: #101b20;
-	--ariunetclub-muted: rgba(25,51,58,.72); --ariunetclub-focus: #47777b;
-	--ariunetclub-input-focus: rgba(255,255,255,.96);
-	--ariunetclub-focus-halo: rgba(71,119,123,.17);
-	--ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px; --ariunetclub-radius-lg: 28px;
-	--ariunetclub-blur: 18px; --ariunetclub-shadow: 0 20px 60px rgba(25,51,58,.12);
-	box-sizing: border-box;
-	color: var(--ariunetclub-text);
-	font-family: Vazirmatn, sans-serif;
-	margin-block: 8px 18px;
+        box-sizing: border-box;
+        color: var(--ariunetclub-text);
+        font-family: Vazirmatn, sans-serif;
+        margin-block: 8px 18px;
 }
 .ariunetclub-wallet-toggle *, .ariunetclub-wallet-toggle *::before, .ariunetclub-wallet-toggle *::after { box-sizing: inherit; }
 .ariunetclub-wallet-toggle__panel {
-	backdrop-filter: blur(var(--ariunetclub-blur)); -webkit-backdrop-filter: blur(var(--ariunetclub-blur));
-	background: var(--ariunetclub-surface);
-	border: 1px solid var(--ariunetclub-border);
-	border-radius: var(--ariunetclub-radius-md);
-	box-shadow: var(--ariunetclub-shadow);
-	padding: clamp(16px, 3vw, 24px);
+        backdrop-filter: blur(var(--ariunetclub-blur)); -webkit-backdrop-filter: blur(var(--ariunetclub-blur));
+        background: var(--ariunetclub-surface);
+        border: 1px solid var(--ariunetclub-surface-border);
+        border-radius: var(--ariunetclub-radius-md);
+        box-shadow: var(--ariunetclub-shadow);
+        padding: clamp(16px, 3vw, 24px);
 }
 .ariunetclub-wallet-toggle__label {
-	align-items: center;
-	color: var(--ariunetclub-deep);
-	cursor: pointer;
-	display: flex;
-	font-size: 15px;
-	font-weight: 700;
-	gap: 10px;
-	min-block-size: 44px;
+        align-items: center;
+        color: var(--ariunetclub-text);
+        cursor: pointer;
+        display: flex;
+        font-size: 15px;
+        font-weight: 700;
+        gap: 10px;
+        min-block-size: 44px;
 }
 .ariunetclub-wallet-toggle__label input[type='checkbox'] {
-	accent-color: var(--ariunetclub-mist);
-	block-size: 18px;
-	flex: 0 0 auto;
-	inline-size: 18px;
-	margin: 0;
+        accent-color: var(--ariunetclub-primary);
+        block-size: 18px;
+        flex: 0 0 auto;
+        inline-size: 18px;
+        margin: 0;
 }
 .ariunetclub-wallet-toggle__meta {
-	color: var(--ariunetclub-muted);
-	display: flex;
-	flex-wrap: wrap;
-	font-size: 13px;
-	gap: 6px 18px;
-	line-height: 1.9;
-	margin-block: 12px 0 0;
+        color: var(--ariunetclub-text-muted);
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 13px;
+        gap: 6px 18px;
+        line-height: 1.9;
+        margin-block: 12px 0 0;
 }
-.ariunetclub-wallet-toggle__meta strong { color: var(--ariunetclub-ink); font-weight: 700; }
+.ariunetclub-wallet-toggle__meta strong { color: var(--ariunetclub-text); font-weight: 700; }
 .ariunetclub-wallet-toggle__note {
-	border-radius: var(--ariunetclub-radius-sm);
-	color: var(--ariunetclub-deep);
-	font-size: 13px;
-	line-height: 1.9;
-	margin-block: 10px 0 0;
-	min-block-size: 0;
+        border-radius: var(--ariunetclub-radius-sm);
+        color: var(--ariunetclub-text);
+        font-size: 13px;
+        line-height: 1.9;
+        margin-block: 10px 0 0;
+        min-block-size: 0;
 }
 .ariunetclub-wallet-toggle__note--error {
-	background: var(--ariunetclub-input-focus);
-	border: 1px solid var(--ariunetclub-border);
-	padding: 10px 13px;
+        background: var(--ariunetclub-danger-soft);
+        border: 1px solid var(--ariunetclub-danger);
+        padding: 10px 13px;
 }
-.ariunetclub-scope.ariunetclub-wallet-toggle :focus-visible { outline: 2px solid var(--ariunetclub-focus); outline-offset: 3px; }
+.ariunetclub-scope.ariunetclub-wallet-toggle :focus-visible { outline: 2px solid var(--ariunetclub-accent); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
-	.ariunetclub-wallet-toggle * { scroll-behavior: auto; transition-duration: .01ms !important; }
+        .ariunetclub-wallet-toggle * { scroll-behavior: auto; transition-duration: .01ms !important; }
 }
-@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
-	.ariunetclub-wallet-toggle__panel {
-		backdrop-filter: none; -webkit-backdrop-filter: none;
-		background: var(--ariunetclub-white);
-	}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
+        .ariunetclub-wallet-toggle__panel {
+                backdrop-filter: none; -webkit-backdrop-filter: none;
+                background: var(--ariunetclub-surface-solid);
+        }
 }

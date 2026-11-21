@@ -1,18 +1,23 @@
 # AriunetClub QA Report
 
-Generated: 2026-11-21T11:52:26+00:00
+Generated: 2026-11-21T18:29:54+00:00
 
 ## Commands
 
-### "/home/z/php/php" vendor/bin/phpcs
+### "/tmp/phpbin/php" vendor/bin/phpcs
 ```text
 
 ```
 
-### "/home/z/php/php" -d memory_limit=512M vendor/bin/phpstan analyse
+### npm run --silent lint:css
 ```text
 
-Warning: PHP Startup: Unable to load dynamic library '/home/z/my-project/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.2.so' (tried: /home/z/my-project/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.2.so (Dynamic loading not supported), /lib/php/extensions/no-debug-non-zts-20220829//home/z/my-project/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.2.so.so (Dynamic loading not supported)) in Unknown on line 0
+```
+
+### "/tmp/phpbin/php" -d memory_limit=512M vendor/bin/phpstan analyse
+```text
+
+Warning: PHP Startup: Unable to load dynamic library '/home/z/my-project/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.4.so' (tried: /home/z/my-project/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.4.so (Dynamic loading not supported), /lib/php/extensions/no-debug-non-zts-20240924//home/z/my-project/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.4.so.so (Dynamic loading not supported)) in Unknown on line 0
 Note: Using configuration file /home/z/my-project/AriunetClub/phpstan.neon.
   0/66 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%[1G[2K 66/66 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 
@@ -21,7 +26,7 @@ Note: Using configuration file /home/z/my-project/AriunetClub/phpstan.neon.
 
 ```
 
-### "/home/z/php/php" vendor/bin/phpunit
+### "/tmp/phpbin/php" vendor/bin/phpunit
 ```text
 PHPUnit 9.6.39 by Sebastian Bergmann and contributors.
 
@@ -33,7 +38,7 @@ Time: 00:00.010, Memory: 6.00 MB
 OK (71 tests, 205 assertions)
 ```
 
-### "/home/z/php/php" tools/wallet-functional-tests.php
+### "/tmp/phpbin/php" tools/wallet-functional-tests.php
 ```text
 === 1) SpendCalculator math ===
   PASS  available below cap wins
@@ -115,7 +120,7 @@ OK (71 tests, 205 assertions)
 ================ RESULT: 64 passed, 0 failed ================
 ```
 
-### "/home/z/php/php" tools/account-functional-tests.php
+### "/tmp/phpbin/php" tools/account-functional-tests.php
 ```text
 === 1) Hook wiring and rewrite registration ===
   PASS  rewrite endpoint hook registered on init
@@ -179,7 +184,7 @@ OK (71 tests, 205 assertions)
 ================ RESULT: 47 passed, 0 failed ================
 ```
 
-### "/home/z/php/php" tools/rebrand-functional-tests.php
+### "/tmp/phpbin/php" tools/rebrand-functional-tests.php
 ```text
 === 1) Fresh install: no legacy, clean create ===
   PASS  no RENAME issued on fresh install
