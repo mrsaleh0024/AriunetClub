@@ -8,8 +8,6 @@ class Plugin {
 	const DB_VERSION = '1.3.0';
 	/** @var self|null */
 	private static $instance;
-	/** @var Logger */
-	private $logger;
 
 	public static function activate(): void {
 		if ( is_multisite() && is_network_admin() ) {
@@ -45,14 +43,13 @@ class Plugin {
 			return;
 		}
 		self::$instance = $this;
-		$this->logger   = new Logger();
 		$settings       = new Settings();
 		$settings->register();
 		( new Migrator() )->maybe_migrate();
 		$this->load_textdomain();
 		$this->register_assets();
 		$registry = new ModuleRegistry();
-		$registry->register( new CoreModule( $this->logger ) );
+		$registry->register( new CoreModule() );
 		$registry->register( new \AriunetClub\Modules\Identity\IdentityModule() );
 		$registry->register( new \AriunetClub\Modules\Ledger\LedgerModule() );
 		$registry->register( new \AriunetClub\Modules\Events\EventsModule() );
@@ -60,10 +57,6 @@ class Plugin {
 		$registry->register( new \AriunetClub\Modules\Wallet\WalletModule() );
 		$registry->register( new \AriunetClub\Modules\Account\AccountModule() );
 		$registry->boot( $settings->enabled_modules() );
-	}
-
-	public function logger(): Logger {
-		return $this->logger;
 	}
 
 	private function load_textdomain(): void {
