@@ -144,10 +144,6 @@ CREATE TABLE {$rules} (
 				),
 				'object'
 			);
-		if ( ! is_array( $actions ) ) {
-				return;
-		}
-
 		foreach ( $actions as $action ) {
 				$args = is_object( $action ) && method_exists( $action, 'get_args' ) ? $action->get_args() : array();
 				$args = is_array( $args ) ? array_values( array_map( 'absint', $args ) ) : array();

@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         define( 'ABSPATH', __DIR__ . '/wp-stubs/wordpress/' );
 }
 if ( ! defined( 'ARIUNETCLUB_VERSION' ) ) {
-        define( 'ARIUNETCLUB_VERSION', '0.3.0' );
+        define( 'ARIUNETCLUB_VERSION', '0.4.0' );
 }
 if ( ! defined( 'ARIUNETCLUB_FILE' ) ) {
         define( 'ARIUNETCLUB_FILE', dirname( __DIR__ ) . '/ariunetclub.php' );
@@ -341,4 +341,56 @@ function as_unschedule_action( string $hook, array $args = array(), string $grou
 }
 
 function as_unschedule_all_actions( string $hook, array $args = array(), string $group = '' ): void {
+}
+
+function is_account_page(): bool {
+        return false;
+}
+
+function is_wc_endpoint_url( string $endpoint = '' ): bool {
+        return false;
+}
+
+function wc_get_endpoint_url( string $endpoint, $value = '', $permalink = '' ): string {
+        return '';
+}
+
+function wc_get_page_permalink( string $page ): string {
+        return '';
+}
+
+function get_woocommerce_currency_symbol( string $currency = '' ): string {
+        return '';
+}
+
+/**
+ * @param array<string,mixed> $args Query args.
+ * @param string              $return OBJECT or ids.
+ * @return array<int,mixed>
+ */
+function as_get_scheduled_actions( array $args = array(), string $return = 'OBJECT' ): array {
+        return array();
+}
+
+// Rewrite masks (wp-includes/rewrite.php); not shipped as constants in the stubs.
+if ( ! defined( 'EP_ROOT' ) ) {
+        define( 'EP_ROOT', 8 );
+}
+if ( ! defined( 'EP_PAGES' ) ) {
+        define( 'EP_PAGES', 512 );
+}
+
+// wpdb output-mode constants (wp-includes/wp-db.php). WordPress defines them at
+// runtime with define(), so function/class stubs never see them.
+if ( ! defined( 'OBJECT' ) ) {
+        define( 'OBJECT', 'OBJECT' );
+}
+if ( ! defined( 'OBJECT_K' ) ) {
+        define( 'OBJECT_K', 'OBJECT_K' );
+}
+if ( ! defined( 'ARRAY_A' ) ) {
+        define( 'ARRAY_A', 'ARRAY_A' );
+}
+if ( ! defined( 'ARRAY_N' ) ) {
+        define( 'ARRAY_N', 'ARRAY_N' );
 }

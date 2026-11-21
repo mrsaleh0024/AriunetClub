@@ -32,12 +32,14 @@
     "stan": "@php -d memory_limit=512M vendor/bin/phpstan analyse",
     "psalm": "psalm --taint-analysis",
     "qa": "@php tools/qa.php",
-    "qa:security": "@php tools/qa.php --security"
+    "qa:security": "@php tools/qa.php --security",
+    "test:account": "@php tools/account-functional-tests.php",
+    "test:rebrand": "@php tools/rebrand-functional-tests.php"
   },
   "config": {
-	"platform": {
-	  "php": "8.2.0"
-	},
+    "platform": {
+      "php": "8.2.0"
+    },
     "sort-packages": true,
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true

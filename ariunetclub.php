@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AriunetClub
  * Description: باشگاه مشتریان ووکامرس با معماری رویدادمحور و دفتر کل.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@
  * @package AriunetClub
  */
 defined( 'ABSPATH' ) || exit;
-define( 'ARIUNETCLUB_VERSION', '0.3.0' );
+define( 'ARIUNETCLUB_VERSION', '0.4.0' );
 define( 'ARIUNETCLUB_FILE', __FILE__ );
 define( 'ARIUNETCLUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ARIUNETCLUB_URL', plugin_dir_url( __FILE__ ) );
@@ -24,7 +24,7 @@ add_action(
 	'before_woocommerce_init',
 	static function () {
 		if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ARIUNETCLUB_FILE, true );
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ARIUNETCLUB_FILE, true );
 		}
 	}
 );
@@ -32,16 +32,16 @@ add_action(
 	'plugins_loaded',
 	static function () {
 		if ( ! class_exists( 'WooCommerce' ) ) {
-			add_action(
-				'admin_notices',
-				static function () {
-					echo '<div class="notice notice-error"><p>'
-						. esc_html__( 'افزونه AriunetClub برای اجرا به ووکامرس نیاز دارد.', 'ariunetclub' )
-						. '</p></div>';
-				}
-			);
-			return;
+				add_action(
+					'admin_notices',
+					static function () {
+								echo '<div class="notice notice-error"><p>'
+										. esc_html__( 'افزونه AriunetClub برای اجرا به ووکامرس نیاز دارد.', 'ariunetclub' )
+										. '</p></div>';
+					}
+				);
+				return;
 		}
-		( new \AriunetClub\Core\Plugin() )->boot();
+				( new \AriunetClub\Core\Plugin() )->boot();
 	}
 );

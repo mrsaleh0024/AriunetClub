@@ -55,8 +55,28 @@ if ( ! function_exists( 'wp_parse_args' ) ) {
                 return array_merge( (array) $defaults, $args );
         }
 }
+if ( ! function_exists( '__' ) ) {
+        function __( $text, $domain = 'default' ) {
+                return $text; }
+}
 if ( ! function_exists( 'get_option' ) ) {
         function get_option( $option, $default = false ) {
                 return $default; }
+}
+if ( ! function_exists( 'get_user_meta' ) ) {
+        $GLOBALS['ariunetclub_test_user_meta'] = array();
+        function get_user_meta( $user_id, $key, $single = false ) {
+                return isset( $GLOBALS['ariunetclub_test_user_meta'][ (int) $user_id ][ $key ] ) ? $GLOBALS['ariunetclub_test_user_meta'][ (int) $user_id ][ $key ] : '';
+        }
+}
+if ( ! function_exists( 'current_time' ) ) {
+        function current_time( $type, $gmt = false ) {
+                return $gmt ? gmdate( 'Y-m-d H:i:s' ) : date( 'Y-m-d H:i:s' ); }
+}
+if ( ! function_exists( 'get_query_var' ) ) {
+        $GLOBALS['ariunetclub_test_query_vars'] = array();
+        function get_query_var( $var, $default = '' ) {
+                return isset( $GLOBALS['ariunetclub_test_query_vars'][ $var ] ) ? $GLOBALS['ariunetclub_test_query_vars'][ $var ] : $default;
+        }
 }
 require_once __DIR__ . '/unit/Fixtures.php';

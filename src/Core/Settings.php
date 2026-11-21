@@ -13,7 +13,7 @@ class Settings {
 	 */
 	public static function defaults(): array {
 		return array(
-			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules', 'wallet' ),
+			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules', 'wallet', 'account' ),
 			'phone_meta'                => 'billing_phone',
 			'delete_data'               => false,
 			'earning_order_status'      => 'completed',
@@ -94,7 +94,7 @@ class Settings {
 			)
 		);
 		return array(
-			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules', 'wallet' ),
+			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules', 'wallet', 'account' ),
 			'phone_meta'                => isset( $input['phone_meta'] ) ? sanitize_key( (string) $input['phone_meta'] ) : 'billing_phone',
 			'delete_data'               => ! empty( $input['delete_data'] ),
 			'earning_order_status'      => in_array( $status, $statuses, true ) ? $status : 'completed',

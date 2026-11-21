@@ -43,12 +43,6 @@ parameters:
 			path: src/Modules/Events/EventRepository.php
 
 		-
-			message: '#^Constant ARRAY_A not found\.$#'
-			identifier: constant.notFound
-			count: 4
-			path: src/Modules/Events/EventRepository.php
-
-		-
 			message: '#^Method AriunetClub\\Modules\\Events\\EventRepository\:\:find_by_key\(\) should return array\<string, mixed\>\|null but returns array\|null\.$#'
 			identifier: return.type
 			count: 1
@@ -76,18 +70,6 @@ parameters:
 			message: '#^Parameter \#1 \$query of method wpdb\:\:query\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 6
-			path: src/Modules/Events/EventRepository.php
-
-		-
-			message: '#^Parameter \#2 \$output of method wpdb\:\:get_results\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/Modules/Events/EventRepository.php
-
-		-
-			message: '#^Parameter \#2 \$output of method wpdb\:\:get_row\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
 			path: src/Modules/Events/EventRepository.php
 
 		-
@@ -253,12 +235,6 @@ parameters:
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
-			message: '#^Constant ARRAY_A not found\.$#'
-			identifier: constant.notFound
-			count: 6
-			path: src/Modules/Ledger/LedgerRepository.php
-
-		-
 			message: '#^Method AriunetClub\\Modules\\Ledger\\LedgerRepository\:\:balance\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -340,18 +316,6 @@ parameters:
 			message: '#^Parameter \#1 \$query of method wpdb\:\:query\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 2
-			path: src/Modules/Ledger/LedgerRepository.php
-
-		-
-			message: '#^Parameter \#2 \$output of method wpdb\:\:get_results\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/Modules/Ledger/LedgerRepository.php
-
-		-
-			message: '#^Parameter \#2 \$output of method wpdb\:\:get_row\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 3
 			path: src/Modules/Ledger/LedgerRepository.php
 
 		-
@@ -541,12 +505,6 @@ parameters:
 			path: src/Modules/Rules/RuleEngine.php
 
 		-
-			message: '#^Constant ARRAY_A not found\.$#'
-			identifier: constant.notFound
-			count: 3
-			path: src/Modules/Rules/RuleRepository.php
-
-		-
 			message: '#^Method AriunetClub\\Modules\\Rules\\RuleRepository\:\:active_for_event\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
 			identifier: return.type
 			count: 1
@@ -567,19 +525,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$query of method wpdb\:\:prepare\(\) expects literal\-string, non\-falsy\-string given\.$#'
 			identifier: argument.type
-			count: 3
-			path: src/Modules/Rules/RuleRepository.php
-
-		-
-			message: '#^Parameter \#2 \$output of method wpdb\:\:get_results\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Modules/Rules/RuleRepository.php
-
-		-
-			message: '#^Parameter \#2 \$output of method wpdb\:\:get_row\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
+			count: 4
 			path: src/Modules/Rules/RuleRepository.php
 
 		-
