@@ -14,10 +14,10 @@ use AriunetClub\Core\Money;
  */
 class OrderMeta {
 
-	const STATE        = '_ariunetclub_wallet_state';
-	const AMOUNT       = '_ariunetclub_wallet_amount';
-	const ORDER_TOTAL  = '_ariunetclub_wallet_order_total';
-	const HELD_AT      = '_ariunetclub_wallet_held_at';
+	const STATE       = '_ariunetclub_wallet_state';
+	const AMOUNT      = '_ariunetclub_wallet_amount';
+	const ORDER_TOTAL = '_ariunetclub_wallet_order_total';
+	const HELD_AT     = '_ariunetclub_wallet_held_at';
 
 	const STATE_HELD     = 'held';
 	const STATE_CAPTURED = 'captured';

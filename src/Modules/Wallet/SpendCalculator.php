@@ -36,12 +36,12 @@ class SpendCalculator {
 	 * @return float Rounded spend amount, zero when the wallet cannot be used.
 	 */
 	public function max_spend( float $available, float $items_base, float $cart_total ): float {
-		$config     = $this->settings->get();
+		$config      = $this->settings->get();
 		$raw_percent = isset( $config['wallet_max_percent'] ) ? $config['wallet_max_percent'] : null;
 		$raw_min     = isset( $config['wallet_min_order'] ) ? $config['wallet_min_order'] : null;
 		$percent     = is_numeric( $raw_percent ) ? (float) $raw_percent : 100.0;
 		$min_order   = is_numeric( $raw_min ) ? (float) $raw_min : 0.0;
-		$coverage   = ! empty( $config['wallet_full_coverage'] );
+		$coverage    = ! empty( $config['wallet_full_coverage'] );
 
 		$available  = max( 0.0, Money::round( $available ) );
 		$items_base = max( 0.0, Money::round( $items_base ) );

@@ -151,9 +151,21 @@ class HoldManager {
 				)
 			);
 			$order->add_order_note( __( 'برگشت خرج کیف پول به کیف پول اضافه شد: ', 'ariunetclub' ) . Money::format( $share ) );
-			$this->logger->info( 'Wallet refund share returned.', array( 'order_id' => $order->get_id(), 'share' => $share ) );
+			$this->logger->info(
+				'Wallet refund share returned.',
+				array(
+					'order_id' => $order->get_id(),
+					'share'    => $share,
+				)
+			);
 		} catch ( \Throwable $error ) {
-			$this->logger->error( 'Wallet refund share failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
+			$this->logger->error(
+				'Wallet refund share failed.',
+				array(
+					'order_id' => $order->get_id(),
+					'error'    => $error->getMessage(),
+				)
+			);
 			$order->add_order_note( __( 'خطا در برگشت خرج کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
@@ -239,9 +251,21 @@ class HoldManager {
 			OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
 			$order->add_order_note( __( 'مصرف کیف پول قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->unschedule( $order->get_id() );
-			$this->logger->info( 'Wallet spend captured.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
+			$this->logger->info(
+				'Wallet spend captured.',
+				array(
+					'order_id' => $order->get_id(),
+					'amount'   => $amount,
+				)
+			);
 		} catch ( \Throwable $error ) {
-			$this->logger->error( 'Wallet capture failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
+			$this->logger->error(
+				'Wallet capture failed.',
+				array(
+					'order_id' => $order->get_id(),
+					'error'    => $error->getMessage(),
+				)
+			);
 			$order->add_order_note( __( 'خطا در قطعی‌سازی رزرو کیف پول؛ لطفاً از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
@@ -281,7 +305,13 @@ class HoldManager {
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
 			$order->add_order_note( __( 'مصرف کیف پول پس از پرداخت مجدد سفارش قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
-			$this->logger->info( 'Wallet re-held and captured after retry payment.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
+			$this->logger->info(
+				'Wallet re-held and captured after retry payment.',
+				array(
+					'order_id' => $order->get_id(),
+					'amount'   => $amount,
+				)
+			);
 		} catch ( InsufficientBalanceException $exception ) {
 			try {
 				$this->ledger->adjust(
@@ -296,13 +326,31 @@ class HoldManager {
 				);
 				OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
 				$order->add_order_note( __( 'موجودی کیف پول کافی نبود؛ مبلغ مصرف به‌صورت بدهی ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
-				$this->logger->error( 'Wallet retry capture created debt.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
+				$this->logger->error(
+					'Wallet retry capture created debt.',
+					array(
+						'order_id' => $order->get_id(),
+						'amount'   => $amount,
+					)
+				);
 			} catch ( \Throwable $error ) {
-				$this->logger->error( 'Wallet retry capture failed entirely.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
+				$this->logger->error(
+					'Wallet retry capture failed entirely.',
+					array(
+						'order_id' => $order->get_id(),
+						'error'    => $error->getMessage(),
+					)
+				);
 				$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 			}
 		} catch ( \Throwable $error ) {
-			$this->logger->error( 'Wallet retry capture failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
+			$this->logger->error(
+				'Wallet retry capture failed.',
+				array(
+					'order_id' => $order->get_id(),
+					'error'    => $error->getMessage(),
+				)
+			);
 			$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
@@ -331,9 +379,21 @@ class HoldManager {
 			OrderMeta::mark( $order, OrderMeta::STATE_RELEASED );
 			$order->add_order_note( __( 'رزرو کیف پول آزاد شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->unschedule( $order->get_id() );
-			$this->logger->info( 'Wallet hold released.', array( 'order_id' => $order->get_id(), 'amount' => $amount ) );
+			$this->logger->info(
+				'Wallet hold released.',
+				array(
+					'order_id' => $order->get_id(),
+					'amount'   => $amount,
+				)
+			);
 		} catch ( \Throwable $error ) {
-			$this->logger->error( 'Wallet release failed.', array( 'order_id' => $order->get_id(), 'error' => $error->getMessage() ) );
+			$this->logger->error(
+				'Wallet release failed.',
+				array(
+					'order_id' => $order->get_id(),
+					'error'    => $error->getMessage(),
+				)
+			);
 			$order->add_order_note( __( 'خطا در آزادسازی رزرو کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
@@ -342,10 +402,10 @@ class HoldManager {
 	 * @return int Expiry window in seconds from the wallet settings.
 	 */
 	private function timeout_seconds(): int {
-		$config = $this->settings->get();
+		$config    = $this->settings->get();
 		$raw_hours = isset( $config['wallet_hold_timeout'] ) ? $config['wallet_hold_timeout'] : null;
 		$hours     = is_numeric( $raw_hours ) ? (int) $raw_hours : 48;
-		$hours  = min( 720, max( 1, $hours ) );
+		$hours     = min( 720, max( 1, $hours ) );
 		return $hours * 3600;
 	}
 

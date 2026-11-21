@@ -71,7 +71,7 @@ class WalletModule implements Module {
 		$ledger_service = isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService
 			? $GLOBALS['ariunetclub_ledger_service']
 			: new LedgerService( new LedgerRepository( $wpdb ) );
-		$settings = new Settings();
+		$settings       = new Settings();
 
 		$gateways[ WalletGateway::GATEWAY_ID ] = new WalletGateway( $ledger_service, new SpendCalculator( $settings ), $settings );
 		return $gateways;
@@ -94,7 +94,7 @@ class WalletModule implements Module {
 
 		$available = 0.0;
 		if ( isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService ) {
-			$balance  = $GLOBALS['ariunetclub_ledger_service']->balance( get_current_user_id() );
+			$balance   = $GLOBALS['ariunetclub_ledger_service']->balance( get_current_user_id() );
 			$available = isset( $balance['available'] ) && is_numeric( $balance['available'] ) ? (float) $balance['available'] : 0.0;
 		}
 
@@ -102,10 +102,10 @@ class WalletModule implements Module {
 			'ariunetclub-checkout',
 			'ariunetclubCheckout',
 			array(
-				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-				'nonce'      => wp_create_nonce( CheckoutController::NONCE ),
-				'available'  => $available,
-				'strings'    => array(
+				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+				'nonce'     => wp_create_nonce( CheckoutController::NONCE ),
+				'available' => $available,
+				'strings'   => array(
 					'error'   => __( 'خطا در به‌روزرسانی کیف پول؛ دوباره تلاش کنید.', 'ariunetclub' ),
 					'blocked' => __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'ariunetclub' ),
 				),

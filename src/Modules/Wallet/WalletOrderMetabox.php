@@ -66,17 +66,17 @@ class WalletOrderMetabox {
 		if ( $post_or_order instanceof \WC_Order ) {
 			$order = $post_or_order;
 		} elseif ( $post_or_order instanceof \WP_Post ) {
-			$found  = function_exists( 'wc_get_order' ) ? wc_get_order( (int) $post_or_order->ID ) : null;
+			$found = function_exists( 'wc_get_order' ) ? wc_get_order( (int) $post_or_order->ID ) : null;
 			$order = $found instanceof \WC_Order ? $found : null;
 		}
 		if ( null === $order || '' === OrderMeta::state( $order ) ) {
 			return;
 		}
 
-		$amount    = OrderMeta::amount( $order );
-		$returned  = $this->returned_for( (int) $order->get_id() );
-		$cashback  = $this->cashback_for( (int) $order->get_id() );
-		$history   = add_query_arg(
+		$amount   = OrderMeta::amount( $order );
+		$returned = $this->returned_for( (int) $order->get_id() );
+		$cashback = $this->cashback_for( (int) $order->get_id() );
+		$history  = add_query_arg(
 			array(
 				'page'    => 'ariunetclub-wallet-history',
 				'user_id' => (int) $order->get_customer_id(),

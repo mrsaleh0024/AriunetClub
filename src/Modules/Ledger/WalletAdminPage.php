@@ -123,8 +123,8 @@ class WalletAdminPage {
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'         => 'ariunetclub-wallet-history',
-					'user_id'      => $user_id,
+					'page'               => 'ariunetclub-wallet-history',
+					'user_id'            => $user_id,
 					'ariunetclub_notice' => 'adjusted',
 				),
 				admin_url( 'admin.php' )

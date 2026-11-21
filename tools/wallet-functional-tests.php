@@ -359,7 +359,7 @@ WC()->cart->shipping = 15000.0;
 WC()->session->set( CheckoutController::SESSION_FLAG, true );
 WC()->session->set( CheckoutController::SESSION_SPEND, 50000.0 );
 $order->set_total( 65000.0 ); // 115000 - 50000 fee
-$checkout->stamp_order( $order, array() ); // real flow: stamps AMOUNT + ORDER_TOTAL
+$checkout->stamp_order( $order ); // real flow: stamps AMOUNT + ORDER_TOTAL
 
 check( 'stamp recorded the spend', 50000.0 === OrderMeta::amount( $order ) );
 check( 'stamp recorded the order total snapshot', 65000.0 === OrderMeta::order_total( $order ) );
@@ -520,7 +520,7 @@ list( $gw, $svc, $holds, $checkout, $calc ) = fresh_world();
 WC()->session->set( CheckoutController::SESSION_FLAG, true );
 WC()->session->set( CheckoutController::SESSION_SPEND, 7000.0 );
 $order = new WC_Order( 130, 2, 0.0 );
-$checkout->stamp_order( $order, array() );
+$checkout->stamp_order( $order );
 check( 'amount meta stamped', 7000.0 === OrderMeta::amount( $order ) );
 check( 'zero-total order stamped as wallet payment', 'ariunetclub_wallet' === $order->get_payment_method() );
 check( 'order total snapshot stored', 0.0 === OrderMeta::order_total( $order ) );
@@ -530,7 +530,7 @@ list( $gw, $svc, $holds, $checkout, $calc ) = fresh_world();
 WC()->session->set( CheckoutController::SESSION_FLAG, true );
 WC()->session->set( CheckoutController::SESSION_SPEND, 9000.0 );
 $order = new WC_Order( 140, 2, 1000.0 ); // zero balance for user 2!
-$checkout->stamp_order( $order, array() ); // stamps AMOUNT=9000 first, like checkout does
+$checkout->stamp_order( $order ); // stamps AMOUNT=9000 first, like checkout does
 $threw = false;
 try {
         do_action( 'woocommerce_checkout_order_processed', 140, array(), $order );

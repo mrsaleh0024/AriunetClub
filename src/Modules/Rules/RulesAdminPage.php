@@ -88,7 +88,7 @@ class RulesAdminPage {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'         => 'ariunetclub-rules',
+						'page'               => 'ariunetclub-rules',
 						'ariunetclub_notice' => $notice,
 					),
 					admin_url( 'admin.php' )
@@ -122,8 +122,8 @@ class RulesAdminPage {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'         => 'ariunetclub-rule-edit',
-						'rule_id'      => $rule_id,
+						'page'               => 'ariunetclub-rule-edit',
+						'rule_id'            => $rule_id,
 						'ariunetclub_notice' => 'saved',
 					),
 					admin_url( 'admin.php' )
@@ -251,7 +251,7 @@ class RulesAdminPage {
 									$notice = sanitize_key( wp_unslash( $_GET['ariunetclub_notice'] ) );
 
 									if ( 'deleted' === $notice ) :
-								?>
+										?>
 										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'کاربر با موفقیت حذف شد.', 'ariunetclub' ); ?></div>
 									<?php elseif ( 'toggled' === $notice ) : ?>
 										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'وضعیت کاربر تغییر کرد.', 'ariunetclub' ); ?></div>

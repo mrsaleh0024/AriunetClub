@@ -65,7 +65,7 @@ class EventsAdminPage {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'page'         => 'ariunetclub-events',
+						'page'               => 'ariunetclub-events',
 						'ariunetclub_notice' => 'requeued',
 					),
 					admin_url( 'admin.php' )

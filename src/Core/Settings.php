@@ -20,10 +20,10 @@ class Settings {
 			'cashback_base_exclude_tax' => false,
 			'wallet_fee_title'          => 'استفاده از کیف پول',
 			'wallet_max_percent'        => 100.0,
-			'wallet_min_order'           => 0.0,
+			'wallet_min_order'          => 0.0,
 			'wallet_allowed_gateways'   => array(),
 			'wallet_hold_timeout'       => 48,
-			'wallet_full_coverage'       => true,
+			'wallet_full_coverage'      => true,
 		);
 	}
 
@@ -70,20 +70,29 @@ class Settings {
 	 * @return array{enabled_modules:array<int,string>,phone_meta:string,delete_data:bool,earning_order_status:string,cashback_base_exclude_tax:bool,wallet_fee_title:string,wallet_max_percent:float,wallet_min_order:float,wallet_allowed_gateways:array<int,string>,wallet_hold_timeout:int,wallet_full_coverage:bool}
 	 */
 	public function sanitize( $input ): array {
-		$input    = is_array( $input ) ? $input : array();
-		$statuses = array( 'processing', 'completed', 'cancelled', 'refunded', 'failed' );
-		$status   = isset( $input['earning_order_status'] ) ? sanitize_key( (string) $input['earning_order_status'] ) : 'completed';
+		$input         = is_array( $input ) ? $input : array();
+		$statuses      = array( 'processing', 'completed', 'cancelled', 'refunded', 'failed' );
+		$status        = isset( $input['earning_order_status'] ) ? sanitize_key( (string) $input['earning_order_status'] ) : 'completed';
 		$raw_fee_title = isset( $input['wallet_fee_title'] ) ? $input['wallet_fee_title'] : '';
-		$fee_title  = is_string( $raw_fee_title ) ? sanitize_text_field( $raw_fee_title ) : '';
-		$raw_percent  = isset( $input['wallet_max_percent'] ) ? $input['wallet_max_percent'] : null;
-		$percent      = is_numeric( $raw_percent ) ? (float) $raw_percent : 100.0;
-		$raw_min      = isset( $input['wallet_min_order'] ) ? $input['wallet_min_order'] : null;
-		$min_order    = is_numeric( $raw_min ) ? (float) $raw_min : 0.0;
-		$timeout  = isset( $input['wallet_hold_timeout'] ) ? absint( $input['wallet_hold_timeout'] ) : 48;
-		$gateways = isset( $input['wallet_allowed_gateways'] ) && is_array( $input['wallet_allowed_gateways'] ) ? $input['wallet_allowed_gateways'] : array();
-		$gateways = array_values( array_unique( array_filter( array_map( static function ( $id ) {
-			return is_string( $id ) ? sanitize_key( $id ) : '';
-		}, array_slice( $gateways, 0, 30 ) ) ) ) );
+		$fee_title     = is_string( $raw_fee_title ) ? sanitize_text_field( $raw_fee_title ) : '';
+		$raw_percent   = isset( $input['wallet_max_percent'] ) ? $input['wallet_max_percent'] : null;
+		$percent       = is_numeric( $raw_percent ) ? (float) $raw_percent : 100.0;
+		$raw_min       = isset( $input['wallet_min_order'] ) ? $input['wallet_min_order'] : null;
+		$min_order     = is_numeric( $raw_min ) ? (float) $raw_min : 0.0;
+		$timeout       = isset( $input['wallet_hold_timeout'] ) ? absint( $input['wallet_hold_timeout'] ) : 48;
+		$gateways      = isset( $input['wallet_allowed_gateways'] ) && is_array( $input['wallet_allowed_gateways'] ) ? $input['wallet_allowed_gateways'] : array();
+		$gateways      = array_values(
+			array_unique(
+				array_filter(
+					array_map(
+						static function ( $id ) {
+							return is_string( $id ) ? sanitize_key( $id ) : '';
+						},
+						array_slice( $gateways, 0, 30 )
+					)
+				)
+			)
+		);
 		return array(
 			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules', 'wallet' ),
 			'phone_meta'                => isset( $input['phone_meta'] ) ? sanitize_key( (string) $input['phone_meta'] ) : 'billing_phone',
@@ -92,7 +101,7 @@ class Settings {
 			'cashback_base_exclude_tax' => ! empty( $input['cashback_base_exclude_tax'] ),
 			'wallet_fee_title'          => '' !== $fee_title ? $fee_title : 'استفاده از کیف پول',
 			'wallet_max_percent'        => min( 100.0, max( 0.0, $percent ) ),
-			'wallet_min_order'           => max( 0.0, $min_order ),
+			'wallet_min_order'          => max( 0.0, $min_order ),
 			'wallet_allowed_gateways'   => $gateways,
 			'wallet_hold_timeout'       => min( 720, max( 1, $timeout ) ),
 			'wallet_full_coverage'      => ! empty( $input['wallet_full_coverage'] ),
@@ -138,11 +147,11 @@ class Settings {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_die( esc_html__( 'شما اجازهٔ دسترسی به این صفحه را ندارید.', 'ariunetclub' ) );
 		}
-		$settings    = $this->get();
-		$phone_meta  = isset( $settings['phone_meta'] ) && is_string( $settings['phone_meta'] ) ? $settings['phone_meta'] : 'billing_phone';
-		$earning     = isset( $settings['earning_order_status'] ) && is_string( $settings['earning_order_status'] ) ? $settings['earning_order_status'] : 'completed';
-		$exclude_tax = ! empty( $settings['cashback_base_exclude_tax'] );
-		$wallet_title   = isset( $settings['wallet_fee_title'] ) && is_string( $settings['wallet_fee_title'] ) && '' !== $settings['wallet_fee_title'] ? $settings['wallet_fee_title'] : 'استفاده از کیف پول';
+		$settings           = $this->get();
+		$phone_meta         = isset( $settings['phone_meta'] ) && is_string( $settings['phone_meta'] ) ? $settings['phone_meta'] : 'billing_phone';
+		$earning            = isset( $settings['earning_order_status'] ) && is_string( $settings['earning_order_status'] ) ? $settings['earning_order_status'] : 'completed';
+		$exclude_tax        = ! empty( $settings['cashback_base_exclude_tax'] );
+		$wallet_title       = isset( $settings['wallet_fee_title'] ) && is_string( $settings['wallet_fee_title'] ) && '' !== $settings['wallet_fee_title'] ? $settings['wallet_fee_title'] : 'استفاده از کیف پول';
 		$raw_wallet_percent = isset( $settings['wallet_max_percent'] ) ? $settings['wallet_max_percent'] : null;
 		$wallet_percent     = is_numeric( $raw_wallet_percent ) ? (float) $raw_wallet_percent : 100.0;
 		$raw_wallet_min     = isset( $settings['wallet_min_order'] ) ? $settings['wallet_min_order'] : null;
@@ -150,10 +159,10 @@ class Settings {
 		$wallet_allowed     = isset( $settings['wallet_allowed_gateways'] ) && is_array( $settings['wallet_allowed_gateways'] ) ? array_values( array_filter( $settings['wallet_allowed_gateways'], 'is_string' ) ) : array();
 		$raw_wallet_timeout = isset( $settings['wallet_hold_timeout'] ) ? $settings['wallet_hold_timeout'] : null;
 		$wallet_timeout     = is_numeric( $raw_wallet_timeout ) ? (int) $raw_wallet_timeout : 48;
-		$wallet_full    = ! empty( $settings['wallet_full_coverage'] );
-		$wallet_gateways = $this->wallet_gateway_options();
-		$phone_metas = apply_filters( 'ariunetclub_phone_meta_keys', array( 'billing_phone' ) );
-		$phone_metas = is_array( $phone_metas ) ? array_values( array_unique( array_filter( $phone_metas, 'is_string' ) ) ) : array( 'billing_phone' );
+		$wallet_full        = ! empty( $settings['wallet_full_coverage'] );
+		$wallet_gateways    = $this->wallet_gateway_options();
+		$phone_metas        = apply_filters( 'ariunetclub_phone_meta_keys', array( 'billing_phone' ) );
+		$phone_metas        = is_array( $phone_metas ) ? array_values( array_unique( array_filter( $phone_metas, 'is_string' ) ) ) : array( 'billing_phone' );
 		if ( ! in_array( $phone_meta, $phone_metas, true ) ) {
 			$phone_metas[] = $phone_meta;
 		}
