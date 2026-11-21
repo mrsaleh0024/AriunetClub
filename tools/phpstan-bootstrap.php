@@ -40,6 +40,9 @@ class WC {
 }
 
 class WC_Cart {
+        public function get_cart_contents_count(): int {
+                return 0;
+        }
         public function get_subtotal(): float {
                 return 0.0;
         }

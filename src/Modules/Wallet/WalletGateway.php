@@ -6,7 +6,6 @@
 namespace AriunetClub\Modules\Wallet;
 
 use AriunetClub\Core\Settings;
-use AriunetClub\Modules\Ledger\LedgerService;
 
 /**
  * The "ariunetclub_wallet" payment method. It only becomes available when the
@@ -18,23 +17,13 @@ class WalletGateway extends \WC_Payment_Gateway {
 
 	const GATEWAY_ID = 'ariunetclub_wallet';
 
-	/** @var LedgerService */
-	private $ledger;
-
-	/** @var SpendCalculator */
-	private $calculator;
-
 	/** @var Settings */
 	private $club_settings;
 
 	/**
-	 * @param LedgerService   $ledger     Ledger service.
-	 * @param SpendCalculator $calculator Wallet spend calculator.
-	 * @param Settings        $settings   Club settings.
+	 * @param Settings $settings Club settings.
 	 */
-	public function __construct( LedgerService $ledger, SpendCalculator $calculator, Settings $settings ) {
-		$this->ledger        = $ledger;
-		$this->calculator    = $calculator;
+	public function __construct( Settings $settings ) {
 		$this->club_settings = $settings;
 
 		$this->id                 = self::GATEWAY_ID;
@@ -71,6 +60,9 @@ class WalletGateway extends \WC_Payment_Gateway {
 		if ( ! is_user_logged_in() || null === $wc || null === $wc->cart || null === $wc->session ) {
 			return false;
 		}
+		if ( function_exists( 'is_checkout_pay_page' ) && is_checkout_pay_page() ) {
+			return false; // the pay page pays for a stored order, never for the current cart.
+		}
 		$config = $this->club_settings->get();
 		if ( empty( $config['wallet_full_coverage'] ) ) {
 			return false;
@@ -79,18 +71,18 @@ class WalletGateway extends \WC_Payment_Gateway {
 			return false;
 		}
 
-		$cart      = $wc->cart;
-		$balance   = $this->ledger->balance( get_current_user_id() );
-		$available = isset( $balance['available'] ) && is_numeric( $balance['available'] ) ? (float) $balance['available'] : 0.0;
-		$base      = max( 0.0, (float) $cart->get_subtotal() + (float) $cart->get_subtotal_tax() );
-		$due       = $base + (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax();
+		$cart = $wc->cart;
+		if ( 0 === $cart->get_cart_contents_count() ) {
+			return false;
+		}
+
+		$due = max( 0.0, (float) $cart->get_subtotal() + (float) $cart->get_subtotal_tax() + (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax() );
 		foreach ( $cart->get_fees() as $fee_row ) {
 			$due += is_object( $fee_row ) && isset( $fee_row->amount ) && is_numeric( $fee_row->amount ) ? (float) $fee_row->amount : 0.0;
 		}
-		$due   = max( 0.0, $due );
-		$spend = $this->calculator->max_spend( $available, $base, $due );
 
-		return $due > 0.0 && $spend + 0.001 >= $due;
+		// The wallet gateway may only complete an order that owes nothing more.
+		return max( 0.0, $due ) <= 0.001;
 	}
 
 	/**
@@ -104,6 +96,16 @@ class WalletGateway extends \WC_Payment_Gateway {
 		$order = function_exists( 'wc_get_order' ) ? wc_get_order( (int) $order_id ) : null;
 		if ( ! $order instanceof \WC_Order ) {
 			wc_add_notice( __( 'سفارش برای پرداخت با کیف پول پیدا نشد.', 'ariunetclub' ), 'error' );
+			return array(
+				'result'   => 'failure',
+				'redirect' => '',
+			);
+		}
+
+		$total  = max( 0.0, (float) $order->get_total() );
+		$amount = OrderMeta::amount( $order );
+		if ( $amount + 0.001 < $total ) {
+			wc_add_notice( __( 'کیف پول فقط سفارشی را کامل می‌پردازد که کل مبلغش را پوشش داده باشد؛ برای ادامه درگاه دیگری انتخاب کنید.', 'ariunetclub' ), 'error' );
 			return array(
 				'result'   => 'failure',
 				'redirect' => '',

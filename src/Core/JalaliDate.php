@@ -36,7 +36,11 @@ class JalaliDate {
 	}
 
 	public static function format( string $datetime, string $format = 'Y/m/d' ): string {
-		$date                       = new \DateTimeImmutable( $datetime, new \DateTimeZone( 'UTC' ) );
+		try {
+			$date = new \DateTimeImmutable( $datetime, new \DateTimeZone( 'UTC' ) );
+		} catch ( \Throwable $error ) {
+			return ''; // corrupt or empty input must never take the tab down.
+		}
 		list( $year, $month, $day ) = self::from_gregorian( (int) $date->format( 'Y' ), (int) $date->format( 'n' ), (int) $date->format( 'j' ) );
 		return str_replace( array( 'Y', 'm', 'd' ), array( (string) $year, str_pad( (string) $month, 2, '0', STR_PAD_LEFT ), str_pad( (string) $day, 2, '0', STR_PAD_LEFT ) ), $format );
 	}

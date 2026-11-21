@@ -40,7 +40,12 @@ class WalletAdminPage {
 		// This is a read-only URL filter. A nonce would break shareable searches and pagination.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Sanitized GET input does not change state.
 		$page   = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
-		$result = $this->repository->balances( null === $user_id ? array() : array( $user_id ), $page );
+		$result = null === $user_id && '' !== $search
+			? array(
+				'items' => array(),
+				'total' => 0,
+			)
+			: $this->repository->balances( null === $user_id ? array() : array( $user_id ), $page );
 		$this->shell_open( __( 'کیف پول مشتریان', 'ariunetclub' ), __( 'جست‌وجو و بررسی موجودی‌های باشگاه مشتریان.', 'ariunetclub' ) );
 		?>
 		<form method="get" class="ariunetclub-panel"><input type="hidden" name="page" value="ariunetclub-wallets" /><label for="ariunetclub-wallet-phone"><?php esc_html_e( 'جست‌وجوی شماره موبایل', 'ariunetclub' ); ?></label><p><input id="ariunetclub-wallet-phone" name="phone" type="text" value="<?php echo esc_attr( Money::to_persian_digits( $search ) ); ?>" placeholder="۰۹۱۲۱۲۳۴۵۶۷" /> <button class="button button-primary" type="submit"><?php esc_html_e( 'جست‌وجو', 'ariunetclub' ); ?></button></p>

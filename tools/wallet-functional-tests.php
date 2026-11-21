@@ -124,6 +124,8 @@ class WC_Cart {
         public function get_fees() { return $this->fees; }
         public function empty_cart() { $this->fees = array(); }
         public function is_empty() { return false; }
+        public $contents_count = 1;
+        public function get_cart_contents_count() { return $this->contents_count; }
         public function cart_total_after_fees() {
                 $total = $this->get_subtotal() + $this->get_subtotal_tax() + $this->get_shipping_total() + $this->get_shipping_tax();
                 foreach ( $this->fees as $fee ) { $total += $fee->amount; }
@@ -153,6 +155,7 @@ class WC_Order {
         public $notes = array();
         public $order_total = 0.0;
         public $payment_method = '';
+        public $payment_method_title = '';
         public function __construct( $id, $customer_id = 0, $total = 0.0 ) {
                 $this->id = (int) $id; $this->customer_id = (int) $customer_id; $this->order_total = (float) $total;
                 $GLOBALS['ariunetclub_test_orders'][ $this->id ] = $this;
@@ -214,6 +217,7 @@ use AriunetClub\Modules\Ledger\LedgerService;
 use AriunetClub\Core\Logger;
 use AriunetClub\Core\Settings;
 use AriunetClub\Modules\Wallet\CheckoutController;
+use AriunetClub\Modules\Wallet\WalletGateway;
 use AriunetClub\Modules\Wallet\HoldManager;
 use AriunetClub\Modules\Wallet\OrderMeta;
 use AriunetClub\Modules\Wallet\SpendCalculator;
@@ -540,6 +544,50 @@ try {
 check( 'failed hold throws customer-facing error', $threw );
 check( 'order marked failed', 'failed' === $order->get_status() );
 check( 'no wallet state recorded on failed hold', '' === OrderMeta::state( $order ) );
+
+
+echo "=== 12) WalletGateway availability and payment guard ===\n";
+list( $gw, $svc, $holds, $checkout, $calc, $settings, $logger ) = fresh_world();
+$gateway = new WalletGateway( $settings );
+
+// Full coverage: the wallet fee already covers the whole cart.
+WC()->cart->fees     = array();
+WC()->cart->subtotal = 100000.0;
+WC()->cart->add_fee( 'استفاده از کیف پول', -100000.0 );
+WC()->session->set( CheckoutController::SESSION_FLAG, true );
+check( 'gateway available when the wallet covers everything', true === $gateway->is_available() );
+
+// Partial coverage (cap 50%): the remainder must go through a bank gateway.
+list( $gw, $svc, $holds, $checkout, $calc, $settings, $logger ) = fresh_world( array( 'wallet_max_percent' => 50.0 ) );
+$gateway = new WalletGateway( $settings );
+WC()->cart->fees     = array();
+WC()->cart->subtotal = 100000.0;
+WC()->cart->add_fee( 'استفاده از کیف پول', -50000.0 );
+WC()->session->set( CheckoutController::SESSION_FLAG, true );
+check( 'gateway hidden while half the cart is still owed', false === $gateway->is_available() );
+
+// Empty cart (e.g. a pay-page context): never available.
+WC()->cart->contents_count = 0;
+check( 'gateway hidden for an empty cart', false === $gateway->is_available() );
+WC()->cart->contents_count = 1;
+
+// process_payment refuses an order the wallet slice does not fully cover.
+list( $gw, $svc, $holds, $checkout, $calc, $settings, $logger ) = fresh_world();
+$gateway = new WalletGateway( $settings );
+$partial = new WC_Order( 150, 2, 50000.0 );
+$partial->update_meta_data( '_ariunetclub_wallet_amount', 30000.0 );
+$result = $gateway->process_payment( 150 );
+check( 'partial-coverage payment refused', 'failure' === $result['result'] );
+check( 'refusal adds an error notice', count( $GLOBALS['ariunetclub_test_notices'] ) > 0 );
+check( 'refused order stays pending', 'pending' === $partial->get_status() );
+
+// A fully covered zero-total order completes through the wallet gateway.
+$svc->credit( 2, 40000.0, 'gateway-seed' );
+$covered = new WC_Order( 151, 2, 0.0 );
+$covered->update_meta_data( '_ariunetclub_wallet_amount', 40000.0 );
+$result = $gateway->process_payment( 151 );
+check( 'full-coverage payment succeeds', 'success' === $result['result'] );
+check( 'full-coverage order completed', 'processing' === $covered->get_status() );
 
 echo "\n================ RESULT: $PASS passed, $FAIL failed ================\n";
 exit( $FAIL > 0 ? 1 : 0 );

@@ -252,9 +252,9 @@ class RulesAdminPage {
 
 									if ( 'deleted' === $notice ) :
 										?>
-										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'کاربر با موفقیت حذف شد.', 'ariunetclub' ); ?></div>
+										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'قانون با موفقیت حذف شد.', 'ariunetclub' ); ?></div>
 									<?php elseif ( 'toggled' === $notice ) : ?>
-										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'وضعیت کاربر تغییر کرد.', 'ariunetclub' ); ?></div>
+										<div class="ariunetclub-notice ariunetclub-notice-info"><?php esc_html_e( 'وضعیت قانون تغییر کرد.', 'ariunetclub' ); ?></div>
 									<?php endif; ?>
 								<?php endif; ?>
 

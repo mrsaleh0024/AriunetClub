@@ -169,9 +169,9 @@ parameters:
 			path: src/Modules/Identity/IdentityService.php
 
 		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 2
+			message: '#^Parameter \#1 \$query of method wpdb\:\:prepare\(\) expects literal\-string, non\-falsy\-string given\.$#'
+			identifier: argument.type
+			count: 1
 			path: src/Modules/Identity/IdentityService.php
 
 		-

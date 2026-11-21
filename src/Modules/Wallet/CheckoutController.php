@@ -166,7 +166,9 @@ class CheckoutController {
 		if ( $spend + 0.001 < $due ) {
 				$raw_method = isset( $data['payment_method'] ) ? $data['payment_method'] : '';
 				$method     = is_string( $raw_method ) ? $raw_method : '';
-			if ( ! $this->gateway_allowed( $method ) ) {
+			if ( WalletGateway::GATEWAY_ID === $method ) {
+				$errors->add( 'ariunetclub_wallet', __( 'کیف پول به‌تنهایی کل مبلغ این سبد را نمی‌پوشاند؛ برای ادامه درگاه بانکی انتخاب کنید.', 'ariunetclub' ) );
+			} elseif ( ! $this->gateway_allowed( $method ) ) {
 					$errors->add( 'ariunetclub_wallet', __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'ariunetclub' ) );
 			}
 		}

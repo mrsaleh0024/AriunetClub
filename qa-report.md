@@ -1,6 +1,6 @@
 # AriunetClub QA Report
 
-Generated: 2026-11-21T10:44:48+00:00
+Generated: 2026-11-21T11:32:58+00:00
 
 ## Commands
 
@@ -25,11 +25,12 @@ Note: Using configuration file /home/z/my-project/AriunetClub/phpstan.neon.
 ```text
 PHPUnit 9.6.39 by Sebastian Bergmann and contributors.
 
-...............................................................   63 / 63 (100%)
+................................................................. 65 / 66 ( 98%)
+.                                                                 66 / 66 (100%)
 
-Time: 00:00.009, Memory: 6.00 MB
+Time: 00:00.010, Memory: 6.00 MB
 
-OK (63 tests, 172 assertions)
+OK (66 tests, 183 assertions)
 ```
 
 ### "/home/z/php/php" tools/wallet-functional-tests.php
@@ -94,8 +95,6 @@ OK (63 tests, 172 assertions)
   PASS  throttled second call rejected (429)
   PASS  toggle off clears flag
 === 10) stamp_order caps and gateway stamping ===
-
-Deprecated: Creation of dynamic property WC_Order::$payment_method_title is deprecated in /home/z/my-project/AriunetClub/tools/wallet-functional-tests.php on line 178
   PASS  amount meta stamped
   PASS  zero-total order stamped as wallet payment
   PASS  order total snapshot stored
@@ -103,8 +102,17 @@ Deprecated: Creation of dynamic property WC_Order::$payment_method_title is depr
   PASS  failed hold throws customer-facing error
   PASS  order marked failed
   PASS  no wallet state recorded on failed hold
+=== 12) WalletGateway availability and payment guard ===
+  PASS  gateway available when the wallet covers everything
+  PASS  gateway hidden while half the cart is still owed
+  PASS  gateway hidden for an empty cart
+  PASS  partial-coverage payment refused
+  PASS  refusal adds an error notice
+  PASS  refused order stays pending
+  PASS  full-coverage payment succeeds
+  PASS  full-coverage order completed
 
-================ RESULT: 56 passed, 0 failed ================
+================ RESULT: 64 passed, 0 failed ================
 ```
 
 ### "/home/z/php/php" tools/account-functional-tests.php

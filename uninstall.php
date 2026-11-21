@@ -33,6 +33,18 @@ foreach ( $tables as $table ) {
 		$wpdb->query( "DROP TABLE IF EXISTS `{$table_name}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Prefix and names are fixed constants.
 }
 
+// Defensive cleanup of scheduled work in case a deactivate hook never ran.
+wp_clear_scheduled_hook( 'ariunetclub_process_events' );
+wp_clear_scheduled_hook( 'ariunetclub_release_expired_hold' );
+wp_clear_scheduled_hook( 'lclub_process_events' );
+wp_clear_scheduled_hook( 'lclub_release_expired_hold' );
+if ( function_exists( 'as_unschedule_all_actions' ) ) {
+	as_unschedule_all_actions( 'ariunetclub_process_events', array(), 'ariunetclub' );
+	as_unschedule_all_actions( 'ariunetclub_release_expired_hold', array(), 'ariunetclub' );
+	as_unschedule_all_actions( 'lclub_process_events', array(), 'lclub' );
+	as_unschedule_all_actions( 'lclub_release_expired_hold', array(), 'lclub' );
+}
+
 delete_option( 'ariunetclub_settings' );
 delete_option( 'ariunetclub_db_version' );
 delete_option( 'ariunetclub_rewrite_version' );

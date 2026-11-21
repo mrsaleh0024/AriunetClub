@@ -67,13 +67,7 @@ class WalletModule implements Module {
 		if ( ! $wpdb instanceof \wpdb ) {
 			return $gateways;
 		}
-
-		$ledger_service = isset( $GLOBALS['ariunetclub_ledger_service'] ) && $GLOBALS['ariunetclub_ledger_service'] instanceof LedgerService
-			? $GLOBALS['ariunetclub_ledger_service']
-			: new LedgerService( new LedgerRepository( $wpdb ) );
-		$settings       = new Settings();
-
-		$gateways[ WalletGateway::GATEWAY_ID ] = new WalletGateway( $ledger_service, new SpendCalculator( $settings ), $settings );
+		$gateways[ WalletGateway::GATEWAY_ID ] = new WalletGateway( new Settings() );
 		return $gateways;
 	}
 
