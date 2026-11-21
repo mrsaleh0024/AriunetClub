@@ -1,6 +1,6 @@
 # AriunetClub QA Report
 
-Generated: 2026-11-21T11:32:58+00:00
+Generated: 2026-11-21T11:52:26+00:00
 
 ## Commands
 
@@ -25,12 +25,12 @@ Note: Using configuration file /home/z/my-project/AriunetClub/phpstan.neon.
 ```text
 PHPUnit 9.6.39 by Sebastian Bergmann and contributors.
 
-................................................................. 65 / 66 ( 98%)
-.                                                                 66 / 66 (100%)
+................................................................. 65 / 71 ( 91%)
+......                                                            71 / 71 (100%)
 
 Time: 00:00.010, Memory: 6.00 MB
 
-OK (66 tests, 183 assertions)
+OK (71 tests, 205 assertions)
 ```
 
 ### "/home/z/php/php" tools/wallet-functional-tests.php
