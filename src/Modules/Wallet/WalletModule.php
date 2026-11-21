@@ -32,6 +32,9 @@ class WalletModule implements Module {
 
 	public function boot(): void {
 		global $wpdb;
+		if ( ! $wpdb instanceof \wpdb ) {
+			return; // no database handle, nothing safe to wire.
+		}
 
 		$ledger_service = isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService
 			? $GLOBALS['lclub_ledger_service']
@@ -61,6 +64,9 @@ class WalletModule implements Module {
 	 */
 	public function register_gateway( array $gateways ): array {
 		global $wpdb;
+		if ( ! $wpdb instanceof \wpdb ) {
+			return $gateways;
+		}
 
 		$ledger_service = isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService
 			? $GLOBALS['lclub_ledger_service']
@@ -89,7 +95,7 @@ class WalletModule implements Module {
 		$available = 0.0;
 		if ( isset( $GLOBALS['lclub_ledger_service'] ) && $GLOBALS['lclub_ledger_service'] instanceof LedgerService ) {
 			$balance  = $GLOBALS['lclub_ledger_service']->balance( get_current_user_id() );
-			$available = isset( $balance['available'] ) ? (float) $balance['available'] : 0.0;
+			$available = isset( $balance['available'] ) && is_numeric( $balance['available'] ) ? (float) $balance['available'] : 0.0;
 		}
 
 		wp_localize_script(

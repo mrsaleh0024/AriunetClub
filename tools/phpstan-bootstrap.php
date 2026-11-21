@@ -60,6 +60,15 @@ class WC_Cart {
 	}
 	public function empty_cart(): void {
 	}
+	/**
+	 * Fee rows as WooCommerce returns them (objects). Typed mixed on purpose:
+	 * the module guards every access at runtime.
+	 *
+	 * @return array<int,mixed>
+	 */
+	public function get_fees(): array {
+		return array();
+	}
 	public function is_empty(): bool {
 		return true;
 	}
@@ -97,26 +106,27 @@ class WC_Payment_Gateways {
 	}
 }
 
-class WC_Payment_Gateway {
+class WC_Settings_API {
+	/** @var string */
+	public $plugin_id = 'woocommerce_';
 	/** @var string */
 	public $id = '';
-	/** @var string|null */
-	public $title = '';
-	/** @var string */
-	protected $method_title = '';
-	/** @var string */
-	protected $method_description = '';
-	/** @var bool */
-	public $has_fields = false;
-	/** @var string */
-	public $enabled = 'yes';
+	/** @var array<int,string> */
+	public $errors = array();
+	/**
+	 * Settings (as saved). Public in WooCommerce: child classes must not
+	 * re-declare it with a tighter visibility or PHP fatals at load time.
+	 *
+	 * @var array<string,mixed>
+	 */
+	public $settings = array();
+	/** @var array<string,mixed> */
+	public $gateway_data = array();
 	/**
 	 * @var array<string,array<string,mixed>>
 	 */
 	protected $form_fields = array();
 
-	public function __construct() {
-	}
 	/**
 	 * @param string $key Option key.
 	 * @param mixed  $empty_value Value when the option is empty.
@@ -130,6 +140,22 @@ class WC_Payment_Gateway {
 	public function process_admin_options(): bool {
 		return true;
 	}
+}
+
+class WC_Payment_Gateway extends WC_Settings_API {
+	/** @var string */
+	public $title = '';
+	/** @var string */
+	public $method_title = '';
+	/** @var string */
+	public $method_description = '';
+	/** @var bool */
+	public $has_fields = false;
+	/** @var string */
+	public $enabled = 'yes';
+	/** @var array<int,string> */
+	public $supports = array();
+
 	/**
 	 * @param \WC_Order|null $order Order object.
 	 * @return string
@@ -139,6 +165,13 @@ class WC_Payment_Gateway {
 	}
 	public function is_available(): bool {
 		return true;
+	}
+	/**
+	 * @param int $order_id Order id.
+	 * @return array<string,mixed>
+	 */
+	public function process_payment( $order_id ) {
+		return array();
 	}
 }
 

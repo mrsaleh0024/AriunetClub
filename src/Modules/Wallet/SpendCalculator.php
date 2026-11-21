@@ -37,8 +37,10 @@ class SpendCalculator {
 	 */
 	public function max_spend( float $available, float $items_base, float $cart_total ): float {
 		$config     = $this->settings->get();
-		$percent    = isset( $config['wallet_max_percent'] ) ? (float) $config['wallet_max_percent'] : 100.0;
-		$min_order  = isset( $config['wallet_min_order'] ) ? (float) $config['wallet_min_order'] : 0.0;
+		$raw_percent = isset( $config['wallet_max_percent'] ) ? $config['wallet_max_percent'] : null;
+		$raw_min     = isset( $config['wallet_min_order'] ) ? $config['wallet_min_order'] : null;
+		$percent     = is_numeric( $raw_percent ) ? (float) $raw_percent : 100.0;
+		$min_order   = is_numeric( $raw_min ) ? (float) $raw_min : 0.0;
 		$coverage   = ! empty( $config['wallet_full_coverage'] );
 
 		$available  = max( 0.0, Money::round( $available ) );

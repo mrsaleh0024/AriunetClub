@@ -25,7 +25,7 @@ class WalletGateway extends \WC_Payment_Gateway {
 	private $calculator;
 
 	/** @var Settings */
-	private $settings;
+	private $club_settings;
 
 	/**
 	 * @param LedgerService   $ledger     Ledger service.
@@ -33,9 +33,9 @@ class WalletGateway extends \WC_Payment_Gateway {
 	 * @param Settings        $settings   Club settings.
 	 */
 	public function __construct( LedgerService $ledger, SpendCalculator $calculator, Settings $settings ) {
-		$this->ledger     = $ledger;
-		$this->calculator = $calculator;
-		$this->settings   = $settings;
+		$this->ledger        = $ledger;
+		$this->calculator    = $calculator;
+		$this->club_settings = $settings;
 
 		$this->id                 = self::GATEWAY_ID;
 		$this->method_title       = __( 'کیف پول باشگاه مشتریان', 'lclub' );
@@ -53,7 +53,8 @@ class WalletGateway extends \WC_Payment_Gateway {
 			),
 		);
 		$this->init_settings();
-		$this->enabled = $this->get_option( 'enabled', 'yes' );
+		$enabled_option = $this->get_option( 'enabled', 'yes' );
+		$this->enabled  = is_string( $enabled_option ) ? $enabled_option : 'yes';
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 	}
@@ -70,7 +71,7 @@ class WalletGateway extends \WC_Payment_Gateway {
 		if ( ! is_user_logged_in() || null === $wc || null === $wc->cart || null === $wc->session ) {
 			return false;
 		}
-		$config = $this->settings->get();
+		$config = $this->club_settings->get();
 		if ( empty( $config['wallet_full_coverage'] ) ) {
 			return false;
 		}
@@ -78,11 +79,16 @@ class WalletGateway extends \WC_Payment_Gateway {
 			return false;
 		}
 
+		$cart      = $wc->cart;
 		$balance   = $this->ledger->balance( get_current_user_id() );
-		$available = isset( $balance['available'] ) ? (float) $balance['available'] : 0.0;
-		$base      = max( 0.0, (float) $wc->cart->get_subtotal() + (float) $wc->cart->get_subtotal_tax() );
-		$due       = $base + (float) $wc->cart->get_shipping_total() + (float) $wc->cart->get_shipping_tax();
-		$spend     = $this->calculator->max_spend( $available, $base, $due );
+		$available = isset( $balance['available'] ) && is_numeric( $balance['available'] ) ? (float) $balance['available'] : 0.0;
+		$base      = max( 0.0, (float) $cart->get_subtotal() + (float) $cart->get_subtotal_tax() );
+		$due       = $base + (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax();
+		foreach ( $cart->get_fees() as $fee_row ) {
+			$due += is_object( $fee_row ) && isset( $fee_row->amount ) && is_numeric( $fee_row->amount ) ? (float) $fee_row->amount : 0.0;
+		}
+		$due   = max( 0.0, $due );
+		$spend = $this->calculator->max_spend( $available, $base, $due );
 
 		return $due > 0.0 && $spend + 0.001 >= $due;
 	}

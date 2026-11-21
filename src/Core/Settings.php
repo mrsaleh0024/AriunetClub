@@ -73,13 +73,16 @@ class Settings {
 		$input    = is_array( $input ) ? $input : array();
 		$statuses = array( 'processing', 'completed', 'cancelled', 'refunded', 'failed' );
 		$status   = isset( $input['earning_order_status'] ) ? sanitize_key( (string) $input['earning_order_status'] ) : 'completed';
-		$fee_title = isset( $input['wallet_fee_title'] ) ? sanitize_text_field( (string) $input['wallet_fee_title'] ) : '';
-		$percent  = isset( $input['wallet_max_percent'] ) ? (float) $input['wallet_max_percent'] : 100.0;
-		$min_order = isset( $input['wallet_min_order'] ) ? (float) $input['wallet_min_order'] : 0.0;
+		$raw_fee_title = isset( $input['wallet_fee_title'] ) ? $input['wallet_fee_title'] : '';
+		$fee_title  = is_string( $raw_fee_title ) ? sanitize_text_field( $raw_fee_title ) : '';
+		$raw_percent  = isset( $input['wallet_max_percent'] ) ? $input['wallet_max_percent'] : null;
+		$percent      = is_numeric( $raw_percent ) ? (float) $raw_percent : 100.0;
+		$raw_min      = isset( $input['wallet_min_order'] ) ? $input['wallet_min_order'] : null;
+		$min_order    = is_numeric( $raw_min ) ? (float) $raw_min : 0.0;
 		$timeout  = isset( $input['wallet_hold_timeout'] ) ? absint( $input['wallet_hold_timeout'] ) : 48;
 		$gateways = isset( $input['wallet_allowed_gateways'] ) && is_array( $input['wallet_allowed_gateways'] ) ? $input['wallet_allowed_gateways'] : array();
 		$gateways = array_values( array_unique( array_filter( array_map( static function ( $id ) {
-			return sanitize_key( (string) $id );
+			return is_string( $id ) ? sanitize_key( $id ) : '';
 		}, array_slice( $gateways, 0, 30 ) ) ) ) );
 		return array(
 			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules', 'wallet' ),
@@ -112,7 +115,7 @@ class Settings {
 				if ( 'lclub_wallet' === (string) $id ) {
 					continue;
 				}
-				$title                   = $gateway instanceof \WC_Payment_Gateway && method_exists( $gateway, 'get_title' ) ? (string) $gateway->get_title() : (string) $id;
+				$title                   = method_exists( $gateway, 'get_title' ) ? (string) $gateway->get_title() : (string) $id;
 				$options[ (string) $id ] = '' !== $title ? $title : (string) $id;
 			}
 		}
@@ -140,10 +143,13 @@ class Settings {
 		$earning     = isset( $settings['earning_order_status'] ) && is_string( $settings['earning_order_status'] ) ? $settings['earning_order_status'] : 'completed';
 		$exclude_tax = ! empty( $settings['cashback_base_exclude_tax'] );
 		$wallet_title   = isset( $settings['wallet_fee_title'] ) && is_string( $settings['wallet_fee_title'] ) && '' !== $settings['wallet_fee_title'] ? $settings['wallet_fee_title'] : 'استفاده از کیف پول';
-		$wallet_percent = isset( $settings['wallet_max_percent'] ) ? (float) $settings['wallet_max_percent'] : 100.0;
-		$wallet_min     = isset( $settings['wallet_min_order'] ) ? (float) $settings['wallet_min_order'] : 0.0;
-		$wallet_allowed = isset( $settings['wallet_allowed_gateways'] ) && is_array( $settings['wallet_allowed_gateways'] ) ? array_map( 'strval', $settings['wallet_allowed_gateways'] ) : array();
-		$wallet_timeout = isset( $settings['wallet_hold_timeout'] ) ? (int) $settings['wallet_hold_timeout'] : 48;
+		$raw_wallet_percent = isset( $settings['wallet_max_percent'] ) ? $settings['wallet_max_percent'] : null;
+		$wallet_percent     = is_numeric( $raw_wallet_percent ) ? (float) $raw_wallet_percent : 100.0;
+		$raw_wallet_min     = isset( $settings['wallet_min_order'] ) ? $settings['wallet_min_order'] : null;
+		$wallet_min         = is_numeric( $raw_wallet_min ) ? (float) $raw_wallet_min : 0.0;
+		$wallet_allowed     = isset( $settings['wallet_allowed_gateways'] ) && is_array( $settings['wallet_allowed_gateways'] ) ? array_values( array_filter( $settings['wallet_allowed_gateways'], 'is_string' ) ) : array();
+		$raw_wallet_timeout = isset( $settings['wallet_hold_timeout'] ) ? $settings['wallet_hold_timeout'] : null;
+		$wallet_timeout     = is_numeric( $raw_wallet_timeout ) ? (int) $raw_wallet_timeout : 48;
 		$wallet_full    = ! empty( $settings['wallet_full_coverage'] );
 		$wallet_gateways = $this->wallet_gateway_options();
 		$phone_metas = apply_filters( 'lclub_phone_meta_keys', array( 'billing_phone' ) );

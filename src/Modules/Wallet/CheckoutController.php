@@ -39,6 +39,9 @@ class CheckoutController {
 	/** @var HoldManager */
 	private $holds;
 
+	/** @var bool True when this request already added the wallet fee row. */
+	private static $fee_applied = false;
+
 	/** @var Logger */
 	private $logger;
 
@@ -70,6 +73,7 @@ class CheckoutController {
 		$wc = function_exists( 'WC' ) ? WC() : null;
 		if ( ! is_user_logged_in() || null === $wc || null === $wc->session || null === $wc->cart ) {
 			wp_send_json_error( array( 'message' => __( 'برای استفاده از کیف پول باید وارد حساب خود شوید.', 'lclub' ) ), 403 );
+			return; // wp_send_json_error() terminates execution; kept so the analysis stays sound.
 		}
 		$user_id = get_current_user_id();
 		if ( get_transient( self::THROTTLE . $user_id ) ) {
@@ -77,7 +81,8 @@ class CheckoutController {
 		}
 		set_transient( self::THROTTLE . $user_id, 1, 1 );
 
-		$use       = isset( $_POST['use'] ) && '1' === sanitize_key( wp_unslash( $_POST['use'] ) );
+		$use_raw   = isset( $_POST['use'] ) && is_string( $_POST['use'] ) ? wp_unslash( $_POST['use'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- normalized then sanitized through sanitize_key below.
+		$use       = is_string( $use_raw ) && '1' === sanitize_key( $use_raw );
 		$available = $this->available();
 		$base      = $this->items_base( $wc->cart );
 		$due       = $this->due_total( $wc->cart );
@@ -108,6 +113,10 @@ class CheckoutController {
 	 * @param \WC_Cart $cart Cart object.
 	 */
 	public function apply_fee( \WC_Cart $cart ): void {
+		if ( self::$fee_applied ) {
+			return; // woocommerce_cart_calculate_fees can fire more than once per request.
+		}
+		self::$fee_applied = true;
 		if ( ! is_user_logged_in() || ! $this->flag() ) {
 			return;
 		}
@@ -155,7 +164,8 @@ class CheckoutController {
 			return;
 		}
 		if ( $spend + 0.001 < $due ) {
-			$method = isset( $data['payment_method'] ) ? (string) $data['payment_method'] : '';
+			$raw_method = isset( $data['payment_method'] ) ? $data['payment_method'] : '';
+			$method     = is_string( $raw_method ) ? $raw_method : '';
 			if ( ! $this->gateway_allowed( $method ) ) {
 				$errors->add( 'lclub_wallet', __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'lclub' ) );
 			}
@@ -310,7 +320,8 @@ class CheckoutController {
 			return 0.0;
 		}
 		$balance = $this->ledger->balance( get_current_user_id() );
-		return isset( $balance['available'] ) ? (float) $balance['available'] : 0.0;
+		$value   = isset( $balance['available'] ) ? $balance['available'] : null;
+		return is_numeric( $value ) ? (float) $value : 0.0;
 	}
 
 	/**
@@ -327,8 +338,9 @@ class CheckoutController {
 
 	/**
 	 * @param \WC_Cart|null $cart Cart object when supplied.
-	 * @return float Amount due for the cart (items + shipping; other fee rows
-	 *                are intentionally ignored, which only makes the cap safer).
+	 * @return float Amount due for the cart (items + shipping + every other fee
+	 *                row already on the cart, so a negative fee such as the
+	 *                phase 2 cashback can never push the total below zero).
 	 */
 	private function due_total( $cart ): float {
 		$cart = $cart instanceof \WC_Cart ? $cart : $this->cart();
@@ -336,6 +348,9 @@ class CheckoutController {
 			return 0.0;
 		}
 		$due = $this->items_base( $cart ) + (float) $cart->get_shipping_total() + (float) $cart->get_shipping_tax();
+		foreach ( $cart->get_fees() as $fee_row ) {
+			$due += is_object( $fee_row ) && isset( $fee_row->amount ) && is_numeric( $fee_row->amount ) ? (float) $fee_row->amount : 0.0;
+		}
 		return max( 0.0, $due );
 	}
 
@@ -352,7 +367,8 @@ class CheckoutController {
 	 */
 	private function fee_title(): string {
 		$config = $this->settings->get();
-		$title  = isset( $config['wallet_fee_title'] ) ? (string) $config['wallet_fee_title'] : '';
+		$raw_title = isset( $config['wallet_fee_title'] ) ? $config['wallet_fee_title'] : '';
+		$title     = is_string( $raw_title ) ? $raw_title : '';
 		return '' !== $title ? $title : __( 'استفاده از کیف پول', 'lclub' );
 	}
 

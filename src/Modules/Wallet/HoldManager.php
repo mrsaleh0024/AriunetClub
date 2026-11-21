@@ -93,7 +93,7 @@ class HoldManager {
 			return;
 		}
 
-		if ( ( 'processing' === $to || 'completed' === $to ) && OrderMeta::STATE_RELEASED === $state && $amount > 0.0 ) {
+		if ( ( 'processing' === $to || 'completed' === $to ) && $amount > 0.0 && ( OrderMeta::STATE_RELEASED === $state || '' === $state ) ) {
 			$this->recapture_released( $order, $user_id, $amount );
 			return;
 		}
@@ -206,9 +206,10 @@ class HoldManager {
 		$prefix  = self::REFUND_PREFIX . $order_id . ':refund:';
 		$sum     = 0.0;
 		foreach ( $entries as $entry ) {
-			$key = (string) ( $entry['idempotency_key'] ?? '' );
+			$key = isset( $entry['idempotency_key'] ) && is_string( $entry['idempotency_key'] ) ? $entry['idempotency_key'] : '';
 			if ( 0 === strpos( $key, $prefix ) ) {
-				$sum += max( 0.0, (float) ( $entry['amount'] ?? 0.0 ) );
+				$entry_amount = isset( $entry['amount'] ) ? $entry['amount'] : null;
+				$sum         += is_numeric( $entry_amount ) ? max( 0.0, (float) $entry_amount ) : 0.0;
 			}
 		}
 		return $sum;
@@ -246,9 +247,11 @@ class HoldManager {
 	}
 
 	/**
-	 * Rare path: an order was paid again after its hold was released (retry
-	 * payment on a failed order). Re-hold then capture; when the balance is
-	 * no longer enough the spend is recorded as debt so the ledger stays whole.
+	 * Recovery paths: an order reaches processing/completed without an intact
+	 * hold — either the hold was released before a retry payment, or hold
+	 * placement failed at checkout while the fee discount stayed on the
+	 * order. Re-hold then capture; when the balance is no longer enough the
+	 * spend is recorded as debt so the ledger stays whole.
 	 *
 	 * @param \WC_Order $order Order object.
 	 * @param int       $user_id Customer id.
@@ -340,7 +343,8 @@ class HoldManager {
 	 */
 	private function timeout_seconds(): int {
 		$config = $this->settings->get();
-		$hours  = isset( $config['wallet_hold_timeout'] ) ? (int) $config['wallet_hold_timeout'] : 48;
+		$raw_hours = isset( $config['wallet_hold_timeout'] ) ? $config['wallet_hold_timeout'] : null;
+		$hours     = is_numeric( $raw_hours ) ? (int) $raw_hours : 48;
 		$hours  = min( 720, max( 1, $hours ) );
 		return $hours * 3600;
 	}

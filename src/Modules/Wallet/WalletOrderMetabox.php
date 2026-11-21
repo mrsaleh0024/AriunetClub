@@ -118,9 +118,10 @@ class WalletOrderMetabox {
 		$prefix  = HoldManager::REFUND_PREFIX . $order_id . ':refund:';
 		$sum     = 0.0;
 		foreach ( $entries as $entry ) {
-			$key = (string) ( $entry['idempotency_key'] ?? '' );
+			$key = isset( $entry['idempotency_key'] ) && is_string( $entry['idempotency_key'] ) ? $entry['idempotency_key'] : '';
 			if ( 0 === strpos( $key, $prefix ) ) {
-				$sum += max( 0.0, (float) ( $entry['amount'] ?? 0.0 ) );
+				$entry_amount = isset( $entry['amount'] ) ? $entry['amount'] : null;
+				$sum         += is_numeric( $entry_amount ) ? max( 0.0, (float) $entry_amount ) : 0.0;
 			}
 		}
 		return $sum;
@@ -133,7 +134,8 @@ class WalletOrderMetabox {
 		$entries = $this->gateway->entries_for_reference( 'order', $order_id, array( 'credit' ) );
 		$sum     = 0.0;
 		foreach ( $entries as $entry ) {
-			$sum += max( 0.0, (float) ( $entry['amount'] ?? 0.0 ) );
+			$amount = isset( $entry['amount'] ) ? $entry['amount'] : null;
+			$sum   += is_numeric( $amount ) ? max( 0.0, (float) $amount ) : 0.0;
 		}
 		return $sum;
 	}
