@@ -1,0 +1,34 @@
+/* LClub phase 3: read-only wallet metabox on the order edit screen. Tokens
+   match the admin palette; scoped under .lclub-scope, logical properties only. */
+.lclub-scope.lclub-metabox {
+	--lclub-deep: #19333a; --lclub-teal: #28515a; --lclub-muted: rgba(25,51,58,.72);
+	--lclub-border: rgba(40,81,90,.16); --lclub-text: #101b20;
+	--lclub-radius-sm: 10px; --lclub-radius-md: 18px;
+	box-sizing: border-box;
+	color: var(--lclub-text);
+	font-family: inherit;
+}
+.lclub-metabox *, .lclub-metabox *::before, .lclub-metabox *::after { box-sizing: inherit; }
+.lclub-metabox dl { display: grid; gap: 10px; margin: 0 0 12px; }
+.lclub-metabox dl div {
+	border-block-end: 1px solid var(--lclub-border);
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+	padding-block-end: 10px;
+}
+.lclub-metabox dl div:last-child { border-block-end: 0; padding-block-end: 0; }
+.lclub-metabox dt { color: var(--lclub-muted); font-size: 12px; }
+.lclub-metabox dd { font-size: 13px; font-weight: 700; margin: 0; white-space: nowrap; }
+.lclub-metabox__link {
+	border: 1px solid var(--lclub-border);
+	border-radius: var(--lclub-radius-sm);
+	color: var(--lclub-teal);
+	display: inline-flex;
+	font-size: 12px;
+	font-weight: 700;
+	min-block-size: 34px;
+	padding-inline: 12px;
+	text-decoration: none;
+}
+.lclub-metabox__link:hover, .lclub-metabox__link:focus-visible { border-color: var(--lclub-teal); outline: 0; }

@@ -1,0 +1,76 @@
+/* LClub phase 3: wallet switch at checkout. Light, low-chroma glass matching
+   the admin tokens; scoped under .lclub-scope only, logical properties only. */
+.lclub-scope.lclub-wallet-toggle {
+	--lclub-ink: #101b20; --lclub-deep: #19333a; --lclub-teal: #28515a;
+	--lclub-accent: #47777b; --lclub-mist: #91aaa0; --lclub-white: #dce2d5;
+	--lclub-surface: rgba(255,255,255,.58);
+	--lclub-border: rgba(40,81,90,.16); --lclub-text: #101b20;
+	--lclub-muted: rgba(25,51,58,.72); --lclub-focus: #47777b;
+	--lclub-input-focus: rgba(255,255,255,.96);
+	--lclub-focus-halo: rgba(71,119,123,.17);
+	--lclub-radius-sm: 10px; --lclub-radius-md: 18px; --lclub-radius-lg: 28px;
+	--lclub-blur: 18px; --lclub-shadow: 0 20px 60px rgba(25,51,58,.12);
+	box-sizing: border-box;
+	color: var(--lclub-text);
+	font-family: Vazirmatn, sans-serif;
+	margin-block: 8px 18px;
+}
+.lclub-wallet-toggle *, .lclub-wallet-toggle *::before, .lclub-wallet-toggle *::after { box-sizing: inherit; }
+.lclub-wallet-toggle__panel {
+	backdrop-filter: blur(var(--lclub-blur)); -webkit-backdrop-filter: blur(var(--lclub-blur));
+	background: var(--lclub-surface);
+	border: 1px solid var(--lclub-border);
+	border-radius: var(--lclub-radius-md);
+	box-shadow: var(--lclub-shadow);
+	padding: clamp(16px, 3vw, 24px);
+}
+.lclub-wallet-toggle__label {
+	align-items: center;
+	color: var(--lclub-deep);
+	cursor: pointer;
+	display: flex;
+	font-size: 15px;
+	font-weight: 700;
+	gap: 10px;
+	min-block-size: 44px;
+}
+.lclub-wallet-toggle__label input[type='checkbox'] {
+	accent-color: var(--lclub-mist);
+	block-size: 18px;
+	flex: 0 0 auto;
+	inline-size: 18px;
+	margin: 0;
+}
+.lclub-wallet-toggle__meta {
+	color: var(--lclub-muted);
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 13px;
+	gap: 6px 18px;
+	line-height: 1.9;
+	margin-block: 12px 0 0;
+}
+.lclub-wallet-toggle__meta strong { color: var(--lclub-ink); font-weight: 700; }
+.lclub-wallet-toggle__note {
+	border-radius: var(--lclub-radius-sm);
+	color: var(--lclub-deep);
+	font-size: 13px;
+	line-height: 1.9;
+	margin-block: 10px 0 0;
+	min-block-size: 0;
+}
+.lclub-wallet-toggle__note--error {
+	background: var(--lclub-input-focus);
+	border: 1px solid var(--lclub-border);
+	padding: 10px 13px;
+}
+.lclub-scope.lclub-wallet-toggle :focus-visible { outline: 2px solid var(--lclub-focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+	.lclub-wallet-toggle * { scroll-behavior: auto; transition-duration: .01ms !important; }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+	.lclub-wallet-toggle__panel {
+		backdrop-filter: none; -webkit-backdrop-filter: none;
+		background: var(--lclub-white);
+	}
+}

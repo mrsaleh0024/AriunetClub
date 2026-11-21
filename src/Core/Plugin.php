@@ -21,8 +21,13 @@ class Plugin {
 
 	public static function deactivate(): void {
 		wp_clear_scheduled_hook( 'lclub_process_events' );
+		wp_clear_scheduled_hook( 'lclub_release_expired_hold' );
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( 'lclub_process_events', array(), 'lclub' );
+			// Per-order expiry actions carry arguments; while the plugin is
+			// inactive their callbacks complete as harmless no-ops, and the
+			// next hold reschedules a fresh action.
+			as_unschedule_all_actions( 'lclub_release_expired_hold', array(), 'lclub' );
 		}
 	}
 
@@ -43,6 +48,7 @@ class Plugin {
 		$registry->register( new \LClub\Modules\Ledger\LedgerModule() );
 		$registry->register( new \LClub\Modules\Events\EventsModule() );
 		$registry->register( new \LClub\Modules\Rules\RulesModule() );
+		$registry->register( new \LClub\Modules\Wallet\WalletModule() );
 		$registry->boot( $settings->enabled_modules() );
 	}
 

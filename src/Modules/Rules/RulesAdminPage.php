@@ -244,13 +244,14 @@ class RulesAdminPage {
 										<p><?php esc_html_e( 'قوانین «رویداد ← شرط ← پاداش» را این‌جا تعریف کنید؛ هر قانون برای رویدادِ خودش اعتبار صادر می‌کند.', 'lclub' ); ?></p>
 								</header>
 
-								<?php 
+								<?php
 								// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message.
-								if ( isset( $_GET['lclub_notice'] ) ) : 
+								if ( isset( $_GET['lclub_notice'] ) ) :
 									// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only status message.
-									$notice = sanitize_key( wp_unslash( $_GET['lclub_notice'] ) ); 
-									
-									if ( 'deleted' === $notice ) : ?>
+									$notice = sanitize_key( wp_unslash( $_GET['lclub_notice'] ) );
+
+									if ( 'deleted' === $notice ) :
+								?>
 										<div class="lclub-notice lclub-notice-info"><?php esc_html_e( 'کاربر با موفقیت حذف شد.', 'lclub' ); ?></div>
 									<?php elseif ( 'toggled' === $notice ) : ?>
 										<div class="lclub-notice lclub-notice-info"><?php esc_html_e( 'وضعیت کاربر تغییر کرد.', 'lclub' ); ?></div>

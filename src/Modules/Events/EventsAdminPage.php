@@ -239,7 +239,8 @@ class EventsAdminPage {
 				return;
 		}
 			echo '<nav class="lclub-pagination" aria-label="' . esc_attr__( 'صفحه‌بندی رویدادها', 'lclub' ) . '">';
-		for ( $i = 1; $i <= min( $pages, 10 ); ++$i ) {
+		$limit = min( $pages, 10 );
+		for ( $i = 1; $i <= $limit; ++$i ) {
 				$url   = add_query_arg(
 					array(
 						'paged'  => $i,
