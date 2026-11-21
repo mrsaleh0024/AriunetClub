@@ -9,13 +9,15 @@ class Settings {
 	const OPTION = 'lclub_settings';
 
 	/**
-	 * @return array{enabled_modules:array<int,string>,phone_meta:string,delete_data:bool}
+	 * @return array{enabled_modules:array<int,string>,phone_meta:string,delete_data:bool,earning_order_status:string,cashback_base_exclude_tax:bool}
 	 */
 	public static function defaults(): array {
 		return array(
-			'enabled_modules' => array( 'core', 'identity', 'ledger' ),
-			'phone_meta'      => 'billing_phone',
-			'delete_data'     => false,
+			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules' ),
+			'phone_meta'                => 'billing_phone',
+			'delete_data'               => false,
+			'earning_order_status'      => 'completed',
+			'cashback_base_exclude_tax' => false,
 		);
 	}
 
@@ -59,14 +61,18 @@ class Settings {
 
 	/**
 	 * @param mixed $input
-	 * @return array{enabled_modules:array<int,string>,phone_meta:string,delete_data:bool}
+	 * @return array{enabled_modules:array<int,string>,phone_meta:string,delete_data:bool,earning_order_status:string,cashback_base_exclude_tax:bool}
 	 */
 	public function sanitize( $input ): array {
-		$input = is_array( $input ) ? $input : array();
+		$input    = is_array( $input ) ? $input : array();
+		$statuses = array( 'processing', 'completed', 'cancelled', 'refunded', 'failed' );
+		$status   = isset( $input['earning_order_status'] ) ? sanitize_key( (string) $input['earning_order_status'] ) : 'completed';
 		return array(
-			'enabled_modules' => array( 'core', 'identity', 'ledger' ),
-			'phone_meta'      => isset( $input['phone_meta'] ) ? sanitize_key( $input['phone_meta'] ) : 'billing_phone',
-			'delete_data'     => ! empty( $input['delete_data'] ),
+			'enabled_modules'           => array( 'core', 'identity', 'ledger', 'events', 'rules' ),
+			'phone_meta'                => isset( $input['phone_meta'] ) ? sanitize_key( (string) $input['phone_meta'] ) : 'billing_phone',
+			'delete_data'               => ! empty( $input['delete_data'] ),
+			'earning_order_status'      => in_array( $status, $statuses, true ) ? $status : 'completed',
+			'cashback_base_exclude_tax' => ! empty( $input['cashback_base_exclude_tax'] ),
 		);
 	}
 
@@ -88,6 +94,8 @@ class Settings {
 		}
 		$settings    = $this->get();
 		$phone_meta  = isset( $settings['phone_meta'] ) && is_string( $settings['phone_meta'] ) ? $settings['phone_meta'] : 'billing_phone';
+		$earning     = isset( $settings['earning_order_status'] ) && is_string( $settings['earning_order_status'] ) ? $settings['earning_order_status'] : 'completed';
+		$exclude_tax = ! empty( $settings['cashback_base_exclude_tax'] );
 		$phone_metas = apply_filters( 'lclub_phone_meta_keys', array( 'billing_phone' ) );
 		$phone_metas = is_array( $phone_metas ) ? array_values( array_unique( array_filter( $phone_metas, 'is_string' ) ) ) : array( 'billing_phone' );
 		if ( ! in_array( $phone_meta, $phone_metas, true ) ) {
@@ -96,15 +104,25 @@ class Settings {
 		?>
 		<div class="wrap lclub-scope" dir="rtl">
 			<div class="lclub-admin-shell">
-				<header class="lclub-admin-header"><span class="lclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'lclub' ); ?></span><h1><?php esc_html_e( 'تنظیمات باشگاه مشتریان', 'lclub' ); ?></h1><p><?php esc_html_e( 'هستهٔ باشگاه آماده است؛ ماژول‌های کسب و خرج در فازهای بعدی فعال می‌شوند.', 'lclub' ); ?></p></header>
+				<header class="lclub-admin-header"><span class="lclub-admin-kicker"><?php esc_html_e( 'ARIUNETCLUB', 'lclub' ); ?></span><h1><?php esc_html_e( 'تنظیمات باشگاه مشتریان', 'lclub' ); ?></h1><p><?php esc_html_e( 'موتور رویداد و قوانین کسب فعال است؛ خرج کیف پول در فاز بعدی اضافه می‌شود.', 'lclub' ); ?></p></header>
 				<form method="post" action="options.php" class="lclub-panel">
 					<?php settings_fields( 'lclub_settings_group' ); ?>
-					<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'بخش‌های تنظیمات', 'lclub' ); ?>"><a class="nav-tab nav-tab-active" href="#general"><?php esc_html_e( 'عمومی', 'lclub' ); ?></a><a class="nav-tab" href="#data"><?php esc_html_e( 'داده‌ها', 'lclub' ); ?></a></nav>
+					<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'بخش‌های تنظیمات', 'lclub' ); ?>"><a class="nav-tab nav-tab-active" href="#general"><?php esc_html_e( 'عمومی', 'lclub' ); ?></a><a class="nav-tab" href="#earning"><?php esc_html_e( 'کسب کش‌بک', 'lclub' ); ?></a><a class="nav-tab" href="#data"><?php esc_html_e( 'داده‌ها', 'lclub' ); ?></a></nav>
 					<section id="general" class="lclub-settings-section"><h2><?php esc_html_e( 'تنظیمات عمومی', 'lclub' ); ?></h2><table class="form-table" role="presentation"><tr><th scope="row"><label for="lclub-phone-meta"><?php esc_html_e( 'کلید متای موبایل', 'lclub' ); ?></label></th><td><select id="lclub-phone-meta" name="lclub_settings[phone_meta]" class="regular-text">
 					<?php
 					foreach ( $phone_metas as $meta_key ) :
 						?>
 						<option value="<?php echo esc_attr( $meta_key ); ?>" <?php selected( $phone_meta, $meta_key ); ?>><?php echo esc_html( $meta_key ); ?></option><?php endforeach; ?></select><p class="description"><?php esc_html_e( 'کلیدهای حاوی phone یا mobile در متای کاربران برای انتخاب نمایش داده می‌شوند. در صورت خالی بودن، billing_phone استفاده می‌شود.', 'lclub' ); ?></p></td></tr></table></section>
+					<section id="earning" class="lclub-settings-section"><h2><?php esc_html_e( 'کسب کش‌بک', 'lclub' ); ?></h2><table class="form-table" role="presentation">
+						<tr><th scope="row"><label for="lclub-earning-status"><?php esc_html_e( 'وضعیت پیش‌فرض کسب', 'lclub' ); ?></label></th><td><select id="lclub-earning-status" name="lclub_settings[earning_order_status]">
+							<option value="processing" <?php selected( $earning, 'processing' ); ?>><?php esc_html_e( 'در حال پردازش', 'lclub' ); ?></option>
+							<option value="completed" <?php selected( $earning, 'completed' ); ?>><?php esc_html_e( 'تکمیل‌شده', 'lclub' ); ?></option>
+							<option value="cancelled" <?php selected( $earning, 'cancelled' ); ?>><?php esc_html_e( 'لغوشده', 'lclub' ); ?></option>
+							<option value="refunded" <?php selected( $earning, 'refunded' ); ?>><?php esc_html_e( 'مستردشده', 'lclub' ); ?></option>
+							<option value="failed" <?php selected( $earning, 'failed' ); ?>><?php esc_html_e( 'ناموفق', 'lclub' ); ?></option>
+						</select><p class="description"><?php esc_html_e( 'فقط پیش‌فرض فرم «قانون جدید» را تعیین می‌کند؛ هر قانون می‌تواند وضعیت خودش را داشته باشد.', 'lclub' ); ?></p></td></tr>
+						<tr><th scope="row"><label for="lclub-base-tax"><?php esc_html_e( 'مبنای مبلغ کش‌بک', 'lclub' ); ?></label></th><td><span class="lclub-check"><input id="lclub-base-tax" name="lclub_settings[cashback_base_exclude_tax]" type="checkbox" value="1" <?php checked( $exclude_tax ); ?> /> <?php esc_html_e( 'مالیات را هم از مبنای کش‌بک کم کن', 'lclub' ); ?></span><p class="description"><?php esc_html_e( 'مبنای پیش‌فرض «مجموع سفارش منهای هزینهٔ حمل» است؛ با این گزینه مالیات نیز کسر می‌شود.', 'lclub' ); ?></p></td></tr>
+					</table></section>
 					<section id="data" class="lclub-settings-section"><h2><?php esc_html_e( 'حذف داده‌ها', 'lclub' ); ?></h2><p><?php esc_html_e( 'با فعال‌سازی این گزینه، حذف افزونه همهٔ داده‌های AriunetClub را پاک می‌کند. این عمل قابل بازگشت نیست.', 'lclub' ); ?></p><label><input name="lclub_settings[delete_data]" type="checkbox" value="1" <?php checked( $settings['delete_data'] ); ?> /> <?php esc_html_e( 'پاک‌سازی کامل داده‌ها هنگام حذف افزونه', 'lclub' ); ?></label></section>
 					<?php submit_button( __( 'ذخیرهٔ تغییرات', 'lclub' ) ); ?>
 				</form>

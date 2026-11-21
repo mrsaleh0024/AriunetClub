@@ -2,15 +2,12 @@
 /**
  * @package LClub
  */
-
 namespace LClub\Core;
 
 class Plugin {
-	const DB_VERSION = '1.1.0';
-
+	const DB_VERSION = '1.2.0';
 	/** @var self|null */
 	private static $instance;
-
 	/** @var Logger */
 	private $logger;
 
@@ -18,20 +15,21 @@ class Plugin {
 		if ( is_multisite() && is_network_admin() ) {
 			wp_die( esc_html__( 'فعال‌سازی شبکه‌ای AriunetClub در MVP پشتیبانی نمی‌شود.', 'lclub' ) );
 		}
-
 		( new Migrator() )->migrate();
 		Settings::ensure_defaults();
 	}
 
 	public static function deactivate(): void {
 		wp_clear_scheduled_hook( 'lclub_process_events' );
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			as_unschedule_all_actions( 'lclub_process_events', array(), 'lclub' );
+		}
 	}
 
 	public function boot(): void {
 		if ( self::$instance ) {
 			return;
 		}
-
 		self::$instance = $this;
 		$this->logger   = new Logger();
 		$settings       = new Settings();
@@ -39,11 +37,12 @@ class Plugin {
 		( new Migrator() )->maybe_migrate();
 		$this->load_textdomain();
 		$this->register_assets();
-
 		$registry = new ModuleRegistry();
 		$registry->register( new CoreModule( $this->logger ) );
 		$registry->register( new \LClub\Modules\Identity\IdentityModule() );
 		$registry->register( new \LClub\Modules\Ledger\LedgerModule() );
+		$registry->register( new \LClub\Modules\Events\EventsModule() );
+		$registry->register( new \LClub\Modules\Rules\RulesModule() );
 		$registry->boot( $settings->enabled_modules() );
 	}
 
@@ -64,7 +63,14 @@ class Plugin {
 				}
 				wp_enqueue_style( 'lclub-admin', LCLUB_URL . 'assets/css/lclub-admin.css', array(), LCLUB_VERSION );
 				wp_enqueue_script( 'lclub-admin', LCLUB_URL . 'assets/js/lclub-admin.js', array(), LCLUB_VERSION, true );
-				wp_localize_script( 'lclub-admin', 'lclubAdmin', array( 'ajaxUrl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'lclub_adjust_balance' ) ) );
+				wp_localize_script(
+					'lclub-admin',
+					'lclubAdmin',
+					array(
+						'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+						'nonce'   => wp_create_nonce( 'lclub_adjust_balance' ),
+					)
+				);
 			}
 		);
 	}

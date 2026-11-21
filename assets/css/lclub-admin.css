@@ -58,3 +58,42 @@
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) { .lclub-panel { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--lclub-deep); }.lclub-scope::before, .lclub-scope::after { display: none; } }
 @media (max-width: 782px) { .lclub-scope { margin-inline-start: -10px; min-block-size: calc(100vh - 46px); }.lclub-scope .form-table th, .lclub-scope .form-table td { padding-inline: 0; } }
 @media (min-width: 640px) { .lclub-history-summary { align-items: end; grid-template-columns: minmax(0,1.25fr) minmax(220px,.75fr); }.lclub-history-summary__details { border-block-start: 0; border-inline-start: 1px solid var(--lclub-border); padding-block-start: 0; padding-inline-start: 24px; }.lclub-history-adjust { align-items: center; flex-direction: row; }.lclub-history-adjust .button { flex: 0 0 auto; } }
+/* ---- Phase 2: rules and events admin ---- */
+.lclub-badge { align-items: center; background: var(--lclub-input); border: 1px solid var(--lclub-border); border-radius: 999px; color: var(--lclub-deep); display: inline-flex; font-size: 12px; font-weight: 700; min-block-size: 26px; padding-inline: 11px; white-space: nowrap; }
+.lclub-badge--active, .lclub-badge--done { background: rgba(220,226,213,.9); border-color: var(--lclub-accent); color: var(--lclub-teal); }
+.lclub-badge--draft { background: var(--lclub-input); color: var(--lclub-muted); }
+.lclub-badge--pending { background: rgba(220,226,213,.72); color: var(--lclub-deep); }
+.lclub-badge--failed { background: rgba(25,51,58,.12); border-color: rgba(25,51,58,.34); color: var(--lclub-deep); }
+.lclub-badge--skipped { background: var(--lclub-input); color: var(--lclub-muted); }
+.lclub-muted { color: var(--lclub-muted); font-size: 12px; line-height: 1.8; }
+.lclub-inline-form { display: inline-block; margin-inline-start: 6px; vertical-align: middle; }
+.lclub-inline-form .button { min-block-size: 30px; padding-inline: 10px; }
+.lclub-check { color: var(--lclub-deep); font-size: 13px; line-height: 2; }
+.lclub-filter { align-items: end; display: flex; flex-wrap: wrap; gap: 10px; margin-block-end: 18px; }
+.lclub-filter label { color: var(--lclub-deep); font-size: 13px; font-weight: 700; margin-inline-end: 4px; }
+.lclub-filter select { min-inline-size: 170px; }
+.lclub-events-summary { display: flex; flex-wrap: wrap; gap: 10px; margin-block-end: 18px; }
+.lclub-events-summary__item { gap: 8px; }
+.lclub-events-summary__item strong { font-variant-numeric: normal; }
+.lclub-events-table .lclub-event-details { max-inline-size: 300px; }
+.lclub-event-error { color: var(--lclub-danger); display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-inline-size: 200px; }
+.lclub-payload summary { color: var(--lclub-teal); cursor: pointer; font-size: 12px; font-weight: 700; }
+.lclub-payload code { background: var(--lclub-input); border-radius: var(--lclub-radius-sm); direction: ltr; display: block; font-size: 11px; margin-block-start: 6px; max-inline-size: 280px; overflow: auto; padding: 8px; white-space: pre-wrap; }
+.lclub-empty { border: 1px dashed var(--lclub-border); border-radius: var(--lclub-radius-md); color: var(--lclub-muted); padding: 34px 22px; text-align: center; }
+.lclub-empty h2 { margin-block: 0 8px; }
+.lclub-empty p { margin: 0; }
+/* Sentence-style rule form */
+.lclub-rule-form .lclub-rule-section { border-block-start: 1px solid var(--lclub-border); margin-block-start: 28px; padding-block-start: 24px; }
+.lclub-rule-form .lclub-rule-section:first-of-type { border-block-start: 0; margin-block-start: 0; padding-block-start: 0; }
+.lclub-rule-grid { align-items: start; display: grid; gap: 18px 26px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.lclub-rule-grid .lclub-field { margin: 0; }
+.lclub-rule-form label { color: var(--lclub-deep); display: block; font-size: 13px; font-weight: 700; margin-block-end: 7px; }
+.lclub-rule-form input[type='text'], .lclub-rule-form input[type='number'], .lclub-rule-form input[type='datetime-local'], .lclub-rule-form select { inline-size: 100%; max-inline-size: 340px; }
+.lclub-rule-form select[multiple] { background: var(--lclub-input); border: 1px solid var(--lclub-border); border-radius: var(--lclub-radius-sm); color: var(--lclub-ink); max-inline-size: 340px; min-block-size: 96px; padding: 6px; }
+.lclub-rule-form select[multiple] option { padding-block: 4px; }
+.lclub-rule-form .description { display: block; margin-block-start: 6px; }
+.lclub-mode { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-block: 8px; }
+.lclub-mode label { color: var(--lclub-deep); font-weight: 500; margin: 0; }
+.lclub-rule-preview { background: var(--lclub-notice-bg); border: 1px solid var(--lclub-notice-border); border-radius: var(--lclub-radius-md); color: var(--lclub-deep); font-size: 14px; line-height: 2; margin-block: 28px 0; padding: 16px 18px; }
+.lclub-rule-actions { display: flex; gap: 10px; margin-block: 24px 0; }
+@media (max-width: 782px) { .lclub-events-table .lclub-event-details { max-inline-size: none; } }
