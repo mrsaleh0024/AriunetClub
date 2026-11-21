@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Ledger;
+namespace AriunetClub\Modules\Ledger;
 
 use RuntimeException;
 

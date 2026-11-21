@@ -1,0 +1,76 @@
+/* AriunetClub phase 3: wallet switch at checkout. Light, low-chroma glass matching
+   the admin tokens; scoped under .ariunetclub-scope only, logical properties only. */
+.ariunetclub-scope.ariunetclub-wallet-toggle {
+	--ariunetclub-ink: #101b20; --ariunetclub-deep: #19333a; --ariunetclub-teal: #28515a;
+	--ariunetclub-accent: #47777b; --ariunetclub-mist: #91aaa0; --ariunetclub-white: #dce2d5;
+	--ariunetclub-surface: rgba(255,255,255,.58);
+	--ariunetclub-border: rgba(40,81,90,.16); --ariunetclub-text: #101b20;
+	--ariunetclub-muted: rgba(25,51,58,.72); --ariunetclub-focus: #47777b;
+	--ariunetclub-input-focus: rgba(255,255,255,.96);
+	--ariunetclub-focus-halo: rgba(71,119,123,.17);
+	--ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px; --ariunetclub-radius-lg: 28px;
+	--ariunetclub-blur: 18px; --ariunetclub-shadow: 0 20px 60px rgba(25,51,58,.12);
+	box-sizing: border-box;
+	color: var(--ariunetclub-text);
+	font-family: Vazirmatn, sans-serif;
+	margin-block: 8px 18px;
+}
+.ariunetclub-wallet-toggle *, .ariunetclub-wallet-toggle *::before, .ariunetclub-wallet-toggle *::after { box-sizing: inherit; }
+.ariunetclub-wallet-toggle__panel {
+	backdrop-filter: blur(var(--ariunetclub-blur)); -webkit-backdrop-filter: blur(var(--ariunetclub-blur));
+	background: var(--ariunetclub-surface);
+	border: 1px solid var(--ariunetclub-border);
+	border-radius: var(--ariunetclub-radius-md);
+	box-shadow: var(--ariunetclub-shadow);
+	padding: clamp(16px, 3vw, 24px);
+}
+.ariunetclub-wallet-toggle__label {
+	align-items: center;
+	color: var(--ariunetclub-deep);
+	cursor: pointer;
+	display: flex;
+	font-size: 15px;
+	font-weight: 700;
+	gap: 10px;
+	min-block-size: 44px;
+}
+.ariunetclub-wallet-toggle__label input[type='checkbox'] {
+	accent-color: var(--ariunetclub-mist);
+	block-size: 18px;
+	flex: 0 0 auto;
+	inline-size: 18px;
+	margin: 0;
+}
+.ariunetclub-wallet-toggle__meta {
+	color: var(--ariunetclub-muted);
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 13px;
+	gap: 6px 18px;
+	line-height: 1.9;
+	margin-block: 12px 0 0;
+}
+.ariunetclub-wallet-toggle__meta strong { color: var(--ariunetclub-ink); font-weight: 700; }
+.ariunetclub-wallet-toggle__note {
+	border-radius: var(--ariunetclub-radius-sm);
+	color: var(--ariunetclub-deep);
+	font-size: 13px;
+	line-height: 1.9;
+	margin-block: 10px 0 0;
+	min-block-size: 0;
+}
+.ariunetclub-wallet-toggle__note--error {
+	background: var(--ariunetclub-input-focus);
+	border: 1px solid var(--ariunetclub-border);
+	padding: 10px 13px;
+}
+.ariunetclub-scope.ariunetclub-wallet-toggle :focus-visible { outline: 2px solid var(--ariunetclub-focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+	.ariunetclub-wallet-toggle * { scroll-behavior: auto; transition-duration: .01ms !important; }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+	.ariunetclub-wallet-toggle__panel {
+		backdrop-filter: none; -webkit-backdrop-filter: none;
+		background: var(--ariunetclub-white);
+	}
+}

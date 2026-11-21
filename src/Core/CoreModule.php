@@ -1,18 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Core;
+namespace AriunetClub\Core;
 
 class CoreModule implements Module {
-	/** @var Logger */
-	private $logger;
-
-	public function __construct( Logger $logger ) {
-		$this->logger = $logger;
-	}
-
 	public function id(): string {
 		return 'core';
 	}
@@ -22,6 +15,5 @@ class CoreModule implements Module {
 	}
 
 	public function boot(): void {
-		$this->logger->info( 'Core module booted.' );
 	}
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Core;
+namespace AriunetClub\Core;
 
 class Logger {
 	/** @param array<string,mixed> $context */
@@ -23,7 +23,7 @@ class Logger {
 			return;
 		}
 
-		$directory = trailingslashit( $upload['basedir'] ) . 'lclub-logs';
+		$directory = trailingslashit( $upload['basedir'] ) . 'ariunetclub-logs';
 		if ( ! wp_mkdir_p( $directory ) ) {
 			return;
 		}
@@ -38,7 +38,9 @@ class Logger {
 			)
 		);
 		if ( false !== $line ) {
-			file_put_contents( trailingslashit( $directory ) . 'lclub-' . gmdate( 'Y-m' ) . '.log', $line . PHP_EOL, FILE_APPEND | LOCK_EX ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			$file = trailingslashit( $directory ) . 'ariunetclub-' . gmdate( 'Y-m' ) . '.log';
+			$this->rotate_if_huge( $file );
+			file_put_contents( $file, $line . PHP_EOL, FILE_APPEND | LOCK_EX ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		}
 	}
 
@@ -63,9 +65,35 @@ class Logger {
 	private function mask_context( array $context ): array {
 		foreach ( $context as $key => $value ) {
 			if ( is_string( $value ) && false !== stripos( (string) $key, 'phone' ) ) {
-				$context[ $key ] = substr( $value, 0, 4 ) . '***' . substr( $value, -3 );
+				$context[ $key ] = self::mask_value( $value );
 			}
 		}
 		return $context;
+	}
+
+	/**
+	 * Masks a phone-like value; short values are hidden entirely so the
+	 * mask itself can never reveal the whole number.
+	 */
+	private static function mask_value( string $value ): string {
+		$length = function_exists( 'mb_strlen' ) ? mb_strlen( $value, 'UTF-8' ) : strlen( $value );
+		if ( $length < 8 ) {
+			return '***';
+		}
+		if ( function_exists( 'mb_substr' ) ) {
+			return mb_substr( $value, 0, 4, 'UTF-8' ) . '***' . mb_substr( $value, -3, 3, 'UTF-8' );
+		}
+		return substr( $value, 0, 4 ) . '***' . substr( $value, -3 );
+	}
+
+	/**
+	 * Keeps monthly log files bounded: a file past ~5 MB is rotated away once.
+	 */
+	private function rotate_if_huge( string $file ): void {
+		$size = is_file( $file ) ? (int) filesize( $file ) : 0; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_file, WordPress.WP.AlternativeFunctions.file_system_operations_filesize -- cheap stat check before the append.
+		if ( $size < 5 * 1024 * 1024 ) {
+			return;
+		}
+		rename( $file, $file . '.old' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- a single rotation per month keeps disk usage bounded.
 	}
 }

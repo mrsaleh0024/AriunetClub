@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Ledger;
+namespace AriunetClub\Modules\Ledger;
 
-use LClub\Core\Money;
+use AriunetClub\Core\Money;
 
 class LedgerService {
 	/** @var LedgerGateway */
@@ -55,7 +55,7 @@ class LedgerService {
 			$context
 		);
 		$recorded = $this->repository->record( $entry );
-		do_action( 'lclub_ledger_entry_created', $recorded );
+		do_action( 'ariunetclub_ledger_entry_created', $recorded );
 		return $recorded;
 	}
 }

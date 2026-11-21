@@ -1,11 +1,11 @@
 <?php
 /**
- * @package LClub
+ * @package AriunetClub
  */
 
-namespace LClub\Modules\Identity;
+namespace AriunetClub\Modules\Identity;
 
-use LClub\Core\Module;
+use AriunetClub\Core\Module;
 
 class IdentityModule implements Module {
 	public function id(): string {
@@ -14,7 +14,7 @@ class IdentityModule implements Module {
 		return array( 'core' ); }
 	public function boot(): void {
 		$service = new IdentityService( new PhoneNormalizer() );
-		add_filter( 'lclub_phone_meta_keys', array( $service, 'phone_meta_keys' ) );
-		$GLOBALS['lclub_identity_service'] = $service;
+		add_filter( 'ariunetclub_phone_meta_keys', array( $service, 'phone_meta_keys' ) );
+		$GLOBALS['ariunetclub_identity_service'] = $service;
 	}
 }

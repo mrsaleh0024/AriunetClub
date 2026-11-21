@@ -1,0 +1,97 @@
+/* AriunetClub phase 4: the customer "club" tab in My Account.
+   Light, low-chroma glass matching the plugin tokens; scoped under
+   .ariunetclub-scope only, logical properties only, no gradients.
+   The surface is more opaque than the admin glass so text contrast
+   holds on any theme background (doc section 10.1). */
+@font-face { font-display: swap; font-family: Vazirmatn; font-style: normal; font-weight: 400; src: url('../fonts/Vazirmatn-Regular.woff2') format('woff2'); }
+@font-face { font-display: swap; font-family: Vazirmatn; font-style: normal; font-weight: 500; src: url('../fonts/Vazirmatn-Medium.woff2') format('woff2'); }
+@font-face { font-display: swap; font-family: Vazirmatn; font-style: normal; font-weight: 700; src: url('../fonts/Vazirmatn-Bold.woff2') format('woff2'); }
+
+.ariunetclub-scope.ariunetclub-account {
+	--ariunetclub-ink: #101b20; --ariunetclub-deep: #19333a; --ariunetclub-teal: #28515a;
+	--ariunetclub-accent: #47777b; --ariunetclub-mist: #91aaa0; --ariunetclub-white: #dce2d5;
+	--ariunetclub-surface: rgba(255,255,255,.8);
+	--ariunetclub-border: rgba(40,81,90,.18); --ariunetclub-text: #101b20;
+	--ariunetclub-muted: rgba(25,51,58,.74); --ariunetclub-focus: #47777b;
+	--ariunetclub-focus-halo: rgba(71,119,123,.17);
+	--ariunetclub-success: #2c565b; --ariunetclub-danger: #8f4a42; --ariunetclub-warning: #7a5c2e; --ariunetclub-neutral: #5b6770;
+	--ariunetclub-radius-sm: 10px; --ariunetclub-radius-md: 18px; --ariunetclub-radius-lg: 28px;
+	--ariunetclub-blur: 16px; --ariunetclub-shadow: 0 18px 50px rgba(25,51,58,.12);
+	box-sizing: border-box;
+	color: var(--ariunetclub-text);
+	font-family: Vazirmatn, sans-serif;
+	margin-block: 8px 24px;
+}
+.ariunetclub-account *, .ariunetclub-account *::before, .ariunetclub-account *::after { box-sizing: inherit; }
+.ariunetclub-account__panel {
+	backdrop-filter: blur(var(--ariunetclub-blur)); -webkit-backdrop-filter: blur(var(--ariunetclub-blur));
+	background: var(--ariunetclub-surface);
+	border: 1px solid var(--ariunetclub-border);
+	border-radius: var(--ariunetclub-radius-lg);
+	box-shadow: var(--ariunetclub-shadow);
+	overflow: hidden;
+	padding: clamp(18px, 4vw, 34px);
+	position: relative;
+}
+/* One flat geometric shape behind the glass; no gradients. */
+.ariunetclub-account__panel::before { background: var(--ariunetclub-mist); block-size: 220px; border-radius: 50%; content: ''; inline-size: 220px; inset-block-start: -110px; inset-inline-start: -90px; opacity: .28; position: absolute; z-index: -1; }
+.ariunetclub-account__head { margin-block-end: 18px; }
+.ariunetclub-account__kicker { color: var(--ariunetclub-accent); font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+.ariunetclub-account__title { color: var(--ariunetclub-ink); font-size: clamp(20px, 3vw, 26px); font-weight: 700; letter-spacing: -.03em; line-height: 1.3; margin-block: 6px 0; }
+.ariunetclub-account h2, .ariunetclub-account h3, .ariunetclub-account p, .ariunetclub-account a, .ariunetclub-account table { font-family: Vazirmatn, sans-serif; }
+.ariunetclub-account__balance { display: grid; gap: 10px; margin-block: 4px 22px; }
+.ariunetclub-account__balance-label { color: var(--ariunetclub-muted); font-size: 13px; }
+.ariunetclub-account__balance-value { color: var(--ariunetclub-ink); font-size: clamp(30px, 6vw, 44px); font-weight: 700; letter-spacing: -.04em; line-height: 1.1; }
+.ariunetclub-account__currency { color: var(--ariunetclub-deep); font-size: .45em; font-weight: 500; }
+.ariunetclub-account__balance-details { border-block-start: 1px solid var(--ariunetclub-border); display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 6px 0 0; padding-block-start: 16px; }
+.ariunetclub-account__balance-details div { display: grid; gap: 3px; }
+.ariunetclub-account__balance-details dt { color: var(--ariunetclub-muted); font-size: 12.5px; margin: 0; }
+.ariunetclub-account__balance-details dd { color: var(--ariunetclub-deep); font-size: 15px; font-weight: 700; margin: 0; }
+.ariunetclub-account__notice { align-items: start; background: rgba(220,226,213,.66); border: 1px solid rgba(71,119,123,.32); border-radius: var(--ariunetclub-radius-md); color: var(--ariunetclub-deep); display: flex; font-size: 13.5px; gap: 10px; line-height: 1.9; margin-block: 0 22px; padding: 13px 16px; }
+.ariunetclub-account__notice-icon { color: var(--ariunetclub-accent); flex: 0 0 auto; margin-block-start: 4px; }
+.ariunetclub-account__notice a { color: var(--ariunetclub-teal); font-weight: 700; text-decoration: none; }
+.ariunetclub-account__notice a:hover, .ariunetclub-account__notice a:focus-visible { text-decoration: underline; }
+.ariunetclub-account__section + .ariunetclub-account__section { border-block-start: 1px solid var(--ariunetclub-border); margin-block-start: 24px; padding-block-start: 24px; }
+.ariunetclub-account__section-head { align-items: center; display: flex; gap: 10px; justify-content: space-between; margin-block: 0 12px; }
+.ariunetclub-account__section-head h3 { color: var(--ariunetclub-deep); font-size: 16px; font-weight: 700; margin: 0; }
+.ariunetclub-account__count { align-items: center; background: rgba(255,255,255,.6); border: 1px solid var(--ariunetclub-border); border-radius: 999px; color: var(--ariunetclub-deep); display: inline-flex; font-size: 12.5px; font-weight: 700; justify-content: center; min-block-size: 28px; min-inline-size: 28px; padding-inline: 9px; }
+.ariunetclub-account__empty { color: var(--ariunetclub-muted); font-size: 13.5px; line-height: 1.9; margin: 0; }
+.ariunetclub-account__table-scroll { overflow-x: auto; }
+.ariunetclub-account__table { border: 0; border-collapse: collapse; inline-size: 100%; min-inline-size: 520px; }
+.ariunetclub-account__table th { border-block-end: 1px solid var(--ariunetclub-border); color: var(--ariunetclub-muted); font-size: 12px; font-weight: 500; padding: 8px 10px; text-align: start; }
+.ariunetclub-account__table td { border-block-end: 1px solid rgba(40,81,90,.09); color: var(--ariunetclub-deep); font-size: 13.5px; padding: 11px 10px; vertical-align: middle; }
+.ariunetclub-account__table tr:last-child td { border-block-end: 0; }
+.ariunetclub-account__badge { border-radius: 999px; display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; white-space: nowrap; }
+.ariunetclub-account__badge--success { background: rgba(71,119,123,.15); color: var(--ariunetclub-success); }
+.ariunetclub-account__badge--danger { background: rgba(143,74,66,.13); color: var(--ariunetclub-danger); }
+.ariunetclub-account__badge--warning { background: rgba(122,92,46,.15); color: var(--ariunetclub-warning); }
+.ariunetclub-account__badge--neutral { background: rgba(91,103,112,.14); color: var(--ariunetclub-neutral); }
+.ariunetclub-account__amount { font-weight: 700; white-space: nowrap; }
+.ariunetclub-account__amount--success { color: var(--ariunetclub-success); }
+.ariunetclub-account__amount--danger { color: var(--ariunetclub-danger); }
+.ariunetclub-account__amount--warning, .ariunetclub-account__amount--neutral { color: var(--ariunetclub-muted); }
+.ariunetclub-account__order-link { color: var(--ariunetclub-teal); font-weight: 700; margin-inline-start: 6px; text-decoration: none; white-space: nowrap; }
+.ariunetclub-account__order-link:hover, .ariunetclub-account__order-link:focus-visible { text-decoration: underline; }
+.ariunetclub-account__pagination { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-block: 18px 0; }
+.ariunetclub-account__pagination a { border: 1px solid var(--ariunetclub-border); border-radius: var(--ariunetclub-radius-sm); color: var(--ariunetclub-deep); font-size: 13px; font-weight: 700; min-block-size: 38px; min-inline-size: 38px; padding: 8px 12px; text-align: center; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; }
+.ariunetclub-account__pagination a:hover, .ariunetclub-account__pagination a:focus-visible { background: rgba(255,255,255,.75); border-color: var(--ariunetclub-focus); }
+.ariunetclub-account__pagination a[aria-current='page'] { background: var(--ariunetclub-deep); border-color: var(--ariunetclub-deep); color: #fff; }
+.ariunetclub-account__rules { display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.ariunetclub-account__rules li { align-items: baseline; background: rgba(255,255,255,.55); border: 1px solid var(--ariunetclub-border); border-radius: var(--ariunetclub-radius-md); display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: space-between; padding: 12px 16px; }
+.ariunetclub-account__rule-title { color: var(--ariunetclub-ink); font-size: 14px; font-weight: 500; }
+.ariunetclub-account__rule-reward { color: var(--ariunetclub-success); font-size: 14px; font-weight: 700; white-space: nowrap; }
+.ariunetclub-account__hint { color: var(--ariunetclub-muted); font-size: 12.5px; line-height: 1.9; margin-block: 14px 0 0; }
+.ariunetclub-scope.ariunetclub-account :focus-visible { outline: 2px solid var(--ariunetclub-focus); outline-offset: 3px; }
+@media (max-width: 480px) {
+	.ariunetclub-account__section-head { flex-wrap: wrap; }
+	.ariunetclub-account__rules li { flex-direction: column; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.ariunetclub-account * { transition-duration: .01ms !important; }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+	.ariunetclub-account__panel {
+		backdrop-filter: none; -webkit-backdrop-filter: none;
+		background: var(--ariunetclub-white);
+	}
+}

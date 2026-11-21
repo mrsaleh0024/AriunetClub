@@ -1,6 +1,6 @@
 <?php
-namespace LClub\Tests;
-use LClub\Core\Money;
+namespace AriunetClub\Tests;
+use AriunetClub\Core\Money;
 use PHPUnit\Framework\TestCase;
 class MoneyTest extends TestCase {
 	public function test_formats_persian_digits(): void { $this->assertSame( '۱۲,۳۴۶', Money::format( 12345.6 ) ); }

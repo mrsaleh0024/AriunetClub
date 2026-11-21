@@ -1,9 +1,12 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
   level: max
   paths:
     - src
   bootstrapFiles:
     - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
-    - tests/bootstrap.php
+    - tools/phpstan-bootstrap.php
   parallel:
     maximumNumberOfProcesses: 1

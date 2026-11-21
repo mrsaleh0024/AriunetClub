@@ -60,8 +60,6 @@ class ComposerStaticInitf543202edab63abdc8dcec4b2fe0d2be
         'L' =>
         array (
             'LanguageServerProtocol\\' => 23,
-            'LClub\\Tests\\' => 12,
-            'LClub\\' => 6,
         ),
         'F' =>
         array (
@@ -81,6 +79,8 @@ class ComposerStaticInitf543202edab63abdc8dcec4b2fe0d2be
         ),
         'A' =>
         array (
+            'AriunetClub\\Tests\\' => 18,
+            'AriunetClub\\' => 12,
             'Amp\\ByteStream\\' => 15,
             'Amp\\' => 4,
             'AdvancedJsonRpc\\' => 16,
@@ -174,14 +174,6 @@ class ComposerStaticInitf543202edab63abdc8dcec4b2fe0d2be
         array (
             0 => __DIR__ . '/..' . '/felixfbecker/language-server-protocol/src',
         ),
-        'LClub\\Tests\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/tests/unit',
-        ),
-        'LClub\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/src',
-        ),
         'Fidry\\CpuCoreCounter\\' =>
         array (
             0 => __DIR__ . '/..' . '/fidry/cpu-core-counter/src',
@@ -209,6 +201,14 @@ class ComposerStaticInitf543202edab63abdc8dcec4b2fe0d2be
         'Composer\\Pcre\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/pcre/src',
+        ),
+        'AriunetClub\\Tests\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/tests/unit',
+        ),
+        'AriunetClub\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src',
         ),
         'Amp\\ByteStream\\' =>
         array (
