@@ -22,7 +22,10 @@ class WcOrderHistory implements OrderHistoryInterface {
 				'customer_id'  => $user_id,
 				'status'       => array( 'wc-processing', 'wc-completed' ),
 				'limit'        => 1,
-				'date_created' => array( 'before' => $before ),
+				// Documented wc_get_orders date format: '<TIMESTAMP' is UTC and
+				// works on both storage engines. The array('before' => ...) form
+				// is a legacy-posts extension and fatals on HPOS stores.
+				'date_created' => '<' . $before->getTimestamp(),
 				'return'       => 'ids',
 			)
 		);

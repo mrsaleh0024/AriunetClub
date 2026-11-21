@@ -109,6 +109,16 @@ if ( ! function_exists( 'delete_option' ) ) {
                 unset( $GLOBALS['ariunetclub_test_settings'][ $option ] );
                 return true; }
 }
+if ( ! function_exists( 'wc_get_orders' ) ) {
+        $GLOBALS['ariunetclub_test_wc_get_orders_args'] = array();
+        function wc_get_orders( $args = array() ) {
+                if ( ! isset( $GLOBALS['ariunetclub_test_wc_get_orders_args'] ) || ! is_array( $GLOBALS['ariunetclub_test_wc_get_orders_args'] ) ) {
+                        $GLOBALS['ariunetclub_test_wc_get_orders_args'] = array();
+                }
+                $GLOBALS['ariunetclub_test_wc_get_orders_args'][] = $args;
+                return array();
+        }
+}
 if ( ! function_exists( 'get_user_meta' ) ) {
         $GLOBALS['ariunetclub_test_user_meta'] = array();
         function get_user_meta( $user_id, $key, $single = false ) {
