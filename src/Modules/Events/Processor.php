@@ -64,7 +64,7 @@ class Processor {
 			} catch ( SkipEventException $skip ) {
 				$this->gateway->mark_skipped( (int) $event['id'], (string) $skip->getMessage() );
 			} catch ( \Throwable $error ) {
-				$this->gateway->mark_error( (int) $event['id'], (string) $error->getMessage(), self::MAX_ATTEMPTS );
+				$this->gateway->mark_error( (int) $event['id'], (string) $error->getMessage(), $this->gateway->max_attempts() );
 			}
 			++$done;
 		}

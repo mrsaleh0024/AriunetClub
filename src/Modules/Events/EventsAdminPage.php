@@ -175,7 +175,7 @@ class EventsAdminPage {
 																								<?php endif; ?>
 																						</td>
 																						<td><span class="ariunetclub-badge ariunetclub-badge--<?php echo esc_attr( $state ); ?>"><?php echo esc_html( $statuses[ $state ] ?? $state ); ?></span></td>
-																						<td><?php echo esc_html( Money::to_persian_digits( (string) ( $event['attempts'] ?? 0 ) ) . ' / ' . Money::to_persian_digits( (string) Processor::MAX_ATTEMPTS ) ); ?></td>
+																						<td><?php echo esc_html( Money::to_persian_digits( (string) ( $event['attempts'] ?? 0 ) ) . ' / ' . Money::to_persian_digits( (string) $this->repository->max_attempts() ) ); ?></td>
 																						<td><?php echo esc_html( JalaliDate::format( (string) $event['created_at'] ) ); ?></td>
 																						<td><?php echo esc_html( null === $event['processed_at'] ? '—' : JalaliDate::format( (string) $event['processed_at'] ) ); ?></td>
 																						<td class="ariunetclub-event-details">

@@ -104,6 +104,10 @@ class InMemoryEventGateway implements EventGateway {
                 }
         }
 
+        public function max_attempts(): int {
+                return 3;
+        }
+
         public function requeue( int $id ): void {
                 foreach ( $this->rows as $index => $row ) {
                         if ( (int) $row['id'] === $id ) {

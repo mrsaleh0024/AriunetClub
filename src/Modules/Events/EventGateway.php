@@ -46,6 +46,12 @@ interface EventGateway {
 	public function requeue( int $id ): void;
 
 	/**
+	 * Retry ceiling for one event; the single source of truth shared by the
+	 * processor (when to give up) and the admin log (what to display).
+	 */
+	public function max_attempts(): int;
+
+	/**
 	 * @param string $status Empty string for every status.
 	 * @return array{items:array<int,array<string,mixed>>,total:int}
 	 */
