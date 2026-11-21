@@ -13,6 +13,13 @@ define( 'ARIUNETCLUB_URL', 'https://example.test/wp-content/plugins/ariunetclub/
 define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' );
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
+if ( ! defined( 'ARRAY_A' ) ) {
+        define( 'ARRAY_A', 'ARRAY_A' );
+}
+if ( ! class_exists( 'wpdb' ) ) {
+        class wpdb {}
+}
+
 if ( ! function_exists( 'wc_get_price_decimals' ) ) {
         function wc_get_price_decimals() {
                 return 0; }
