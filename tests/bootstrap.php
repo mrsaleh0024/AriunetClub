@@ -68,7 +68,25 @@ if ( ! function_exists( '__' ) ) {
 }
 if ( ! function_exists( 'get_option' ) ) {
         function get_option( $option, $default = false ) {
-                return $default; }
+                return isset( $GLOBALS['ariunetclub_test_settings'][ $option ] ) ? $GLOBALS['ariunetclub_test_settings'][ $option ] : $default; }
+}
+if ( ! function_exists( 'add_option' ) ) {
+        function add_option( $option, $value = '', $deprecated = '', $autoload = null ) {
+                if ( ! isset( $GLOBALS['ariunetclub_test_settings'] ) || ! is_array( $GLOBALS['ariunetclub_test_settings'] ) ) {
+                        $GLOBALS['ariunetclub_test_settings'] = array();
+                }
+                if ( array_key_exists( $option, $GLOBALS['ariunetclub_test_settings'] ) ) {
+                        return false; // mirrors the duplicate-key INSERT failure.
+                }
+                $GLOBALS['ariunetclub_test_settings'][ $option ] = $value;
+                return true; }
+}
+if ( ! function_exists( 'delete_option' ) ) {
+        function delete_option( $option ) {
+                if ( ! isset( $GLOBALS['ariunetclub_test_settings'] ) || ! is_array( $GLOBALS['ariunetclub_test_settings'] ) || ! array_key_exists( $option, $GLOBALS['ariunetclub_test_settings'] ) ) {
+                        return false; }
+                unset( $GLOBALS['ariunetclub_test_settings'][ $option ] );
+                return true; }
 }
 if ( ! function_exists( 'get_user_meta' ) ) {
         $GLOBALS['ariunetclub_test_user_meta'] = array();

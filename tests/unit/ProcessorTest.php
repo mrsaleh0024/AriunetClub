@@ -89,4 +89,39 @@ class ProcessorTest extends TestCase {
 		$this->assertSame( 'done', $gateway->rows[0]['status'] );
 		$this->assertSame( 1, (int) $gateway->rows[0]['attempts'] );
 	}
+
+	public function test_processing_is_skipped_while_another_processor_holds_the_lock(): void {
+		$gateway = new InMemoryEventGateway();
+		$gateway->insert( $this->make_event() );
+		$GLOBALS['ariunetclub_test_settings'][ Processor::LOCK_OPTION ] = (string) time();
+		$processor = new Processor( $gateway, static function (): void {
+			throw new \RuntimeException( 'must not run while locked' );
+		} );
+
+		$this->assertSame( 0, $processor->process_pending() );
+		$this->assertSame( 'pending', $gateway->rows[0]['status'] );
+		$this->assertNotEmpty( $GLOBALS['ariunetclub_test_settings'][ Processor::LOCK_OPTION ] );
+
+		unset( $GLOBALS['ariunetclub_test_settings'][ Processor::LOCK_OPTION ] );
+	}
+
+	public function test_the_lock_is_released_after_the_batch(): void {
+		$gateway = new InMemoryEventGateway();
+		$gateway->insert( $this->make_event() );
+		$processor = new Processor( $gateway );
+
+		$this->assertSame( 1, $processor->process_pending() );
+		$this->assertArrayNotHasKey( Processor::LOCK_OPTION, $GLOBALS['ariunetclub_test_settings'] ?? array() );
+	}
+
+	public function test_a_stale_lock_from_a_crashed_processor_is_recovered(): void {
+		$gateway = new InMemoryEventGateway();
+		$gateway->insert( $this->make_event() );
+		$GLOBALS['ariunetclub_test_settings'][ Processor::LOCK_OPTION ] = (string) ( time() - 500 );
+		$processor = new Processor( $gateway );
+
+		$this->assertSame( 1, $processor->process_pending() );
+		$this->assertSame( 'done', $gateway->rows[0]['status'] );
+		$this->assertArrayNotHasKey( Processor::LOCK_OPTION, $GLOBALS['ariunetclub_test_settings'] ?? array() );
+	}
 }

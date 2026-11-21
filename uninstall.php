@@ -48,5 +48,6 @@ if ( function_exists( 'as_unschedule_all_actions' ) ) {
 delete_option( 'ariunetclub_settings' );
 delete_option( 'ariunetclub_db_version' );
 delete_option( 'ariunetclub_rewrite_version' );
+delete_option( 'ariunetclub_process_lock' );
 delete_option( 'lclub_settings' );
 delete_option( 'lclub_db_version' );
