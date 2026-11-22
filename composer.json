@@ -35,7 +35,10 @@
     "qa": "@php tools/qa.php",
     "qa:security": "@php tools/qa.php --security",
     "test:account": "@php tools/account-functional-tests.php",
-    "test:rebrand": "@php tools/rebrand-functional-tests.php"
+    "test:rebrand": "@php tools/rebrand-functional-tests.php",
+    "test:license": "@php tools/license-functional-tests.php",
+    "load:test": "@php tools/load-test.php --driver sqlite",
+    "dist": "@php tools/dist/build-zip.php"
   },
   "config": {
     "platform": {

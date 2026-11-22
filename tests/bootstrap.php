@@ -135,4 +135,44 @@ if ( ! function_exists( 'get_query_var' ) ) {
                 return isset( $GLOBALS['ariunetclub_test_query_vars'][ $var ] ) ? $GLOBALS['ariunetclub_test_query_vars'][ $var ] : $default;
         }
 }
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+        define( 'DAY_IN_SECONDS', 86400 );
+}
+if ( ! function_exists( 'update_option' ) ) {
+        function update_option( $option, $value, $autoload = null ) {
+                $GLOBALS['ariunetclub_test_settings'][ $option ] = $value;
+                return true; }
+}
+if ( ! function_exists( 'wp_salt' ) ) {
+        function wp_salt( $scheme = 'auth' ) {
+                return 'ariunetclub-test-salt-' . $scheme; }
+}
+if ( ! defined( 'ARIUNETCLUB_TEST_SITE_URL' ) ) {
+        define( 'ARIUNETCLUB_TEST_SITE_URL', 'https://www.example.test' );
+}
+if ( ! function_exists( 'get_current_user_id' ) ) {
+        function get_current_user_id() {
+                return isset( $GLOBALS['ariunetclub_test_user_id'] ) ? (int) $GLOBALS['ariunetclub_test_user_id'] : 0;
+        }
+}
+if ( ! function_exists( 'current_user_can' ) ) {
+        function current_user_can( $capability, ...$args ) {
+                return ! empty( $GLOBALS['ariunetclub_test_can_manage'] );
+        }
+}
+if ( ! function_exists( 'esc_html' ) ) {
+        function esc_html( $text ) {
+                return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+        }
+}
+if ( ! function_exists( 'esc_attr' ) ) {
+        function esc_attr( $text ) {
+                return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+        }
+}
+if ( ! function_exists( 'esc_html__' ) ) {
+        function esc_html__( $text, $domain = 'default' ) {
+                return $text;
+        }
+}
 require_once __DIR__ . '/unit/Fixtures.php';

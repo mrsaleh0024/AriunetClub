@@ -7,24 +7,26 @@ $root     = dirname( __DIR__ );
 $security = in_array( '--security', $argv, true );
 $php      = '"' . PHP_BINARY . '"';
 $commands = $security
-	? array( $php . ' vendor/bin/psalm --taint-analysis' )
-	: array(
-		$php . ' vendor/bin/phpcs',
-		'npm run --silent lint:css',
-		$php . ' -d memory_limit=512M vendor/bin/phpstan analyse',
-		$php . ' vendor/bin/phpunit',
-		$php . ' tools/wallet-functional-tests.php',
-		$php . ' tools/account-functional-tests.php',
-		$php . ' tools/rebrand-functional-tests.php',
-	);
+        ? array( $php . ' vendor/bin/psalm --taint-analysis' )
+        : array(
+                $php . ' vendor/bin/phpcs',
+                'npm run --silent lint:css',
+                $php . ' -d memory_limit=512M vendor/bin/phpstan analyse',
+                $php . ' vendor/bin/phpunit',
+                $php . ' tools/wallet-functional-tests.php',
+                $php . ' tools/account-functional-tests.php',
+                $php . ' tools/rebrand-functional-tests.php',
+                $php . ' tools/license-functional-tests.php',
+                $php . ' tools/load-test.php --driver sqlite',
+        );
 $report = array( '# AriunetClub QA Report', '', 'Generated: ' . gmdate( 'c' ), '', '## Commands' );
 $failed = false;
 $cd     = ( '\\' === DIRECTORY_SEPARATOR ) ? 'cd /d ' : 'cd ';
 foreach ( $commands as $command ) {
-	$output = array(); $exit = 0;
-	exec( $cd . escapeshellarg( $root ) . ' && ' . $command . ' 2>&1', $output, $exit );
-	$report[] = ''; $report[] = '### ' . $command; $report[] = '```text'; $report[] = implode( PHP_EOL, $output ); $report[] = '```';
-	if ( 0 !== $exit ) { $failed = true; }
+        $output = array(); $exit = 0;
+        exec( $cd . escapeshellarg( $root ) . ' && ' . $command . ' 2>&1', $output, $exit );
+        $report[] = ''; $report[] = '### ' . $command; $report[] = '```text'; $report[] = implode( PHP_EOL, $output ); $report[] = '```';
+        if ( 0 !== $exit ) { $failed = true; }
 }
 file_put_contents( $root . DIRECTORY_SEPARATOR . 'qa-report.md', implode( PHP_EOL, $report ) . PHP_EOL );
 exit( $failed ? 1 : 0 );
