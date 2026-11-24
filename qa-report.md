@@ -1,6 +1,6 @@
 # AriunetClub QA Report
 
-Generated: 2026-11-24T13:56:38+00:00
+Generated: 2026-11-24T14:07:43+00:00
 
 ## Commands
 
@@ -33,7 +33,7 @@ PHPUnit 9.6.39 by Sebastian Bergmann and contributors.
 ............................................................... 126 / 149 ( 84%)
 .......................                                         149 / 149 (100%)
 
-Time: 00:00.023, Memory: 10.00 MB
+Time: 00:00.025, Memory: 10.00 MB
 
 OK (149 tests, 382 assertions)
 ```
@@ -470,7 +470,7 @@ Engine: in-memory SQLite (sandbox). Concurrency section runs serialized.
   PASS  exactly 20 capture entries
 
 === 6) balance → legacy-lot migration, 100,000 users ===
-  PASS  100k-user migration finishes in batches — last batch 302 users, 200 batches, 15.18s total
+  PASS  100k-user migration finishes in batches — last batch 302 users, 200 batches, 15.32s total
   PASS  one legacy lot per positive-balance user — legacy=85543 positive=85543
   PASS  migration leaves already-consistent users untouched — legacy lots created for lifecycle users: 0
   PASS  full migration re-run is inert — before=85543 after=85543
@@ -495,38 +495,45 @@ Engine: in-memory SQLite (sandbox). Concurrency section runs serialized.
 === AriunetClub load test: 100000 ledger rows, driver sqlite ===
 Driver: in-memory SQLite (development sandbox; advisory locks simulated)
 Seeding 100000 ledger rows across 5000 users...
-Seeded in 931.78ms
+Seeded in 912.85ms
 
 === 1) Wallet balance reads (100 lookups) ===
-  PASS  average balance read < 50ms — 0.01ms avg, 1.21ms total
+  PASS  average balance read < 50ms — 0.01ms avg, 1.17ms total
   PASS  exactly 100 queries for 100 reads (no N+1) — 100 queries
 === 2) Ledger history pages (a user with ~20 rows/page) ===
-  PASS  history page under 1s — 0.22ms
+  PASS  history page under 1s — 0.20ms
   PASS  history is paginated to 20 rows — 20 rows
   PASS  history uses exactly 2 queries (count + page) — 2 queries
 === 3) Dashboard queries on the full ledger ===
-  PASS  lifetime totals under 1s — 32.50ms
+  PASS  lifetime totals under 1s — 29.34ms
   PASS  totals use 5 constant queries — 5 queries
   PASS  totals are non-zero
-  PASS  today range under 1s — 0.42ms
+  PASS  today range under 1s — 0.34ms
   PASS  range uses 1 query — 1 queries
-  PASS  30-day daily aggregation under 1s — 14.95ms
+  PASS  30-day daily aggregation under 1s — 13.07ms
   PASS  daily aggregation uses 1 query — 1 queries
   PASS  every bucket day present after fill
-  PASS  top rules under 1s — 20.25ms
+  PASS  top rules under 1s — 17.45ms
   PASS  top rules use 1 query — 1 queries
-  PASS  recent activity under 1s — 0.12ms
+  PASS  recent activity under 1s — 0.07ms
   PASS  recent activity uses 1 query — 1 queries
 === 4) Aggregation consistency ===
-  PASS  30-day series sum matches the range query — 29,659,404.70 vs 29,659,404.70
+  PASS  30-day series sum matches the range query — 29,351,627.10 vs 29,351,627.10
 === 5) Phase 6 credit lots: 1,000,000 ledger rows ===
-  PASS  ledger grew to 1,000,000 rows — 1,000,000 rows in 11,030.02ms
+  PASS  ledger grew to 1,000,000 rows — 1,000,000 rows in 10,380.48ms
   PASS  credit lots seeded (6 per user) — 30,000 lots
+  PASS  liability summary under 1s on 1M ledger rows — 13.67ms
+  PASS  liability summary is one query — 1 queries
+  PASS  liability numbers are non-zero
+  PASS  customer lots view under 1s — 0.18ms
+  PASS  customer lots use 2 queries — 2 queries
+  PASS  customer lots capped at 20 rows — 6 rows, total 6
+  PASS  expiry due-lots scan under 1s — 0.06ms (0 due now)
+  PASS  7-day expiring scan under 1s — 0.24ms (90 lots)
+  PASS  reconciliation batch (1000 users, 3-way join) under 1s — 494.62ms
+  PASS  reconciliation batch checked 1000 users — 1000 users
+  PASS  budget issued aggregate (current month, indexed) under 1s on 1M rows — 42.64ms
+  PASS  issued aggregate is non-zero
 
-Fatal error: Uncaught Error: Call to undefined function AriunetClub\Modules\Credit\esc_sql() in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php:91
-Stack trace:
-#0 /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php(320): AriunetClub\Modules\Credit\LotRepository::escape_datetime('2026-12-24 13:5...')
-#1 /home/z/my-project/repo/AriunetClub/tools/load-test.php(365): AriunetClub\Modules\Credit\LotRepository->liability_summary('2026-11-24 13:5...', '2026-12-24 13:5...')
-#2 {main}
-  thrown in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 91
+================ LOAD TEST PASSED ================
 ```

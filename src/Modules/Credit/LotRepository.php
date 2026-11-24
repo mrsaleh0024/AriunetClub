@@ -88,8 +88,8 @@ class LotRepository {
 	 * @return string
 	 */
 	private static function escape_datetime( string $value ): string {
-		$escaped = esc_sql( $value );
-		return is_string( $escaped ) ? $escaped : '';
+		$escaped = function_exists( 'esc_sql' ) ? esc_sql( $value ) : str_replace( "'", "''", $value );
+		return is_string( $escaped ) ? $escaped : str_replace( "'", "''", $value );
 	}
 
 	public function __construct( \wpdb $wpdb ) {
