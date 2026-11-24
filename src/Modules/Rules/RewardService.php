@@ -162,14 +162,14 @@ class RewardService {
 							continue;
 			}
 			if ( null !== $this->policy ) {
-				$object_type = is_string( $event['object_type'] ?? null ) ? $event['object_type'] : '';
-										$object_id   = is_numeric( $event['object_id'] ?? null ) ? (int) $event['object_id'] : 0;
-										$review      = $this->policy->review(
-												$amount,
-												$context->user_id,
-												$this->order_base_for_event( $event ),
-												'order' === $object_type ? $object_id : 0,
-												'order' === $object_type ? $this->credits_for_order( $object_id ) : 0.0
+				$object_type                       = is_string( $event['object_type'] ?? null ) ? $event['object_type'] : '';
+										$object_id = is_numeric( $event['object_id'] ?? null ) ? (int) $event['object_id'] : 0;
+										$review    = $this->policy->review(
+											$amount,
+											$context->user_id,
+											$this->order_base_for_event( $event ),
+											'order' === $object_type ? $object_id : 0,
+											'order' === $object_type ? $this->credits_for_order( $object_id ) : 0.0
 										);
 				if ( ! $review['allowed'] || $review['amount'] <= 0.0 ) {
 						continue;
@@ -351,9 +351,9 @@ class RewardService {
 				 */
 	private function order_base_for_event( array $event ) {
 			$object_type = is_string( $event['object_type'] ?? null ) ? $event['object_type'] : '';
-			if ( 'order' !== $object_type ) {
-							return null;
-			}
+		if ( 'order' !== $object_type ) {
+						return null;
+		}
 			$object_id = is_numeric( $event['object_id'] ?? null ) ? (int) $event['object_id'] : 0;
 			$snapshot  = $this->lookup->find( $object_id );
 			return null === $snapshot ? null : (float) $snapshot->base_amount;

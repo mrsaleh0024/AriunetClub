@@ -227,7 +227,7 @@ class CreditAdminPage {
 				if ( $drift > 0 && ! empty( $samples ) ) {
 						echo '<div class="ariunetclub-notice ariunetclub-notice--warning"><p>' . esc_html__( 'نمونهٔ مغایرت‌ها (اصلاح خودکار انجام نمی‌شود):', 'ariunetclub' ) . '</p><ul>';
 					foreach ( array_slice( $samples, 0, 10 ) as $sample ) {
-					$sample = is_array( $sample ) ? $sample : array();
+						$sample = is_array( $sample ) ? $sample : array();
 							echo '<li>' . esc_html( sprintf( 'user %d — %s', LotRepository::i( $sample['user_id'] ?? 0 ), LotRepository::s( $sample['problem'] ?? '' ) ) ) . '</li>';
 					}
 						echo '</ul></div>';
@@ -322,9 +322,9 @@ class CreditAdminPage {
 		 */
 	private function get_wpdb(): \wpdb {
 			global $wpdb;
-			if ( ! $wpdb instanceof \wpdb ) {
-					throw new \RuntimeException( 'wpdb is not available in this context.' );
-			}
+		if ( ! $wpdb instanceof \wpdb ) {
+				throw new \RuntimeException( 'wpdb is not available in this context.' );
+		}
 			return $wpdb;
 	}
 }

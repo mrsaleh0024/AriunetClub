@@ -221,18 +221,22 @@ class BudgetService {
 				$table  = $this->wpdb->prefix . 'wc_orders';
 				$exists = self::s( $this->wpdb->get_var( "SHOW TABLES LIKE '" . self::escape_datetime( $this->wpdb->esc_like( $table ) ) . "'" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- engine detection on a WooCommerce-owned table; escaped LIKE pattern.
 			if ( '' !== $exists ) {
-					$value = self::s( $this->wpdb->get_var(
-						"SELECT COALESCE(SUM(total_amount), 0) FROM {$table} WHERE status = 'wc-completed' AND date_completed_gmt >= '" . self::escape_datetime( $start_gmt ) . "'" // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- WooCommerce-owned table; escaped UTC datetime.
-					) );
+					$value = self::s(
+						$this->wpdb->get_var(
+							"SELECT COALESCE(SUM(total_amount), 0) FROM {$table} WHERE status = 'wc-completed' AND date_completed_gmt >= '" . self::escape_datetime( $start_gmt ) . "'" // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- WooCommerce-owned table; escaped UTC datetime.
+						)
+					);
 					return Money::round( max( 0.0, self::f( $value ) ) );
 			}
 		}
 
 			$posts    = $this->wpdb->posts;
 			$postmeta = $this->wpdb->postmeta;
-			$value    = self::s( $this->wpdb->get_var(
-				"SELECT COALESCE(SUM(pm_total.meta_value), 0) FROM {$posts} p INNER JOIN {$postmeta} pm_total ON (pm_total.post_id = p.ID AND pm_total.meta_key = '_order_total') INNER JOIN {$postmeta} pm_done ON (pm_done.post_id = p.ID AND pm_done.meta_key = '_date_completed') WHERE p.post_type = 'shop_order' AND p.post_status = 'wc-completed' AND pm_done.meta_value >= " . (int) $start_ts // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- WooCommerce-owned tables; integer-only predicate.
-			) );
+			$value    = self::s(
+				$this->wpdb->get_var(
+					"SELECT COALESCE(SUM(pm_total.meta_value), 0) FROM {$posts} p INNER JOIN {$postmeta} pm_total ON (pm_total.post_id = p.ID AND pm_total.meta_key = '_order_total') INNER JOIN {$postmeta} pm_done ON (pm_done.post_id = p.ID AND pm_done.meta_key = '_date_completed') WHERE p.post_type = 'shop_order' AND p.post_status = 'wc-completed' AND pm_done.meta_value >= " . (int) $start_ts // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- WooCommerce-owned tables; integer-only predicate.
+				)
+			);
 			return Money::round( max( 0.0, self::f( $value ) ) );
 	}
 

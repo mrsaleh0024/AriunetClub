@@ -108,12 +108,12 @@ class LotRepository {
 	public function sums_for_user( int $user_id ): array {
 			/** @var array<string,mixed>|null $row */
 		$row = $this->wpdb->get_row(
-				"SELECT COALESCE(SUM(remaining), 0) AS remaining, COALESCE(SUM(held), 0) AS held FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer-only predicate; locking read inside the ledger transaction.
-				ARRAY_A
-			);
+			"SELECT COALESCE(SUM(remaining), 0) AS remaining, COALESCE(SUM(held), 0) AS held FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer-only predicate; locking read inside the ledger transaction.
+			ARRAY_A
+		);
 			return array(
-				'remaining' => is_array( $row ) && is_numeric( $row['remaining'] ?? null ) ? LotRepository::f( $row['remaining'] ) : 0.0,
-				'held'      => is_array( $row ) && is_numeric( $row['held'] ?? null ) ? LotRepository::f( $row['held'] ) : 0.0,
+				'remaining' => is_array( $row ) && is_numeric( $row['remaining'] ?? null ) ? self::f( $row['remaining'] ) : 0.0,
+				'held'      => is_array( $row ) && is_numeric( $row['held'] ?? null ) ? self::f( $row['held'] ) : 0.0,
 			);
 	}
 
@@ -126,9 +126,9 @@ class LotRepository {
 	public function lock_allocatable_lots( int $user_id, string $now_gmt ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT * FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > held + " . self::EPSILON . " AND (expires_at IS NULL OR expires_at > '" . self::escape_datetime( $now_gmt ) . "') ORDER BY expires_at IS NULL ASC, expires_at ASC, created_at ASC, id ASC FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates and an escaped UTC datetime; locking read inside the ledger transaction.
-				ARRAY_A
-			);
+			"SELECT * FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > held + " . self::EPSILON . " AND (expires_at IS NULL OR expires_at > '" . self::escape_datetime( $now_gmt ) . "') ORDER BY expires_at IS NULL ASC, expires_at ASC, created_at ASC, id ASC FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates and an escaped UTC datetime; locking read inside the ledger transaction.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -142,9 +142,9 @@ class LotRepository {
 	public function lock_consumable_lots( int $user_id ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT * FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > held + " . self::EPSILON . " ORDER BY expires_at IS NULL ASC, expires_at ASC, created_at ASC, id ASC FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates; locking read inside the ledger transaction.
-				ARRAY_A
-			);
+			"SELECT * FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > held + " . self::EPSILON . ' ORDER BY expires_at IS NULL ASC, expires_at ASC, created_at ASC, id ASC FOR UPDATE', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates; locking read inside the ledger transaction.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -157,9 +157,9 @@ class LotRepository {
 	public function lock_order_lots( int $user_id, int $order_id ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT * FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND ref_type = 'order' AND ref_id = " . (int) $order_id . " AND remaining > held + " . self::EPSILON . " ORDER BY expires_at IS NULL ASC, expires_at ASC, id ASC FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates; locking read inside the ledger transaction.
-				ARRAY_A
-			);
+			"SELECT * FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND ref_type = 'order' AND ref_id = " . (int) $order_id . ' AND remaining > held + ' . self::EPSILON . ' ORDER BY expires_at IS NULL ASC, expires_at ASC, id ASC FOR UPDATE', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates; locking read inside the ledger transaction.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -169,9 +169,9 @@ class LotRepository {
 	public function lock_lot( int $lot_id ): ?array {
 			/** @var array<string,mixed>|null $row */
 		$row = $this->wpdb->get_row(
-				"SELECT * FROM {$this->lots_table} WHERE id = " . (int) $lot_id . " FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer-only predicate; locking read.
-				ARRAY_A
-			);
+			"SELECT * FROM {$this->lots_table} WHERE id = " . (int) $lot_id . ' FOR UPDATE', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer-only predicate; locking read.
+			ARRAY_A
+		);
 			return is_array( $row ) ? $row : null;
 	}
 
@@ -184,9 +184,9 @@ class LotRepository {
 	public function lock_held_allocations( int $order_id, int $user_id ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT a.*, l.expires_at AS lot_expires_at FROM {$this->allocations_table} a INNER JOIN {$this->lots_table} l ON l.id = a.lot_id WHERE a.order_id = " . (int) $order_id . " AND a.user_id = " . (int) $user_id . " AND a.state = 'held' ORDER BY a.id ASC FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled tables; integer-only predicates; locking read inside the ledger transaction.
-				ARRAY_A
-			);
+			"SELECT a.*, l.expires_at AS lot_expires_at FROM {$this->allocations_table} a INNER JOIN {$this->lots_table} l ON l.id = a.lot_id WHERE a.order_id = " . (int) $order_id . ' AND a.user_id = ' . (int) $user_id . " AND a.state = 'held' ORDER BY a.id ASC FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled tables; integer-only predicates; locking read inside the ledger transaction.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -197,19 +197,19 @@ class LotRepository {
 	public function insert_lot( array $lot ): int {
 			$now  = current_time( 'mysql', true );
 			$data = array(
-				'user_id'        => LotRepository::i( $lot['user_id'] ),
-				'source_type'    => LotRepository::s( $lot['source_type'] ),
-				'source_ref'     => isset( $lot['source_ref'] ) ? LotRepository::i( $lot['source_ref'] ) : null,
-				'ref_type'       => LotRepository::s( $lot['ref_type'] ?? '' ) !== '' ? LotRepository::s( $lot['ref_type'] ) : null,
-				'ref_id'         => is_numeric( $lot['ref_id'] ?? null ) ? LotRepository::i( $lot['ref_id'] ) : null,
-				'rule_id'        => is_numeric( $lot['rule_id'] ?? null ) ? LotRepository::i( $lot['rule_id'] ) : null,
-				'initial_amount' => Money::round( LotRepository::f( $lot['initial_amount'] ) ),
-				'remaining'      => Money::round( LotRepository::f( $lot['remaining'] ) ),
-				'held'           => Money::round( LotRepository::f( $lot['held'] ) ),
-				'expires_at'     => LotRepository::s( $lot['expires_at'] ?? '' ) !== '' ? LotRepository::s( $lot['expires_at'] ) : null,
-				'status'         => isset( $lot['status'] ) ? LotRepository::s( $lot['status'] ) : self::STATUS_ACTIVE,
-				'reason'         => LotRepository::s( $lot['reason'] ?? '' ) !== '' ? LotRepository::s( $lot['reason'] ) : null,
-				'campaign_id'    => is_numeric( $lot['campaign_id'] ?? null ) ? LotRepository::i( $lot['campaign_id'] ) : null,
+				'user_id'        => self::i( $lot['user_id'] ),
+				'source_type'    => self::s( $lot['source_type'] ),
+				'source_ref'     => isset( $lot['source_ref'] ) ? self::i( $lot['source_ref'] ) : null,
+				'ref_type'       => self::s( $lot['ref_type'] ?? '' ) !== '' ? self::s( $lot['ref_type'] ) : null,
+				'ref_id'         => is_numeric( $lot['ref_id'] ?? null ) ? self::i( $lot['ref_id'] ) : null,
+				'rule_id'        => is_numeric( $lot['rule_id'] ?? null ) ? self::i( $lot['rule_id'] ) : null,
+				'initial_amount' => Money::round( self::f( $lot['initial_amount'] ) ),
+				'remaining'      => Money::round( self::f( $lot['remaining'] ) ),
+				'held'           => Money::round( self::f( $lot['held'] ) ),
+				'expires_at'     => self::s( $lot['expires_at'] ?? '' ) !== '' ? self::s( $lot['expires_at'] ) : null,
+				'status'         => isset( $lot['status'] ) ? self::s( $lot['status'] ) : self::STATUS_ACTIVE,
+				'reason'         => self::s( $lot['reason'] ?? '' ) !== '' ? self::s( $lot['reason'] ) : null,
+				'campaign_id'    => is_numeric( $lot['campaign_id'] ?? null ) ? self::i( $lot['campaign_id'] ) : null,
 				'created_at'     => $now,
 			);
 			$ok   = $this->wpdb->insert( $this->lots_table, $data, array( '%d', '%s', '%d', '%s', '%d', '%d', '%f', '%f', '%f', '%s', '%s', '%s', '%d', '%s' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- append-only insert owned by the repository.
@@ -292,7 +292,7 @@ class LotRepository {
 	public function lots_for_user( int $user_id, int $limit = 10 ): array {
 			$limit = max( 1, min( 50, $limit ) );
 			$rows  = $this->wpdb->get_results(
-				"SELECT id, source_type, ref_type, ref_id, remaining, held, expires_at, status, reason, created_at FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > " . self::EPSILON . " ORDER BY expires_at IS NULL ASC, expires_at ASC, created_at ASC, id ASC LIMIT " . (int) $limit, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates.
+				"SELECT id, source_type, ref_type, ref_id, remaining, held, expires_at, status, reason, created_at FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > " . self::EPSILON . ' ORDER BY expires_at IS NULL ASC, expires_at ASC, created_at ASC, id ASC LIMIT ' . (int) $limit, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates.
 				ARRAY_A
 			);
 			return is_array( $rows ) ? $rows : array();
@@ -302,9 +302,11 @@ class LotRepository {
 		 * @return int Live lot rows for the user (for the "and N more" note).
 		 */
 	public function count_lots_for_user( int $user_id ): int {
-			return self::i( $this->wpdb->get_var(
-				"SELECT COUNT(*) FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > " . self::EPSILON // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates.
-			) );
+			return self::i(
+				$this->wpdb->get_var(
+					"SELECT COUNT(*) FROM {$this->lots_table} WHERE user_id = " . (int) $user_id . " AND status = 'active' AND remaining > " . self::EPSILON // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer/epsilon predicates.
+				)
+			);
 	}
 
 		/**
@@ -315,14 +317,14 @@ class LotRepository {
 	public function liability_summary( string $now_gmt, string $in_30d_gmt ): array {
 			/** @var array<string,mixed>|null $row */
 		$row = $this->wpdb->get_row(
-				"SELECT COALESCE(SUM(remaining), 0) AS outstanding, COALESCE(SUM(CASE WHEN expires_at IS NOT NULL AND expires_at <= '" . self::escape_datetime( $in_30d_gmt ) . "' THEN remaining ELSE 0 END), 0) AS expiring, COUNT(*) AS lots, COUNT(DISTINCT user_id) AS users FROM {$this->lots_table} WHERE status = 'active' AND remaining > " . self::EPSILON, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; escaped UTC datetime and epsilon predicate.
-				ARRAY_A
-			);
+			"SELECT COALESCE(SUM(remaining), 0) AS outstanding, COALESCE(SUM(CASE WHEN expires_at IS NOT NULL AND expires_at <= '" . self::escape_datetime( $in_30d_gmt ) . "' THEN remaining ELSE 0 END), 0) AS expiring, COUNT(*) AS lots, COUNT(DISTINCT user_id) AS users FROM {$this->lots_table} WHERE status = 'active' AND remaining > " . self::EPSILON, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; escaped UTC datetime and epsilon predicate.
+			ARRAY_A
+		);
 			return array(
-				'outstanding'  => is_array( $row ) && is_numeric( $row['outstanding'] ?? null ) ? LotRepository::f( $row['outstanding'] ) : 0.0,
-				'expiring_30d' => is_array( $row ) && is_numeric( $row['expiring'] ?? null ) ? LotRepository::f( $row['expiring'] ) : 0.0,
-				'lots'         => is_array( $row ) ? LotRepository::i( $row['lots'] ?? 0 ) : 0,
-				'users'        => is_array( $row ) ? LotRepository::i( $row['users'] ?? 0 ) : 0,
+				'outstanding'  => is_array( $row ) && is_numeric( $row['outstanding'] ?? null ) ? self::f( $row['outstanding'] ) : 0.0,
+				'expiring_30d' => is_array( $row ) && is_numeric( $row['expiring'] ?? null ) ? self::f( $row['expiring'] ) : 0.0,
+				'lots'         => is_array( $row ) ? self::i( $row['lots'] ?? 0 ) : 0,
+				'users'        => is_array( $row ) ? self::i( $row['users'] ?? 0 ) : 0,
 			);
 	}
 
@@ -334,9 +336,9 @@ class LotRepository {
 	public function due_lots( string $now_gmt, int $limit ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT * FROM {$this->lots_table} WHERE status = 'active' AND expires_at IS NOT NULL AND expires_at <= '" . self::escape_datetime( $now_gmt ) . "' AND remaining > held + " . self::EPSILON . " ORDER BY expires_at ASC, id ASC LIMIT " . (int) $limit, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; escaped UTC datetime, epsilon and integer predicates.
-				ARRAY_A
-			);
+			"SELECT * FROM {$this->lots_table} WHERE status = 'active' AND expires_at IS NOT NULL AND expires_at <= '" . self::escape_datetime( $now_gmt ) . "' AND remaining > held + " . self::EPSILON . ' ORDER BY expires_at ASC, id ASC LIMIT ' . (int) $limit, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; escaped UTC datetime, epsilon and integer predicates.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -349,9 +351,9 @@ class LotRepository {
 	public function lots_expiring_within( string $start_gmt, string $end_gmt, int $limit ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT * FROM {$this->lots_table} WHERE status = 'active' AND expires_at IS NOT NULL AND expires_at >= '" . self::escape_datetime( $start_gmt ) . "' AND expires_at < '" . self::escape_datetime( $end_gmt ) . "' AND remaining > " . self::EPSILON . " ORDER BY expires_at ASC, id ASC LIMIT " . (int) $limit, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; escaped UTC datetimes, epsilon and integer predicates.
-				ARRAY_A
-			);
+			"SELECT * FROM {$this->lots_table} WHERE status = 'active' AND expires_at IS NOT NULL AND expires_at >= '" . self::escape_datetime( $start_gmt ) . "' AND expires_at < '" . self::escape_datetime( $end_gmt ) . "' AND remaining > " . self::EPSILON . ' ORDER BY expires_at ASC, id ASC LIMIT ' . (int) $limit, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; escaped UTC datetimes, epsilon and integer predicates.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -364,9 +366,9 @@ class LotRepository {
 	public function migration_batch( int $after_user_id, int $batch ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT b.user_id AS user_id, b.available AS available, b.held AS held, COALESCE(l.sr, 0) AS lot_remaining, COALESCE(l.sh, 0) AS lot_held FROM {$this->balances_table} b LEFT JOIN (SELECT user_id, SUM(remaining) AS sr, SUM(held) AS sh FROM {$this->lots_table} WHERE status = 'active' GROUP BY user_id) l ON l.user_id = b.user_id WHERE b.asset = 'cashback' AND b.user_id > " . (int) $after_user_id . " AND (b.available <> 0 OR b.held <> 0) ORDER BY b.user_id ASC LIMIT " . (int) $batch, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled tables; integer-only predicates; read-only migration scan.
-				ARRAY_A
-			);
+			"SELECT b.user_id AS user_id, b.available AS available, b.held AS held, COALESCE(l.sr, 0) AS lot_remaining, COALESCE(l.sh, 0) AS lot_held FROM {$this->balances_table} b LEFT JOIN (SELECT user_id, SUM(remaining) AS sr, SUM(held) AS sh FROM {$this->lots_table} WHERE status = 'active' GROUP BY user_id) l ON l.user_id = b.user_id WHERE b.asset = 'cashback' AND b.user_id > " . (int) $after_user_id . ' AND (b.available <> 0 OR b.held <> 0) ORDER BY b.user_id ASC LIMIT ' . (int) $batch, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled tables; integer-only predicates; read-only migration scan.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -379,9 +381,9 @@ class LotRepository {
 	public function lock_balance( int $user_id ): array {
 			/** @var array<string,mixed>|null $row */
 		$row = $this->wpdb->get_row(
-				"SELECT available, held FROM {$this->balances_table} WHERE user_id = " . (int) $user_id . " AND asset = 'cashback' FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer-only predicate; locking read inside the migration transaction.
-				ARRAY_A
-			);
+			"SELECT available, held FROM {$this->balances_table} WHERE user_id = " . (int) $user_id . " AND asset = 'cashback' FOR UPDATE", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; integer-only predicate; locking read inside the migration transaction.
+			ARRAY_A
+		);
 		if ( ! is_array( $row ) ) {
 				return array(
 					'available' => 0.0,
@@ -389,8 +391,8 @@ class LotRepository {
 				);
 		}
 			return array(
-				'available' => is_numeric( $row['available'] ?? null ) ? LotRepository::f( $row['available'] ) : 0.0,
-				'held'      => is_numeric( $row['held'] ?? null ) ? LotRepository::f( $row['held'] ) : 0.0,
+				'available' => is_numeric( $row['available'] ?? null ) ? self::f( $row['available'] ) : 0.0,
+				'held'      => is_numeric( $row['held'] ?? null ) ? self::f( $row['held'] ) : 0.0,
 			);
 	}
 
@@ -416,9 +418,9 @@ class LotRepository {
 	public function reconciliation_batch( int $after_user_id, int $batch ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT b.user_id AS user_id, b.available AS available, b.held AS held, COALESCE(l.sr, 0) AS lot_remaining, COALESCE(l.sh, 0) AS lot_held, COALESCE(g.ledger_sum, 0) AS ledger_sum FROM {$this->balances_table} b LEFT JOIN (SELECT user_id, SUM(remaining) AS sr, SUM(held) AS sh FROM {$this->lots_table} WHERE status = 'active' GROUP BY user_id) l ON l.user_id = b.user_id LEFT JOIN (SELECT user_id, SUM(amount) AS ledger_sum FROM {$this->ledger_table} WHERE asset = 'cashback' GROUP BY user_id) g ON g.user_id = b.user_id WHERE b.asset = 'cashback' AND b.user_id > " . (int) $after_user_id . " ORDER BY b.user_id ASC LIMIT " . (int) $batch, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled tables; integer-only predicates; read-only reconciliation scan.
-				ARRAY_A
-			);
+			"SELECT b.user_id AS user_id, b.available AS available, b.held AS held, COALESCE(l.sr, 0) AS lot_remaining, COALESCE(l.sh, 0) AS lot_held, COALESCE(g.ledger_sum, 0) AS ledger_sum FROM {$this->balances_table} b LEFT JOIN (SELECT user_id, SUM(remaining) AS sr, SUM(held) AS sh FROM {$this->lots_table} WHERE status = 'active' GROUP BY user_id) l ON l.user_id = b.user_id LEFT JOIN (SELECT user_id, SUM(amount) AS ledger_sum FROM {$this->ledger_table} WHERE asset = 'cashback' GROUP BY user_id) g ON g.user_id = b.user_id WHERE b.asset = 'cashback' AND b.user_id > " . (int) $after_user_id . ' ORDER BY b.user_id ASC LIMIT ' . (int) $batch, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled tables; integer-only predicates; read-only reconciliation scan.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 
@@ -430,9 +432,9 @@ class LotRepository {
 	public function invariant_violations( string $grace_gmt ): array {
 			/** @var array<int, array<string,mixed>>|null $rows */
 		$rows = $this->wpdb->get_results(
-				"SELECT id, user_id, remaining, held, expires_at, status FROM {$this->lots_table} WHERE remaining < -1 * " . self::EPSILON . " OR held < -1 * " . self::EPSILON . " OR held > remaining + " . self::EPSILON . " OR (status = 'active' AND expires_at IS NOT NULL AND expires_at < '" . self::escape_datetime( $grace_gmt ) . "' AND remaining > held + " . self::EPSILON . ")", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; epsilon and escaped-datetime predicates; read-only invariant scan.
-				ARRAY_A
-			);
+			"SELECT id, user_id, remaining, held, expires_at, status FROM {$this->lots_table} WHERE remaining < -1 * " . self::EPSILON . ' OR held < -1 * ' . self::EPSILON . ' OR held > remaining + ' . self::EPSILON . " OR (status = 'active' AND expires_at IS NOT NULL AND expires_at < '" . self::escape_datetime( $grace_gmt ) . "' AND remaining > held + " . self::EPSILON . ')', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- plugin-controlled table; epsilon and escaped-datetime predicates; read-only invariant scan.
+			ARRAY_A
+		);
 			return is_array( $rows ) ? $rows : array();
 	}
 }

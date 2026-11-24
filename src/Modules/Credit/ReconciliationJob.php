@@ -167,15 +167,15 @@ class ReconciliationJob {
 		 */
 	public function status(): array {
 			$status = get_option( self::OPTION, array() );
-			if ( ! is_array( $status ) ) {
-					return array();
-			}
+		if ( ! is_array( $status ) ) {
+				return array();
+		}
 			$typed = array();
-			foreach ( $status as $key => $value ) {
-					if ( is_string( $key ) ) {
-							$typed[ $key ] = $value;
-					}
+		foreach ( $status as $key => $value ) {
+			if ( is_string( $key ) ) {
+					$typed[ $key ] = $value;
 			}
+		}
 			return $typed;
 	}
 

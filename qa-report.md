@@ -1,10 +1,10 @@
 # AriunetClub QA Report
 
-Generated: 2026-11-22T08:00:04+00:00
+Generated: 2026-11-24T13:56:38+00:00
 
 ## Commands
 
-### "/home/z/tools/php" vendor/bin/phpcs
+### "/home/z/my-project/tools/php" vendor/bin/phpcs
 ```text
 
 ```
@@ -14,31 +14,31 @@ Generated: 2026-11-22T08:00:04+00:00
 
 ```
 
-### "/home/z/tools/php" -d memory_limit=512M vendor/bin/phpstan analyse
+### "/home/z/my-project/tools/php" -d memory_limit=512M vendor/bin/phpstan analyse
 ```text
-Warning: PHP Startup: Unable to load dynamic library '/home/z/my-project/repo/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.3.so' (tried: /home/z/my-project/repo/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.3.so (Dynamic loading not supported), /lib/php/extensions/no-debug-non-zts-20230831//home/z/my-project/repo/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.3.so.so (Dynamic loading not supported)) in Unknown on line 0
-Note: Using configuration file /home/z/my-project/repo/phpstan.neon.
-  0/77 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%[1G[2K 77/77 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+Warning: PHP Startup: Unable to load dynamic library '/home/z/my-project/repo/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.2.so' (tried: /home/z/my-project/repo/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.2.so (Dynamic loading not supported), /lib/php/extensions/no-debug-non-zts-20220829//home/z/my-project/repo/AriunetClub/vendor/phpstan/phpstan/turbo-ext/linux-gnu-x86_64/phpstan_turbo-8.2.so.so (Dynamic loading not supported)) in Unknown on line 0
+Note: Using configuration file /home/z/my-project/repo/AriunetClub/phpstan.neon.
+  0/87 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%[1G[2K 87/87 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 
 
  [OK] No errors
 
 ```
 
-### "/home/z/tools/php" vendor/bin/phpunit
+### "/home/z/my-project/tools/php" vendor/bin/phpunit
 ```text
 PHPUnit 9.6.39 by Sebastian Bergmann and contributors.
 
-...............................................................  63 / 136 ( 46%)
-............................................................... 126 / 136 ( 92%)
-..........                                                      136 / 136 (100%)
+...............................................................  63 / 149 ( 42%)
+............................................................... 126 / 149 ( 84%)
+.......................                                         149 / 149 (100%)
 
-Time: 00:00.021, Memory: 10.00 MB
+Time: 00:00.023, Memory: 10.00 MB
 
-OK (136 tests, 348 assertions)
+OK (149 tests, 382 assertions)
 ```
 
-### "/home/z/tools/php" tools/wallet-functional-tests.php
+### "/home/z/my-project/tools/php" tools/wallet-functional-tests.php
 ```text
 === 1) SpendCalculator math ===
   PASS  available below cap wins
@@ -120,7 +120,7 @@ OK (136 tests, 348 assertions)
 ================ RESULT: 64 passed, 0 failed ================
 ```
 
-### "/home/z/tools/php" tools/account-functional-tests.php
+### "/home/z/my-project/tools/php" tools/account-functional-tests.php
 ```text
 === 1) Hook wiring and rewrite registration ===
   PASS  rewrite endpoint hook registered on init
@@ -184,7 +184,7 @@ OK (136 tests, 348 assertions)
 ================ RESULT: 47 passed, 0 failed ================
 ```
 
-### "/home/z/tools/php" tools/rebrand-functional-tests.php
+### "/home/z/my-project/tools/php" tools/rebrand-functional-tests.php
 ```text
 === 1) Fresh install: no legacy, clean create ===
   PASS  no RENAME issued on fresh install
@@ -228,7 +228,7 @@ OK (136 tests, 348 assertions)
 ================ RESULT: 30 passed, 0 failed ================
 ```
 
-### "/home/z/tools/php" tools/license-functional-tests.php
+### "/home/z/my-project/tools/php" tools/license-functional-tests.php
 ```text
 === 1) S18 matrix: verifier end to end ===
   PASS  genuine token activates
@@ -287,11 +287,13 @@ OK (136 tests, 348 assertions)
 === 8) S15: no outbound network anywhere ===
   PASS  full license lifecycle made zero network attempts
   PASS  static scan: no network calls in src/
-=== 9) Migration 1.4.0 adds the ledger index, idempotently ===
+=== 9) Migration adds the tables and indexes, idempotently ===
   PASS  dbDelta received the ledger table
   PASS  phase 5 created_at index present in the schema
-  PASS  db version option set to 1.4.0
+  PASS  db version option set to 1.5.0
   PASS  second migrate run is harmless
+  PASS  phase 6 credit lots table in the schema
+  PASS  phase 6 lot allocations table in the schema
 === 10) Dashboard: real data, charts, escaping, no N+1 ===
   PASS  dashboard uses exactly 9 queries (no N+1)
   PASS  lifetime issued total is exact (142,500)
@@ -321,38 +323,210 @@ OK (136 tests, 348 assertions)
   PASS  embedded public key is exactly 32 bytes (hex 64)
   PASS  signer tool is present for the maintainer
 
-================ RESULT: 78 passed, 0 failed ================
+================ RESULT: 80 passed, 0 failed ================
 ```
 
-### "/home/z/tools/php" tools/load-test.php --driver sqlite
+### "/home/z/my-project/tools/php" tools/credit-functional-tests.php
+```text
+
+=== 1) random earn/spend/hold/capture/release/expire sequences (I1-I4) ===
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 97
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 98
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 99
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 100
+  PASS  seed 20261124: 400 ops keep I1-I4 on every step
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 97
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 98
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 99
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 100
+  PASS  seed 42: 400 ops keep I1-I4 on every step
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 97
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 98
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 99
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 100
+  PASS  seed 987654: 400 ops keep I1-I4 on every step
+
+=== 2) settings sanitize (expiry, budget, guards) ===
+  PASS  expiry settings persist
+  PASS  budget settings persist
+  PASS  guard settings persist
+  PASS  empty fee title falls back to the new vocabulary
+  PASS  credit module is in the default enabled list
+  PASS  out-of-range inputs are clamped
+
+=== 3) credit policy guards + budget (SQLite engine) ===
+  PASS  min order guard blocks small carts
+  PASS  healthy grant passes untouched
+  PASS  per-order cap clamps to the remaining room
+  PASS  per-order cap blocks when the order is full
+  PASS  monthly per-customer cap lets a within-room grant pass — {"allowed":true,"amount":10000,"reason":""}
+  PASS  monthly per-customer cap clamps an over-room grant — {"allowed":true,"amount":20000,"reason":""}
+  PASS  monthly cap blocks an exhausted customer
+  PASS  budget cap reflects the fixed amount — [200000,155000]
+  PASS  grant clamped to the remaining budget
+  PASS  budget exhausted → grant blocked at zero
+  PASS  reversals reduce the issued budget total — used=170000
+
+=== 4) expiry reminders (7/3/1) and labels ===
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 97
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 98
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 99
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 100
+  PASS  exactly one reminder per lot per threshold — ["credit:expiring:lot:1:7d","credit:expiring:lot:2:3d"]
+  PASS  reminder payloads carry lot id and days
+  PASS  event label: credit.expiring
+  PASS  event label: budget.warning
+  PASS  event label: budget.blocked
+  PASS  event object label: lot
+
+=== 5) club tab lots (view model, XSS, own data) ===
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 97
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 98
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 99
+
+Warning: Undefined property: wpdb::$prefix in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 100
+  PASS  two lot rows in the view
+  PASS  FEFO order: dated lot first
+  PASS  jalali expiry is formatted
+  PASS  held flag exposed
+  PASS  template renders the lots section
+  PASS  XSS payload in the reason is escaped
+  PASS  other users see no lots of user 5
+  PASS  logged-out view has no lots
+  PASS  entry label: grant
+  PASS  entry label: expire
+  PASS  entry family: grant success / expire danger
+
+=== 6) vocabulary: grep for the old credit word ===
+  PASS  no «کیف پول» left in src/ (Migrator legacy literal excepted)
+  PASS  no «کیف پول» left in templates/
+  PASS  default fee title uses the new vocabulary
+
+=== 7) block checkout notice detection ===
+  PASS  no checkout page configured → no notice
+
+================ RESULT: 41 passed, 0 failed ================
+```
+
+### "/home/z/my-project/tools/php" tools/integration-tests.php --driver sqlite
+```text
+=== AriunetClub phase 6 integration tests (driver: sqlite) ===
+Engine: in-memory SQLite (sandbox). Concurrency section runs serialized.
+
+=== 3) earn → spend lifecycle (FEFO, reasons, idempotency) ===
+  PASS  invariants I1-I4 after earn 1 — av=50000 held=0 lots=50000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  earn creates one lot with the rule reason
+  PASS  lot remaining equals the credited amount
+  PASS  idempotent ledger key records once
+  PASS  idempotent re-run creates no extra lot
+  PASS  invariants I1-I4 after more earns — av=100000 held=0 lots=100000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  invariants I1-I4 after hold — av=60000 held=40000 lots=100000 lot_held=40000 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  hold allocates FEFO across lots (sooner expiry first) — [{"amount":30000,"state":"held"},{"amount":10000,"state":"held"}]
+  PASS  invariants I1-I4 after capture — av=60000 held=0 lots=60000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  capture marks allocations captured
+  PASS  invariants I1-I4 after reversal — av=35000 held=0 lots=35000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  reversal claws back the order lot exactly — {"remaining":25000,"held":0,"status":"active"}
+  PASS  invariants I1-I4 after reversal into debt — av=-55000 held=0 lots=0 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  oversized reversal creates debt — available=-55000
+  PASS  debt state leaves no unheld live lots
+  PASS  invariants I1-I4 after grant repaying debt — av=5000 held=0 lots=5000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  grant after debt nets out (I1) — lots=5000 bal=5000
+
+=== 4) expiry job, held-part protection, release after expiry ===
+  PASS  I3: no new hold on an expired lot (fail closed)
+  PASS  invariants I1-I4 after expiry of user 9 — av=0 held=0 lots=0 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  invariants I1-I4 after expiry with open hold — av=0 held=20000 lots=20000 lot_held=20000 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  due lot fully expires (unheld part)
+  PASS  expire ledger entry written once
+  PASS  held part survives the expiry date — {"remaining":20000,"held":20000,"status":"active"}
+  PASS  expiry job re-run is inert
+  PASS  invariants I1-I4 after release after expiry — av=0 held=0 lots=0 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  released amount on an expired lot expires immediately — {"remaining":0,"held":0,"status":"expired"}
+  PASS  ledger trail: 1 release + 2 expires (daily unheld part + freed held part)
+
+=== 5) 20 concurrent spends on one user ===
+  PASS  20 sequential spends executed (SQLite: single writer)
+  PASS  invariants I1-I4 after 20 spends — av=1000000 held=0 lots=1000000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+  PASS  20 × 50,000 spent exactly once each — available=1000000
+  PASS  exactly 20 capture entries
+
+=== 6) balance → legacy-lot migration, 100,000 users ===
+  PASS  100k-user migration finishes in batches — last batch 302 users, 200 batches, 15.18s total
+  PASS  one legacy lot per positive-balance user — legacy=85543 positive=85543
+  PASS  migration leaves already-consistent users untouched — legacy lots created for lifecycle users: 0
+  PASS  full migration re-run is inert — before=85543 after=85543
+  PASS  migrated lot matches the seeded balance — {"av":1,"h":0,"lots":1}
+  PASS  invariants I1-I4 after post-migration cleanup — av=1000000 held=0 lots=1000000 lot_held=0 ledger_ok=1 lots_ok=1 held_ok=1 i2i4=1
+
+=== 7) reconciliation detects drift, passes on healthy data ===
+  PASS  healthy users show no drift
+  PASS  no drift on the lifecycle users — []
+  PASS  injected drift is detected — drift=1
+  PASS  drift disappears after repair
+
+=== 8) budget service on real ledger data ===
+  PASS  month window is a sane UTC range
+  PASS  issued for user 7 counts credits minus reversals — issued=45000
+
+================ RESULT: 43 passed, 0 failed ================
+```
+
+### "/home/z/my-project/tools/php" tools/load-test.php --driver sqlite
 ```text
 === AriunetClub load test: 100000 ledger rows, driver sqlite ===
 Driver: in-memory SQLite (development sandbox; advisory locks simulated)
 Seeding 100000 ledger rows across 5000 users...
-Seeded in 916.55ms
+Seeded in 931.78ms
 
 === 1) Wallet balance reads (100 lookups) ===
-  PASS  average balance read < 50ms — 0.01ms avg, 1.18ms total
+  PASS  average balance read < 50ms — 0.01ms avg, 1.21ms total
   PASS  exactly 100 queries for 100 reads (no N+1) — 100 queries
 === 2) Ledger history pages (a user with ~20 rows/page) ===
-  PASS  history page under 1s — 0.21ms
+  PASS  history page under 1s — 0.22ms
   PASS  history is paginated to 20 rows — 20 rows
   PASS  history uses exactly 2 queries (count + page) — 2 queries
 === 3) Dashboard queries on the full ledger ===
-  PASS  lifetime totals under 1s — 28.92ms
+  PASS  lifetime totals under 1s — 32.50ms
   PASS  totals use 5 constant queries — 5 queries
   PASS  totals are non-zero
-  PASS  today range under 1s — 0.37ms
+  PASS  today range under 1s — 0.42ms
   PASS  range uses 1 query — 1 queries
-  PASS  30-day daily aggregation under 1s — 13.56ms
+  PASS  30-day daily aggregation under 1s — 14.95ms
   PASS  daily aggregation uses 1 query — 1 queries
   PASS  every bucket day present after fill
-  PASS  top rules under 1s — 17.46ms
+  PASS  top rules under 1s — 20.25ms
   PASS  top rules use 1 query — 1 queries
-  PASS  recent activity under 1s — 0.08ms
+  PASS  recent activity under 1s — 0.12ms
   PASS  recent activity uses 1 query — 1 queries
 === 4) Aggregation consistency ===
-  PASS  30-day series sum matches the range query — 29,459,224.90 vs 29,459,224.90
+  PASS  30-day series sum matches the range query — 29,659,404.70 vs 29,659,404.70
+=== 5) Phase 6 credit lots: 1,000,000 ledger rows ===
+  PASS  ledger grew to 1,000,000 rows — 1,000,000 rows in 11,030.02ms
+  PASS  credit lots seeded (6 per user) — 30,000 lots
 
-================ LOAD TEST PASSED ================
+Fatal error: Uncaught Error: Call to undefined function AriunetClub\Modules\Credit\esc_sql() in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php:91
+Stack trace:
+#0 /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php(320): AriunetClub\Modules\Credit\LotRepository::escape_datetime('2026-12-24 13:5...')
+#1 /home/z/my-project/repo/AriunetClub/tools/load-test.php(365): AriunetClub\Modules\Credit\LotRepository->liability_summary('2026-11-24 13:5...', '2026-12-24 13:5...')
+#2 {main}
+  thrown in /home/z/my-project/repo/AriunetClub/src/Modules/Credit/LotRepository.php on line 91
 ```
