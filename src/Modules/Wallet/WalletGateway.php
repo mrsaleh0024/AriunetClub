@@ -27,9 +27,9 @@ class WalletGateway extends \WC_Payment_Gateway {
 		$this->club_settings = $settings;
 
 		$this->id                 = self::GATEWAY_ID;
-		$this->method_title       = __( 'کیف پول باشگاه مشتریان', 'ariunetclub' );
-		$this->method_description = __( 'پرداخت کامل مبلغ سفارش از موجودی کیف پول؛ فقط وقتی سوییچ کیف پول کل سبد را پوشش داده باشد در دسترس قرار می‌گیرد.', 'ariunetclub' );
-		$this->title              = __( 'کیف پول', 'ariunetclub' );
+		$this->method_title       = __( 'اعتبار باشگاه مشتریان', 'ariunetclub' );
+		$this->method_description = __( 'پرداخت کامل مبلغ سفارش از موجودی اعتبار باشگاه؛ فقط وقتی سوییچ اعتبار باشگاه کل سبد را پوشش داده باشد در دسترس قرار می‌گیرد.', 'ariunetclub' );
+		$this->title              = __( 'اعتبار باشگاه', 'ariunetclub' );
 		$this->has_fields         = false;
 		$this->enabled            = 'yes';
 
@@ -95,7 +95,7 @@ class WalletGateway extends \WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 		$order = function_exists( 'wc_get_order' ) ? wc_get_order( (int) $order_id ) : null;
 		if ( ! $order instanceof \WC_Order ) {
-			wc_add_notice( __( 'سفارش برای پرداخت با کیف پول پیدا نشد.', 'ariunetclub' ), 'error' );
+			wc_add_notice( __( 'سفارش برای پرداخت با اعتبار باشگاه پیدا نشد.', 'ariunetclub' ), 'error' );
 			return array(
 				'result'   => 'failure',
 				'redirect' => '',
@@ -105,7 +105,7 @@ class WalletGateway extends \WC_Payment_Gateway {
 		$total  = max( 0.0, (float) $order->get_total() );
 		$amount = OrderMeta::amount( $order );
 		if ( $amount + 0.001 < $total ) {
-			wc_add_notice( __( 'کیف پول فقط سفارشی را کامل می‌پردازد که کل مبلغش را پوشش داده باشد؛ برای ادامه درگاه دیگری انتخاب کنید.', 'ariunetclub' ), 'error' );
+			wc_add_notice( __( 'اعتبار باشگاه فقط سفارشی را کامل می‌پردازد که کل مبلغش را پوشش داده باشد؛ برای ادامه درگاه دیگری انتخاب کنید.', 'ariunetclub' ), 'error' );
 			return array(
 				'result'   => 'failure',
 				'redirect' => '',

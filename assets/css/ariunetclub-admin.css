@@ -171,3 +171,10 @@
 .ariunetclub-lock-screen__card .button-primary:hover, .ariunetclub-lock-screen__card .button-primary:focus-visible { background: var(--ariunetclub-primary-hover); border-color: var(--ariunetclub-primary-hover); color: var(--ariunetclub-on-primary); }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) { .ariunetclub-card, .ariunetclub-lock-screen, .ariunetclub-lock-screen__card { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--ariunetclub-surface-solid); } }
 @media (min-width: 900px) { .ariunetclub-dashboard-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }.ariunetclub-dashboard-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }.ariunetclub-license-status__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* Phase 6: credit liability cards (admin page + wallet list). */
+.ariunetclub-credit-cards { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); list-style: none; margin: 14px 0 0; padding: 0; }
+.ariunetclub-credit-card { background: var(--ariunetclub-surface); border: 1px solid var(--ariunetclub-surface-border); border-radius: var(--ariunetclub-radius-md); display: grid; gap: 6px; padding: 14px 16px; }
+.ariunetclub-credit-card span { color: var(--ariunetclub-text-muted); font-size: 12px; }
+.ariunetclub-credit-card strong { color: var(--ariunetclub-text); font-size: 18px; font-weight: 700; }
+.ariunetclub-credit-danger { color: var(--ariunetclub-danger) !important; }
+.ariunetclub-history-lots .ariunetclub-table-scroll { margin-block-start: 10px; }

@@ -72,7 +72,7 @@ final class DashboardPage {
 				'chart'     => SvgChart::daily_bars(
 					$series,
 					array(
-						'title'        => __( 'کسب و خرج کیف پول در ۳۰ روز اخیر', 'ariunetclub' ),
+						'title'        => __( 'کسب و خرج اعتبار باشگاه در ۳۰ روز اخیر', 'ariunetclub' ),
 						'earned_label' => __( 'کسب', 'ariunetclub' ),
 						'spent_label'  => __( 'خرج', 'ariunetclub' ),
 					)
@@ -112,7 +112,7 @@ final class DashboardPage {
 										<div class="ariunetclub-card ariunetclub-card--earned">
 												<span class="ariunetclub-card__label"><?php esc_html_e( 'کسب امروز', 'ariunetclub' ); ?></span>
 												<strong class="ariunetclub-card__value"><?php echo esc_html( Money::format( (float) $today['earned'] ) ); ?></strong>
-												<span class="ariunetclub-card__hint"><?php echo esc_html( sprintf( /* translators: %s: number of wallet holders in Persian digits. */ __( 'در میان %s کیف پول دارنده', 'ariunetclub' ), Money::to_persian_digits( (string) $totals['users'] ) ) ); ?></span>
+												<span class="ariunetclub-card__hint"><?php echo esc_html( sprintf( /* translators: %s: number of wallet holders in Persian digits. */ __( 'در میان %s دارندهٔ اعتبار باشگاه', 'ariunetclub' ), Money::to_persian_digits( (string) $totals['users'] ) ) ); ?></span>
 										</div>
 										<div class="ariunetclub-card ariunetclub-card--spent">
 												<span class="ariunetclub-card__label"><?php esc_html_e( 'خرج امروز', 'ariunetclub' ); ?></span>

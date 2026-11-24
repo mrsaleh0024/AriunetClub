@@ -28,7 +28,7 @@ $club_currency = isset( $data['currency'] ) && is_string( $data['currency'] ) ? 
 
 				<?php if ( empty( $data['logged_in'] ) ) : ?>
 						<div class="ariunetclub-account__notice">
-								<p><?php esc_html_e( 'برای دیدن کیف پول و کش‌بک خود، ابتدا وارد حساب کاربری شوید.', 'ariunetclub' ); ?></p>
+								<p><?php esc_html_e( 'برای دیدن اعتبار باشگاه و کش‌بک خود، ابتدا وارد حساب کاربری شوید.', 'ariunetclub' ); ?></p>
 						</div>
 				<?php else : ?>
 						<div class="ariunetclub-account__balance">
@@ -59,7 +59,41 @@ $club_currency = isset( $data['currency'] ) && is_string( $data['currency'] ) ? 
 										<?php endif; ?></p>
 								</div>
 						<?php endif; ?>
-				<?php endif; ?>
+				<?php if ( ! empty( $data['lots'] ) ) : ?>
+												<section class="ariunetclub-account__section" aria-labelledby="ariunetclub-account-lots">
+																<div class="ariunetclub-account__section-head">
+																				<h3 id="ariunetclub-account-lots"><?php esc_html_e( 'ردیف‌های اعتبار باشگاه', 'ariunetclub' ); ?></h3>
+																				<?php if ( ! empty( $data['lots_total'] ) ) : ?>
+																								<span class="ariunetclub-account__count"><?php echo esc_html( Money::to_persian_digits( (string) $data['lots_total'] ) ); ?></span>
+																				<?php endif; ?>
+																</div>
+																<div class="ariunetclub-account__table-scroll">
+																				<table class="ariunetclub-account__table">
+																								<thead>
+																												<tr>
+																																<th scope="col"><?php esc_html_e( 'مانده', 'ariunetclub' ); ?></th>
+																																<th scope="col"><?php esc_html_e( 'تاریخ انقضا', 'ariunetclub' ); ?></th>
+																																<th scope="col"><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></th>
+																												</tr>
+																								</thead>
+																								<tbody>
+																								<?php foreach ( $data['lots'] as $club_lot ) : ?>
+																												<tr>
+																																<td class="ariunetclub-account__amount"><span dir="ltr"><?php echo esc_html( $club_lot['remaining_display'] ); ?></span><?php if ( ! empty( $club_lot['held'] ) ) : ?> <span class="ariunetclub-account__lot-held"><?php esc_html_e( '(شامل بخش رزروشده)', 'ariunetclub' ); ?></span><?php endif; ?></td>
+																																<td><?php echo esc_html( $club_lot['expires_display'] ); ?></td>
+																																<td><?php echo esc_html( $club_lot['reason'] ); ?></td>
+																												</tr>
+																								<?php endforeach; ?>
+																								</tbody>
+																				</table>
+																</div>
+																<?php if ( (int) $data['lots_total'] > count( $data['lots'] ) ) : ?>
+																				<p class="ariunetclub-account__hint"><?php echo esc_html( sprintf( /* translators: %s: number of rows in Persian digits. */ __( 'و %s ردیف دیگر…', 'ariunetclub' ), Money::to_persian_digits( (string) ( (int) $data['lots_total'] - count( $data['lots'] ) ) ) ) ); ?></p>
+																<?php endif; ?>
+																<p class="ariunetclub-account__hint"><?php esc_html_e( 'ثبت اعتبار خودکار است؛ هنگام خرید، نزدیک‌ترین ردیف به انقضا اول خرج می‌شود.', 'ariunetclub' ); ?></p>
+												</section>
+												<?php endif; ?>
+<?php endif; ?>
 
 				<section class="ariunetclub-account__section" aria-labelledby="ariunetclub-account-history">
 						<div class="ariunetclub-account__section-head">

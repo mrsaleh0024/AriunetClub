@@ -39,6 +39,6 @@ class AccountModule implements Module {
 			? $GLOBALS['ariunetclub_identity_service']
 			: new IdentityService( new PhoneNormalizer() );
 
-		( new ClubEndpoint( new LedgerRepository( $wpdb ), new RuleRepository( $wpdb ), $identity ) )->register();
+		( new ClubEndpoint( new LedgerRepository( $wpdb ), new RuleRepository( $wpdb ), $identity, new \AriunetClub\Modules\Credit\LotRepository( $wpdb ) ) )->register();
 	}
 }

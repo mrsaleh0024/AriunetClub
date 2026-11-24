@@ -17,6 +17,8 @@ $commands = $security
                 $php . ' tools/account-functional-tests.php',
                 $php . ' tools/rebrand-functional-tests.php',
                 $php . ' tools/license-functional-tests.php',
+                $php . ' tools/credit-functional-tests.php',
+                $php . ' tools/integration-tests.php --driver sqlite',
                 $php . ' tools/load-test.php --driver sqlite',
         );
 $report = array( '# AriunetClub QA Report', '', 'Generated: ' . gmdate( 'c' ), '', '## Commands' );

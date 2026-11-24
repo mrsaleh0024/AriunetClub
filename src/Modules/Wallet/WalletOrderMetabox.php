@@ -30,7 +30,7 @@ class WalletOrderMetabox {
 	public function register_boxes(): void {
 		add_meta_box(
 			'ariunetclub_wallet',
-			__( 'کیف پول باشگاه', 'ariunetclub' ),
+			__( 'اعتبار باشگاه', 'ariunetclub' ),
 			array( $this, 'render' ),
 			array( 'shop_order', 'woocommerce_page_wc-orders' ),
 			'side',
@@ -93,7 +93,7 @@ class WalletOrderMetabox {
 				<?php endif; ?>
 				<div><dt><?php esc_html_e( 'کش‌بک کسب‌شده', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( Money::format( $cashback ) ); ?></dd></div>
 			</dl>
-			<a class="ariunetclub-metabox__link" href="<?php echo esc_url( $history ); ?>"><?php esc_html_e( 'تاریخچهٔ کیف پول مشتری', 'ariunetclub' ); ?></a>
+			<a class="ariunetclub-metabox__link" href="<?php echo esc_url( $history ); ?>"><?php esc_html_e( 'تاریخچهٔ اعتبار مشتری', 'ariunetclub' ); ?></a>
 		</div>
 		<?php
 	}

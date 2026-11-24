@@ -37,6 +37,8 @@
     "test:account": "@php tools/account-functional-tests.php",
     "test:rebrand": "@php tools/rebrand-functional-tests.php",
     "test:license": "@php tools/license-functional-tests.php",
+    "test:credit": "@php tools/credit-functional-tests.php",
+    "test:integration": "@php tools/integration-tests.php",
     "load:test": "@php tools/load-test.php --driver sqlite",
     "dist": "@php tools/dist/build-zip.php"
   },

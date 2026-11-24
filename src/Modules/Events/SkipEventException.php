@@ -25,8 +25,8 @@ class SkipEventException extends \RuntimeException {
 	 */
 	public static function because( string $reason ): self {
 		$messages          = array(
-			'guest_user'        => 'کاربر مهمان کیف پول باشگاه ندارد.',
-			'guest_order'       => 'سفارش مهمان کیف پول باشگاه ندارد.',
+			'guest_user'        => 'کاربر مهمان اعتبار باشگاه ندارد.',
+			'guest_order'       => 'سفارش مهمان اعتبار باشگاه ندارد.',
 			'sub_order_ignored' => 'زیرسفارش نادیده گرفته شد (کش‌بک روی سفارش اصلی محاسبه می‌شود).',
 		);
 		$exception         = new self( $messages[ $reason ] ?? $reason );

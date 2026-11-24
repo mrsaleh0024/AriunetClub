@@ -1,3 +1,6 @@
-dist/
+# Only the ROOT dist folder (the built zip) is ignored; tools/dist ships in git.
+/dist/
 .phpunit.result.cache
 node_modules/
+# Runtime dependencies are installed with `composer install`; never committed.
+/vendor/

@@ -19,7 +19,7 @@ class LedgerModule implements Module {
 		$repository = new LedgerRepository( $wpdb );
 		$service    = new LedgerService( $repository );
 		$identity   = isset( $GLOBALS['ariunetclub_identity_service'] ) && $GLOBALS['ariunetclub_identity_service'] instanceof IdentityService ? $GLOBALS['ariunetclub_identity_service'] : new IdentityService( new PhoneNormalizer() );
-		( new WalletAdminPage( $repository, $service, $identity ) )->register();
+		( new WalletAdminPage( $repository, $service, $identity, new \AriunetClub\Modules\Credit\LotRepository( $wpdb ) ) )->register();
 		$GLOBALS['ariunetclub_ledger_service'] = $service;
 	}
 }

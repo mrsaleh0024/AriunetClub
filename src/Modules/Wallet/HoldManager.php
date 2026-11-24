@@ -147,10 +147,10 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'برگشت خرج کیف پول — مستردشدهٔ سفارش', 'ariunetclub' ),
+					'note'     => __( 'برگشت خرج اعتبار باشگاه — مستردشدهٔ سفارش', 'ariunetclub' ),
 				)
 			);
-			$order->add_order_note( __( 'برگشت خرج کیف پول به کیف پول اضافه شد: ', 'ariunetclub' ) . Money::format( $share ) );
+			$order->add_order_note( __( 'برگشت خرج اعتبار باشگاه به اعتبار باشگاه اضافه شد: ', 'ariunetclub' ) . Money::format( $share ) );
 			$this->logger->info(
 				'Wallet refund share returned.',
 				array(
@@ -166,7 +166,7 @@ class HoldManager {
 					'error'    => $error->getMessage(),
 				)
 			);
-			$order->add_order_note( __( 'خطا در برگشت خرج کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
+			$order->add_order_note( __( 'خطا در برگشت خرج اعتبار باشگاه؛ از تاریخچهٔ اعتبار بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -196,7 +196,7 @@ class HoldManager {
 		$user_id = (int) $order->get_customer_id();
 		$amount  = OrderMeta::amount( $order );
 		$this->release( $order, $user_id, $amount );
-		$order->add_order_note( __( 'مهلت پرداخت سفارش منقضی و رزرو کیف پول آزاد شد.', 'ariunetclub' ) );
+		$order->add_order_note( __( 'مهلت پرداخت سفارش منقضی و رزرو اعتبار باشگاه آزاد شد.', 'ariunetclub' ) );
 		$this->logger->info( 'Expired wallet hold released.', array( 'order_id' => $order_id ) );
 	}
 
@@ -245,11 +245,11 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'مصرف کیف پول برای سفارش', 'ariunetclub' ),
+					'note'     => __( 'مصرف اعتبار باشگاه برای سفارش', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
-			$order->add_order_note( __( 'مصرف کیف پول قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'مصرف اعتبار باشگاه قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->unschedule( $order->get_id() );
 			$this->logger->info(
 				'Wallet spend captured.',
@@ -266,7 +266,7 @@ class HoldManager {
 					'error'    => $error->getMessage(),
 				)
 			);
-			$order->add_order_note( __( 'خطا در قطعی‌سازی رزرو کیف پول؛ لطفاً از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
+			$order->add_order_note( __( 'خطا در قطعی‌سازی رزرو اعتبار باشگاه؛ لطفاً از تاریخچهٔ اعتبار بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -290,7 +290,7 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'رزرو مجدد کیف پول برای پرداخت مجدد سفارش', 'ariunetclub' ),
+					'note'     => __( 'رزرو مجدد اعتبار باشگاه برای پرداخت مجدد سفارش', 'ariunetclub' ),
 				)
 			);
 			$this->ledger->capture(
@@ -300,11 +300,11 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'مصرف کیف پول برای سفارش', 'ariunetclub' ),
+					'note'     => __( 'مصرف اعتبار باشگاه برای سفارش', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
-			$order->add_order_note( __( 'مصرف کیف پول پس از پرداخت مجدد سفارش قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'مصرف اعتبار باشگاه پس از پرداخت مجدد سفارش قطعی شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->logger->info(
 				'Wallet re-held and captured after retry payment.',
 				array(
@@ -321,11 +321,11 @@ class HoldManager {
 					array(
 						'ref_type' => 'order',
 						'ref_id'   => $order->get_id(),
-						'note'     => __( 'بدهی کیف پول — پرداخت مجدد سفارش', 'ariunetclub' ),
+						'note'     => __( 'بدهی اعتبار باشگاه — پرداخت مجدد سفارش', 'ariunetclub' ),
 					)
 				);
 				OrderMeta::mark( $order, OrderMeta::STATE_CAPTURED );
-				$order->add_order_note( __( 'موجودی کیف پول کافی نبود؛ مبلغ مصرف به‌صورت بدهی ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
+				$order->add_order_note( __( 'موجودی اعتبار باشگاه کافی نبود؛ مبلغ مصرف به‌صورت بدهی ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 				$this->logger->error(
 					'Wallet retry capture created debt.',
 					array(
@@ -341,7 +341,7 @@ class HoldManager {
 						'error'    => $error->getMessage(),
 					)
 				);
-				$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
+				$order->add_order_note( __( 'خطا در ثبت مصرف اعتبار باشگاه پس از پرداخت مجدد؛ از تاریخچهٔ اعتبار بررسی کنید.', 'ariunetclub' ) );
 			}
 		} catch ( \Throwable $error ) {
 			$this->logger->error(
@@ -351,7 +351,7 @@ class HoldManager {
 					'error'    => $error->getMessage(),
 				)
 			);
-			$order->add_order_note( __( 'خطا در ثبت مصرف کیف پول پس از پرداخت مجدد؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
+			$order->add_order_note( __( 'خطا در ثبت مصرف اعتبار باشگاه پس از پرداخت مجدد؛ از تاریخچهٔ اعتبار بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 
@@ -373,11 +373,11 @@ class HoldManager {
 				array(
 					'ref_type' => 'order',
 					'ref_id'   => $order->get_id(),
-					'note'     => __( 'آزادسازی رزرو کیف پول', 'ariunetclub' ),
+					'note'     => __( 'آزادسازی رزرو اعتبار باشگاه', 'ariunetclub' ),
 				)
 			);
 			OrderMeta::mark( $order, OrderMeta::STATE_RELEASED );
-			$order->add_order_note( __( 'رزرو کیف پول آزاد شد: ', 'ariunetclub' ) . Money::format( $amount ) );
+			$order->add_order_note( __( 'رزرو اعتبار باشگاه آزاد شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 			$this->unschedule( $order->get_id() );
 			$this->logger->info(
 				'Wallet hold released.',
@@ -394,7 +394,7 @@ class HoldManager {
 					'error'    => $error->getMessage(),
 				)
 			);
-			$order->add_order_note( __( 'خطا در آزادسازی رزرو کیف پول؛ از تاریخچهٔ کیف پول بررسی کنید.', 'ariunetclub' ) );
+			$order->add_order_note( __( 'خطا در آزادسازی رزرو اعتبار باشگاه؛ از تاریخچهٔ اعتبار بررسی کنید.', 'ariunetclub' ) );
 		}
 	}
 

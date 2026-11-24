@@ -7,6 +7,7 @@ namespace AriunetClub\Modules\Account;
 
 use AriunetClub\Core\JalaliDate;
 use AriunetClub\Core\Money;
+use AriunetClub\Modules\Credit\LotRepository;
 use AriunetClub\Modules\Identity\IdentityService;
 use AriunetClub\Modules\Ledger\LedgerGateway;
 use AriunetClub\Modules\Rules\RuleGateway;
@@ -36,15 +37,19 @@ class ClubEndpoint {
 				/** @var IdentityService */
 				private $identity;
 
+				/** @var LotRepository|null */
+				private $lots;
+
 				/**
 				 * @param LedgerGateway    $ledger   Ledger storage.
 				 * @param RuleGateway      $rules    Rule storage.
 				 * @param IdentityService  $identity Phone identity service.
 				 */
-	public function __construct( LedgerGateway $ledger, RuleGateway $rules, IdentityService $identity ) {
+	public function __construct( LedgerGateway $ledger, RuleGateway $rules, IdentityService $identity, ?LotRepository $lots = null ) {
 					$this->ledger   = $ledger;
 					$this->rules    = $rules;
 					$this->identity = $identity;
+					$this->lots       = $lots;
 	}
 
 	public function register(): void {
@@ -153,6 +158,8 @@ class ClubEndpoint {
 						'page'              => 1,
 						'pages'             => 1,
 						'rules'             => array(),
+						'lots'              => array(),
+						'lots_total'        => 0,
 						'currency'          => self::currency_symbol(),
 						'edit_address_url'  => self::edit_address_url(),
 					);
@@ -202,11 +209,15 @@ class ClubEndpoint {
 						$rules
 					);
 
+					$view['lots'] = $this->lots_for_view( $user_id );
+					if ( null !== $this->lots ) {
+							$view['lots_total'] = $this->lots->count_lots_for_user( $user_id );
+					}
 					return $view;
 	}
 
 				/**
-				 * Maps one ledger row onto the customer-facing history shape.
+				  * Maps one ledger row onto the customer-facing history shape.
 				 *
 				 * @param array<string,mixed> $row Ledger row.
 				 * @return array<string,mixed>
@@ -250,6 +261,8 @@ class ClubEndpoint {
 						'capture' => __( 'ثبت خرج', 'ariunetclub' ),
 						'release' => __( 'آزادسازی رزرو', 'ariunetclub' ),
 						'adjust'  => __( 'اصلاح', 'ariunetclub' ),
+						'grant'   => __( 'اعطای اعتبار', 'ariunetclub' ),
+						'expire'  => __( 'انقضا', 'ariunetclub' ),
 					);
 					return isset( $labels[ $type ] ) ? $labels[ $type ] : $type;
 	}
@@ -263,6 +276,8 @@ class ClubEndpoint {
 						'capture' => 'danger',
 						'hold'    => 'warning',
 						'adjust'  => 'neutral',
+						'grant'   => 'success',
+						'expire'  => 'danger',
 					);
 					return isset( $families[ $type ] ) ? $families[ $type ] : 'neutral';
 	}
@@ -271,6 +286,33 @@ class ClubEndpoint {
 				 * Masks a normalized mobile number: ۰۹۱۲***۴۵۶۷. The full number never
 				 * reaches the browser.
 				 */
+				/**
+				 * Customer-facing lot rows (amount, Jalali expiry, reason), soonest
+				 * expiry first — the same order the money will be spent in.
+				 *
+				 * @param int $user_id Customer.
+				 * @return array<int,array<string,mixed>>
+				 */
+				private function lots_for_view( int $user_id ): array {
+								if ( null === $this->lots || $user_id <= 0 ) {
+												return array();
+								}
+								$rows = $this->lots->lots_for_user( $user_id, 10 );
+								$out  = array();
+								foreach ( $rows as $row ) {
+												$expires_at = isset( $row['expires_at'] ) && is_string( $row['expires_at'] ) ? $row['expires_at'] : '';
+												$held       = isset( $row['held'] ) && is_numeric( $row['held'] ) ? (float) $row['held'] : 0.0;
+												$out[]      = array(
+																'remaining_display' => Money::format( isset( $row['remaining'] ) && is_numeric( $row['remaining'] ) ? (float) $row['remaining'] : 0.0 ),
+																'expires_display'   => '' === $expires_at ? __( 'بدون انقضا', 'ariunetclub' ) : Money::to_persian_digits( JalaliDate::format( $expires_at ) ),
+																'has_expiry'        => '' !== $expires_at,
+																'held'              => $held > 0.0,
+																'reason'            => isset( $row['reason'] ) && is_string( $row['reason'] ) ? $row['reason'] : '',
+												);
+								}
+								return $out;
+				}
+
 	private static function mask_phone( string $phone ): string {
 					$digits = preg_replace( '/[^0-9]/', '', $phone );
 		if ( ! is_string( $digits ) || strlen( $digits ) < 7 ) {

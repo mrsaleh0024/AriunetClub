@@ -1,0 +1,151 @@
+<?php
+/**
+ * Distribution builder (phase 6 gate): produces a clean, production-ready zip
+ * of the plugin with NO development dependencies — no tests, no QA tools, no
+ * composer dev packages (phpunit/phpstan/psalm/phpcs…), no signer, no git
+ * files. A final safety scan refuses to build when a private key, the license
+ * signer or any dev tool would leak into the archive.
+ *
+ * Usage: php tools/dist/build-zip.php [--output=dist/ariunetclub.zip]
+ * The runtime needs nothing from vendor except a minimal PSR-4 autoloader
+ * for src/ (the plugin declares no runtime composer dependencies), which is
+ * generated fresh inside the archive.
+ */
+
+error_reporting( E_ALL );
+
+$root = dirname( __DIR__, 2 );
+$args = getopt( '', array( 'output:' ) );
+$out  = isset( $args['output'] ) ? (string) $args['output'] : $root . '/dist/ariunetclub.zip';
+
+if ( PHP_SAPI !== 'cli' ) {
+        exit( "CLI only.\n" );
+}
+
+/** Development-only composer packages pruned from the distribution. */
+$dev_packages = array(
+        'amphp', 'composer', 'dealerdirect', 'dnoegel', 'doctrine', 'felixfbecker',
+        'fidry', 'myclabs', 'netresearch', 'nikic', 'phar-io', 'php-stubs',
+        'phpcompatibility', 'phpcsstandards', 'phpdocumentor', 'phpstan', 'phpunit',
+        'psalm', 'psr', 'sebastian', 'spatie', 'squizlabs', 'symfony', 'theseer',
+        'vimeo', 'webmozart',
+);
+
+/** Files and directories never shipped. */
+$excluded_paths = array(
+        '.git', '.phpunit.result.cache', 'dist', 'node_modules', 'tools',
+        'tests', 'qa-report.md', 'CHANGELOG.md', 'README-PHASE2-FA.md',
+        'README-PHASE3-FA.md', 'README-PHASE4-FA.md', 'README-PHASE6-FA.md',
+        'phpcs.xml', 'phpstan.neon', 'phpstan-baseline.neon', 'psalm.xml',
+        'phpunit.xml', 'package.json', 'package-lock.json', 'stylelint.config.cjs',
+        'composer.lock', 'tools/license-signer',
+);
+
+$staged = $out . '.stage';
+
+if ( is_dir( $staged ) ) {
+        shell_exec( 'rm -rf ' . escapeshellarg( $staged ) );
+}
+if ( ! mkdir( $staged . '/ariunetclub', 0777, true ) && ! is_dir( $staged . '/ariunetclub' ) ) {
+        exit( "Unable to create the staging directory.\n" );
+}
+
+$iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator( $root, FilesystemIterator::SKIP_DOTS ),
+        RecursiveIteratorIterator::SELF_FIRST
+);
+
+$files = array();
+foreach ( $iterator as $item ) {
+        if ( ! $item instanceof SplFileInfo ) {
+                continue;
+        }
+        $relative = ltrim( str_replace( '\\', '/', substr( $item->getPathname(), strlen( $root ) ) ), '/' );
+        if ( '' === $relative ) {
+                continue;
+        }
+        $first = explode( '/', $relative )[0];
+        if ( in_array( $first, $excluded_paths, true ) || in_array( $relative, $excluded_paths, true ) ) {
+                continue;
+        }
+        if ( 0 === strpos( $relative, 'vendor/' ) ) {
+                $second = explode( '/', $relative )[1] ?? '';
+                if ( in_array( $second, $dev_packages, true ) ) {
+                        continue; // dev-only composer package.
+                }
+                if ( 'bin' === $second ) {
+                        continue; // dev tool binaries.
+                }
+        }
+        if ( $item->isDir() ) {
+                continue;
+        }
+        $files[] = $relative;
+}
+
+if ( empty( $files ) ) {
+        exit( "Nothing to package — run from the repository root.\n" );
+}
+
+// Safety scan: no private keys, no signer, no dev tools may ship.
+foreach ( $files as $relative ) {
+        foreach ( array( 'PRIVATE KEY', 'BEGIN RSA', 'BEGIN OPENSSH' ) as $marker ) {
+                if ( false !== strpos( strtoupper( basename( $relative ) ), $marker ) ) {
+                        exit( "Refusing to build: suspicious key file in the archive: {$relative}\n" );
+                }
+        }
+        if ( false !== strpos( $relative, 'license-signer' ) ) {
+                exit( "Refusing to build: the license signer must never ship: {$relative}\n" );
+        }
+}
+
+foreach ( $files as $relative ) {
+        $target = $staged . '/ariunetclub/' . $relative;
+        if ( ! is_dir( dirname( $target ) ) ) {
+                mkdir( dirname( $target ), 0777, true );
+        }
+        if ( ! copy( $root . '/' . $relative, $target ) ) {
+                exit( "Unable to copy {$relative}\n" );
+        }
+}
+
+// The runtime autoloader: the plugin declares no runtime composer dependencies,
+// so the archive carries a tiny PSR-4 autoloader for src/ only. Built through
+// chr(92) (backslash) to keep the escaping of three nesting levels readable.
+$vendor_dir = $staged . '/ariunetclub/vendor';
+if ( ! is_dir( $vendor_dir ) ) {
+        mkdir( $vendor_dir, 0777, true );
+}
+$bs             = chr( 92 );
+$prefix_literal = "'AriunetClub" . $bs . $bs . "'";
+$replace_call   = "str_replace( '" . $bs . $bs . "', '/', substr( \$class, strlen( \$prefix ) ) )";
+$autoloader     = "<?php\n/**\n * Generated by tools/dist/build-zip.php — the plugin ships no runtime composer\n * dependencies; this is a minimal PSR-4 autoloader for src/.\n */\nif ( ! defined( 'ABSPATH' ) ) {\n\texit;\n}\nspl_autoload_register(\n\tstatic function ( \$class ) {\n\t\t\$prefix = {$prefix_literal};\n\t\tif ( 0 !== strpos( \$class, \$prefix ) ) {\n\t\t\treturn;\n\t\t}\n\t\t\$path = __DIR__ . '/../src/' . {$replace_call} . '.php';\n\t\tif ( is_file( \$path ) ) {\n\t\t\trequire_once \$path;\n\t\t}\n\t}\n);\n";
+file_put_contents( $vendor_dir . '/autoload.php', $autoloader );
+
+if ( ! is_dir( dirname( $out ) ) ) {
+        mkdir( dirname( $out ), 0777, true );
+}
+if ( is_file( $out ) ) {
+        unlink( $out );
+}
+
+$zip = new ZipArchive();
+if ( true !== $zip->open( $out, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+        exit( "Unable to create {$out}\n" );
+}
+$stage_iter = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator( $staged, FilesystemIterator::SKIP_DOTS ),
+        RecursiveIteratorIterator::LEAVES_ONLY
+);
+foreach ( $stage_iter as $item ) {
+        if ( ! $item instanceof SplFileInfo ) {
+                continue;
+        }
+        $zip->addFile( $item->getPathname(), substr( str_replace( '\\', '/', $item->getPathname() ), strlen( $staged ) + 1 ) );
+}
+$zip->close();
+
+shell_exec( 'rm -rf ' . escapeshellarg( $staged ) );
+
+$count = count( $files ) + 1; // + generated autoloader.
+echo "Built {$out} with {$count} files (dev tools, tests and the signer excluded).\n";

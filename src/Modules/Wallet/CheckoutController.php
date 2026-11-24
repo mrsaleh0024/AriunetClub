@@ -72,7 +72,7 @@ class CheckoutController {
 
 			$wc = function_exists( 'WC' ) ? WC() : null;
 		if ( ! is_user_logged_in() || null === $wc || null === $wc->session || null === $wc->cart ) {
-				wp_send_json_error( array( 'message' => __( 'برای استفاده از کیف پول باید وارد حساب خود شوید.', 'ariunetclub' ) ), 403 );
+				wp_send_json_error( array( 'message' => __( 'برای استفاده از اعتبار باشگاه باید وارد حساب خود شوید.', 'ariunetclub' ) ), 403 );
 				return; // wp_send_json_error() terminates execution; kept so the analysis stays sound.
 		}
 			$user_id = get_current_user_id();
@@ -91,7 +91,7 @@ class CheckoutController {
 		if ( $use && $spend <= 0.0 ) {
 				$wc->session->set( self::SESSION_FLAG, false );
 				$wc->session->set( self::SESSION_SPEND, 0.0 );
-				wp_send_json_error( array( 'message' => __( 'با توجه به تنظیمات، در حال حاضر امکان استفاده از کیف پول برای این سبد نیست.', 'ariunetclub' ) ), 409 );
+				wp_send_json_error( array( 'message' => __( 'با توجه به تنظیمات، در حال حاضر امکان استفاده از اعتبار باشگاه برای این سبد نیست.', 'ariunetclub' ) ), 409 );
 		}
 
 			$wc->session->set( self::SESSION_FLAG, $use );
@@ -156,20 +156,20 @@ class CheckoutController {
 			$spend     = $this->calculator->max_spend( $available, $base, $due );
 
 		if ( $spend <= 0.0 ) {
-				$errors->add( 'ariunetclub_wallet', __( 'با توجه به شرایط فعلی، استفاده از کیف پول برای این سبد ممکن نیست.', 'ariunetclub' ) );
+				$errors->add( 'ariunetclub_wallet', __( 'با توجه به شرایط فعلی، استفاده از اعتبار باشگاه برای این سبد ممکن نیست.', 'ariunetclub' ) );
 				return;
 		}
 		if ( $available + 0.001 < $spend ) {
-				$errors->add( 'ariunetclub_wallet', __( 'موجودی کیف پول برای این خرید کافی نیست.', 'ariunetclub' ) );
+				$errors->add( 'ariunetclub_wallet', __( 'موجودی اعتبار باشگاه برای این خرید کافی نیست.', 'ariunetclub' ) );
 				return;
 		}
 		if ( $spend + 0.001 < $due ) {
 				$raw_method = isset( $data['payment_method'] ) ? $data['payment_method'] : '';
 				$method     = is_string( $raw_method ) ? $raw_method : '';
 			if ( WalletGateway::GATEWAY_ID === $method ) {
-				$errors->add( 'ariunetclub_wallet', __( 'کیف پول به‌تنهایی کل مبلغ این سبد را نمی‌پوشاند؛ برای ادامه درگاه بانکی انتخاب کنید.', 'ariunetclub' ) );
+				$errors->add( 'ariunetclub_wallet', __( 'اعتبار باشگاه به‌تنهایی کل مبلغ این سبد را نمی‌پوشاند؛ برای ادامه درگاه بانکی انتخاب کنید.', 'ariunetclub' ) );
 			} elseif ( ! $this->gateway_allowed( $method ) ) {
-					$errors->add( 'ariunetclub_wallet', __( 'برای درگاه انتخاب‌شده امکان استفاده از کیف پول وجود ندارد.', 'ariunetclub' ) );
+					$errors->add( 'ariunetclub_wallet', __( 'برای درگاه انتخاب‌شده امکان استفاده از اعتبار باشگاه وجود ندارد.', 'ariunetclub' ) );
 			}
 		}
 	}
@@ -231,12 +231,12 @@ class CheckoutController {
 					array(
 						'ref_type' => 'order',
 						'ref_id'   => $order_id,
-						'note'     => __( 'رزرو کیف پول برای سفارش', 'ariunetclub' ),
+						'note'     => __( 'رزرو اعتبار باشگاه برای سفارش', 'ariunetclub' ),
 					)
 				);
 				OrderMeta::remember_hold( $order, $amount, max( 0.0, OrderMeta::order_total( $order ) ) );
 				$this->holds->schedule_expiry( $order_id );
-				$order->add_order_note( __( 'رزرو کیف پول ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
+				$order->add_order_note( __( 'رزرو اعتبار باشگاه ثبت شد: ', 'ariunetclub' ) . Money::format( $amount ) );
 				$this->logger->info(
 					'Wallet hold placed.',
 					array(
@@ -245,7 +245,7 @@ class CheckoutController {
 					)
 				);
 		} catch ( InsufficientBalanceException $exception ) {
-				$order->update_status( 'failed', __( 'رزرو کیف پول به‌دلیل کافی نبودن موجودی انجام نشد.', 'ariunetclub' ) );
+				$order->update_status( 'failed', __( 'رزرو اعتبار باشگاه به‌دلیل کافی نبودن موجودی انجام نشد.', 'ariunetclub' ) );
 				$this->logger->error(
 					'Wallet hold failed: insufficient balance.',
 					array(
@@ -253,9 +253,9 @@ class CheckoutController {
 						'user_id'  => $user_id,
 					)
 				);
-				throw new \Exception( esc_html__( 'موجودی کیف پول کافی نیست؛ سفارش ثبت نشد.', 'ariunetclub' ) );
+				throw new \Exception( esc_html__( 'موجودی اعتبار باشگاه کافی نیست؛ سفارش ثبت نشد.', 'ariunetclub' ) );
 		} catch ( \Throwable $error ) {
-				$order->update_status( 'failed', __( 'خطا در ثبت رزرو کیف پول؛ سفارش ناموفق شد.', 'ariunetclub' ) );
+				$order->update_status( 'failed', __( 'خطا در ثبت رزرو اعتبار باشگاه؛ سفارش ناموفق شد.', 'ariunetclub' ) );
 				$this->logger->error(
 					'Wallet hold failed.',
 					array(
@@ -263,7 +263,7 @@ class CheckoutController {
 						'error'    => $error->getMessage(),
 					)
 				);
-				throw new \Exception( esc_html__( 'خطا در ثبت رزرو کیف پول؛ سفارش ناموفق شد.', 'ariunetclub' ) );
+				throw new \Exception( esc_html__( 'خطا در ثبت رزرو اعتبار باشگاه؛ سفارش ناموفق شد.', 'ariunetclub' ) );
 		}
 	}
 
@@ -388,7 +388,7 @@ class CheckoutController {
 			$config    = $this->settings->get();
 			$raw_title = isset( $config['wallet_fee_title'] ) ? $config['wallet_fee_title'] : '';
 			$title     = is_string( $raw_title ) ? $raw_title : '';
-			return '' !== $title ? $title : __( 'استفاده از کیف پول', 'ariunetclub' );
+			return '' !== $title ? $title : __( 'استفاده از اعتبار باشگاه', 'ariunetclub' );
 	}
 
 		/**

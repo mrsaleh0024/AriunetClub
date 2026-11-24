@@ -7,6 +7,7 @@ namespace AriunetClub\Modules\Ledger;
 
 use AriunetClub\Core\JalaliDate;
 use AriunetClub\Core\Money;
+use AriunetClub\Modules\Credit\LotRepository;
 use AriunetClub\Modules\Identity\IdentityService;
 
 class WalletAdminPage {
@@ -16,18 +17,21 @@ class WalletAdminPage {
 		private $ledger;
 		/** @var IdentityService */
 		private $identity;
+		/** @var LotRepository|null */
+		private $lots;
 
-	public function __construct( LedgerGateway $repository, LedgerService $ledger, IdentityService $identity ) {
+	public function __construct( LedgerGateway $repository, LedgerService $ledger, IdentityService $identity, ?LotRepository $lots = null ) {
 			$this->repository = $repository;
 			$this->ledger     = $ledger;
-			$this->identity   = $identity; }
+			$this->identity   = $identity;
+			$this->lots       = $lots; }
 	public function register(): void {
 			add_action( 'admin_menu', array( $this, 'menu' ), 20 );
 			add_action( 'admin_post_ariunetclub_adjust_balance', array( $this, 'adjust_balance' ) );
 			add_action( 'wp_ajax_ariunetclub_adjust_balance', array( $this, 'adjust_balance_ajax' ) ); }
 	public function menu(): void {
-			add_submenu_page( 'ariunetclub-settings', __( 'کیف پول‌ها', 'ariunetclub' ), __( 'کیف پول‌ها', 'ariunetclub' ), 'manage_woocommerce', 'ariunetclub-wallets', array( $this, 'render_wallets' ) );
-			add_submenu_page( null, __( 'تاریخچه کیف پول', 'ariunetclub' ), __( 'تاریخچه کیف پول', 'ariunetclub' ), 'manage_woocommerce', 'ariunetclub-wallet-history', array( $this, 'render_history' ) );
+			add_submenu_page( 'ariunetclub-settings', __( 'اعتبار مشتریان', 'ariunetclub' ), __( 'اعتبار مشتریان', 'ariunetclub' ), 'manage_woocommerce', 'ariunetclub-wallets', array( $this, 'render_wallets' ) );
+			add_submenu_page( null, __( 'تاریخچه اعتبار', 'ariunetclub' ), __( 'تاریخچه اعتبار', 'ariunetclub' ), 'manage_woocommerce', 'ariunetclub-wallet-history', array( $this, 'render_history' ) );
 	}
 	public function render_wallets(): void {
 			$this->guard();
@@ -46,7 +50,19 @@ class WalletAdminPage {
 						'total' => 0,
 					)
 					: $this->repository->balances( null === $user_id ? array() : array( $user_id ), $page );
-			$this->shell_open( __( 'کیف پول مشتریان', 'ariunetclub' ), __( 'جست‌وجو و بررسی موجودی‌های باشگاه مشتریان.', 'ariunetclub' ) );
+			$this->shell_open( __( 'اعتبار باشگاه مشتریان', 'ariunetclub' ), __( 'جست‌وجو و بررسی موجودی‌های باشگاه مشتریان.', 'ariunetclub' ) );
+			if ( null !== $this->lots ) :
+					$now_gmt   = current_time( 'mysql', true );
+					$in_30d    = gmdate( 'Y-m-d H:i:s', time() + 30 * DAY_IN_SECONDS );
+					$liability = $this->lots->liability_summary( $now_gmt, $in_30d );
+					?>
+					<section class="ariunetclub-panel ariunetclub-credit-cards" aria-label="<?php esc_attr_e( 'بدهی باشگاه', 'ariunetclub' ); ?>">
+							<div class="ariunetclub-credit-card"><span><?php esc_html_e( 'کل اعتبار باز', 'ariunetclub' ); ?></span><strong><?php echo esc_html( Money::format( $liability['outstanding'] ) ); ?></strong></div>
+							<div class="ariunetclub-credit-card"><span><?php esc_html_e( 'منقضیشونده تا ۳۰ روز', 'ariunetclub' ); ?></span><strong><?php echo esc_html( Money::format( $liability['expiring_30d'] ) ); ?></strong></div>
+							<div class="ariunetclub-credit-card"><span><?php esc_html_e( 'مشتریان دارای اعتبار', 'ariunetclub' ); ?></span><strong><?php echo esc_html( Money::to_persian_digits( (string) $liability['users'] ) ); ?></strong></div>
+					</section>
+					<?php
+			endif;
 			?>
 				<form method="get" class="ariunetclub-panel"><input type="hidden" name="page" value="ariunetclub-wallets" /><label for="ariunetclub-wallet-phone"><?php esc_html_e( 'جست‌وجوی شماره موبایل', 'ariunetclub' ); ?></label><p><input id="ariunetclub-wallet-phone" name="phone" type="text" value="<?php echo esc_attr( Money::to_persian_digits( $search ) ); ?>" placeholder="۰۹۱۲۱۲۳۴۵۶۷" /> <button class="button button-primary" type="submit"><?php esc_html_e( 'جست‌وجو', 'ariunetclub' ); ?></button></p>
 				<?php
@@ -88,7 +104,7 @@ class WalletAdminPage {
 			$history     = $this->repository->history( $user_id, 'cashback', $page );
 			$wallets_url = add_query_arg( array( 'page' => 'ariunetclub-wallets' ), admin_url( 'admin.php' ) );
 			/* translators: %s: customer display name. */
-			$this->shell_open( sprintf( __( 'کیف پول %s', 'ariunetclub' ), $user->display_name ), __( 'تاریخچهٔ تراکنش‌ها و تنظیم دستی موجودی.', 'ariunetclub' ), $wallets_url );
+			$this->shell_open( sprintf( __( 'اعتبار باشگاه %s', 'ariunetclub' ), $user->display_name ), __( 'تاریخچهٔ تراکنش‌ها و تنظیم دستی موجودی.', 'ariunetclub' ), $wallets_url );
 		?>
 			<?php $phone = $this->identity->phone_for_user( $user_id ); ?>
 				<?php
@@ -98,8 +114,22 @@ class WalletAdminPage {
 					?>
 						<div class="ariunetclub-notice ariunetclub-notice--info"><?php esc_html_e( 'موجودی با موفقیت تنظیم شد.', 'ariunetclub' ); ?></div><?php endif; ?>
 				<section class="ariunetclub-panel ariunetclub-history-summary" aria-labelledby="ariunetclub-balance-title"><div class="ariunetclub-history-summary__primary"><span><?php esc_html_e( 'موجودی قابل استفاده', 'ariunetclub' ); ?></span><strong id="ariunetclub-balance-title"><?php echo esc_html( Money::format( (float) $balance['available'] ) ); ?></strong></div><dl class="ariunetclub-history-summary__details"><div><dt><?php esc_html_e( 'شماره موبایل', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( null === $phone ? '—' : Money::to_persian_digits( '0' . $phone ) ); ?></dd></div><div><dt><?php esc_html_e( 'موجودی رزروشده', 'ariunetclub' ); ?></dt><dd><?php echo esc_html( Money::format( (float) $balance['held'] ) ); ?></dd></div></dl></section>
-				<section class="ariunetclub-panel ariunetclub-history-adjust" aria-labelledby="ariunetclub-adjust-title"><div><h2 id="ariunetclub-adjust-title"><?php esc_html_e( 'تنظیم دستی', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'در صورت نیاز، اعتبار این مشتری را با ثبت دلیل تغییر دهید.', 'ariunetclub' ); ?></p></div><button class="button button-primary" type="button" data-ariunetclub-open-adjust><?php esc_html_e( 'تنظیم دستی موجودی', 'ariunetclub' ); ?></button></section><dialog class="ariunetclub-dialog" data-ariunetclub-adjust-dialog aria-labelledby="ariunetclub-adjust-dialog-title"><form method="dialog" class="ariunetclub-dialog__card" data-ariunetclub-adjust-form><header class="ariunetclub-dialog__header"><div><span class="ariunetclub-admin-kicker">ARIUNETCLUB</span><h2 id="ariunetclub-adjust-dialog-title"><?php esc_html_e( 'تنظیم دستی موجودی', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'مبلغ مثبت اعتبار و مبلغ منفی کسر می‌کند.', 'ariunetclub' ); ?></p></div><button class="ariunetclub-dialog__close" type="button" data-ariunetclub-close-adjust aria-label="<?php esc_attr_e( 'بستن', 'ariunetclub' ); ?>">×</button></header><input type="hidden" name="user_id" value="<?php echo esc_attr( (string) $user_id ); ?>" /><?php wp_nonce_field( 'ariunetclub_adjust_balance' ); ?><p><label for="ariunetclub-adjust-amount"><?php esc_html_e( 'مبلغ تغییر', 'ariunetclub' ); ?></label><input id="ariunetclub-adjust-amount" name="amount" type="number" step="any" required /></p><p><label for="ariunetclub-adjust-reason"><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></label><textarea id="ariunetclub-adjust-reason" name="reason" required></textarea></p><footer class="ariunetclub-dialog__actions"><button class="button ariunetclub-button-secondary" type="button" data-ariunetclub-close-adjust><?php esc_html_e( 'انصراف', 'ariunetclub' ); ?></button><button class="button button-primary" type="submit" data-ariunetclub-save-adjust><?php esc_html_e( 'ثبت تغییر', 'ariunetclub' ); ?></button></footer></form></dialog><div class="ariunetclub-toast" data-ariunetclub-toast role="status" aria-live="polite" hidden></div>
-				<section class="ariunetclub-panel ariunetclub-history-transactions" aria-labelledby="ariunetclub-history-title"><div class="ariunetclub-section-heading"><div><h2 id="ariunetclub-history-title"><?php esc_html_e( 'تاریخچه تراکنش‌ها', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'تمام تغییرهای ثبت‌شده برای این کیف پول.', 'ariunetclub' ); ?></p></div><span class="ariunetclub-history-count"><?php echo esc_html( Money::to_persian_digits( (string) $history['total'] ) ); ?></span></div><div class="ariunetclub-table-scroll"><table class="ariunetclub-table"><thead><tr><th><?php esc_html_e( 'تاریخ', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'نوع', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'تغییر', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'مانده کل', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></th></tr></thead><tbody>
+				<section class="ariunetclub-panel ariunetclub-history-adjust" aria-labelledby="ariunetclub-adjust-title"><div><h2 id="ariunetclub-adjust-title"><?php esc_html_e( 'تنظیم دستی', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'در صورت نیاز، اعتبار این مشتری را با ثبت دلیل تغییر دهید.', 'ariunetclub' ); ?></p></div><button class="button button-primary" type="button" data-ariunetclub-open-adjust><?php esc_html_e( 'تنظیم دستی موجودی', 'ariunetclub' ); ?></button></section><dialog class="ariunetclub-dialog" data-ariunetclub-adjust-dialog aria-labelledby="ariunetclub-adjust-dialog-title"><form method="dialog" class="ariunetclub-dialog__card" data-ariunetclub-adjust-form><header class="ariunetclub-dialog__header"><div><span class="ariunetclub-admin-kicker">ARIUNETCLUB</span><h2 id="ariunetclub-adjust-dialog-title"><?php esc_html_e( 'تنظیم دستی موجودی', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'مبلغ مثبت اعتبار و مبلغ منفی کسر می‌کند.', 'ariunetclub' ); ?></p></div><button class="ariunetclub-dialog__close" type="button" data-ariunetclub-close-adjust aria-label="<?php esc_attr_e( 'بستن', 'ariunetclub' ); ?>">×</button></header><input type="hidden" name="user_id" value="<?php echo esc_attr( (string) $user_id ); ?>" /><?php wp_nonce_field( 'ariunetclub_adjust_balance' ); ?><p><label for="ariunetclub-adjust-amount"><?php esc_html_e( 'مبلغ تغییر', 'ariunetclub' ); ?></label><input id="ariunetclub-adjust-amount" name="amount" type="number" step="any" required /></p><p><label for="ariunetclub-adjust-expiry"><?php esc_html_e( 'انقضا (روز — اختیاری)', 'ariunetclub' ); ?></label><input id="ariunetclub-adjust-expiry" name="expiry_days" type="number" min="0" max="3650" step="1" value="0" /><p class="description"><?php esc_html_e( 'فقط برای مبلغ مثبت: تعداد روز تا انقضای این اعتبار؛ صفر یعنی بدون انقضا.', 'ariunetclub' ); ?></p></p><p><label for="ariunetclub-adjust-reason"><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></label><textarea id="ariunetclub-adjust-reason" name="reason" required></textarea></p><footer class="ariunetclub-dialog__actions"><button class="button ariunetclub-button-secondary" type="button" data-ariunetclub-close-adjust><?php esc_html_e( 'انصراف', 'ariunetclub' ); ?></button><button class="button button-primary" type="submit" data-ariunetclub-save-adjust><?php esc_html_e( 'ثبت تغییر', 'ariunetclub' ); ?></button></footer></form></dialog><div class="ariunetclub-toast" data-ariunetclub-toast role="status" aria-live="polite" hidden></div>
+				<?php if ( null !== $this->lots ) : ?>
+					<?php $user_lots = $this->lots->lots_for_user( $user_id, 20 ); ?>
+					<section class="ariunetclub-panel ariunetclub-history-lots" aria-labelledby="ariunetclub-lots-title">
+							<div class="ariunetclub-section-heading"><div><h2 id="ariunetclub-lots-title"><?php esc_html_e( 'ردیف‌های اعتبار', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'اعتبار این مشتری از این ردیف‌ها خرج می‌شود؛ نزدیک‌ترین انقضا اول.', 'ariunetclub' ); ?></p></div></div>
+							<?php if ( empty( $user_lots ) ) : ?>
+									<p class="description"><?php esc_html_e( 'ردیف فعالی وجود ندارد.', 'ariunetclub' ); ?></p>
+							<?php else : ?>
+									<div class="ariunetclub-table-scroll"><table class="ariunetclub-table"><thead><tr><th><?php esc_html_e( 'مانده', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'رزروشده', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'انقضا', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></th></tr></thead><tbody>
+									<?php foreach ( $user_lots as $user_lot ) : ?>
+											<tr><td class="ariunetclub-balance"><?php echo esc_html( Money::format( (float) $user_lot['remaining'] ) ); ?></td><td class="ariunetclub-balance"><?php echo esc_html( Money::format( (float) $user_lot['held'] ) ); ?></td><td><?php echo esc_html( $this->lot_expiry_label( isset( $user_lot['expires_at'] ) ? (string) $user_lot['expires_at'] : '' ) ); ?></td><td><?php echo esc_html( isset( $user_lot['reason'] ) ? (string) $user_lot['reason'] : '' ); ?></td></tr>
+									<?php endforeach; ?></tbody></table></div>
+							<?php endif; ?>
+					</section>
+					<?php endif; ?>
+					<section class="ariunetclub-panel ariunetclub-history-transactions" aria-labelledby="ariunetclub-history-title"><div class="ariunetclub-section-heading"><div><h2 id="ariunetclub-history-title"><?php esc_html_e( 'تاریخچه تراکنش‌ها', 'ariunetclub' ); ?></h2><p><?php esc_html_e( 'تمام تغییرهای ثبت‌شده برای این اعتبار باشگاه.', 'ariunetclub' ); ?></p></div><span class="ariunetclub-history-count"><?php echo esc_html( Money::to_persian_digits( (string) $history['total'] ) ); ?></span></div><div class="ariunetclub-table-scroll"><table class="ariunetclub-table"><thead><tr><th><?php esc_html_e( 'تاریخ', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'نوع', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'تغییر', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'مانده کل', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></th></tr></thead><tbody>
 				<?php
 				foreach ( $history['items'] as $entry ) :
 					?>
@@ -114,6 +144,7 @@ class WalletAdminPage {
 			$user_id = isset( $_POST['user_id'] ) ? absint( $_POST['user_id'] ) : 0;
 			$reason  = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
 			$amount  = isset( $_POST['amount'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : 0.0;
+			$expiry_days = isset( $_POST['expiry_days'] ) ? absint( $_POST['expiry_days'] ) : 0;
 		if ( $user_id <= 0 || '' === $reason || 0.0 === $amount ) {
 				wp_die( esc_html__( 'مبلغ و دلیل معتبر الزامی هستند.', 'ariunetclub' ) ); }
 			$this->ledger->adjust(
@@ -124,6 +155,7 @@ class WalletAdminPage {
 					'note'       => $reason,
 					'ref_type'   => 'manual_adjustment',
 					'created_by' => get_current_user_id(),
+					'_lot_expiry_days' => $expiry_days,
 				)
 			);
 			wp_safe_redirect(
@@ -145,6 +177,7 @@ class WalletAdminPage {
 			$user_id = isset( $_POST['user_id'] ) ? absint( $_POST['user_id'] ) : 0;
 			$reason  = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
 			$amount  = isset( $_POST['amount'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : 0.0;
+			$expiry_days = isset( $_POST['expiry_days'] ) ? absint( $_POST['expiry_days'] ) : 0;
 		if ( $user_id <= 0 || '' === $reason || 0.0 === $amount ) {
 				wp_send_json_error( array( 'message' => __( 'مبلغ و دلیل معتبر الزامی هستند.', 'ariunetclub' ) ), 400 );
 		}
@@ -157,6 +190,7 @@ class WalletAdminPage {
 						'note'       => $reason,
 						'ref_type'   => 'manual_adjustment',
 						'created_by' => get_current_user_id(),
+						'_lot_expiry_days' => $expiry_days,
 					)
 				);
 				wp_send_json_success( array( 'message' => __( 'موجودی با موفقیت تغییر کرد.', 'ariunetclub' ) ) );
@@ -174,7 +208,7 @@ class WalletAdminPage {
 			<?php
 			if ( '' !== $back_url ) :
 				?>
-				<nav class="ariunetclub-history-breadcrumb" aria-label="<?php esc_attr_e( 'ناوبری کیف پول', 'ariunetclub' ); ?>"><a href="<?php echo esc_url( $back_url ); ?>"><?php esc_html_e( 'بازگشت به کیف پول‌ها', 'ariunetclub' ); ?></a></nav><?php endif; ?><span class="ariunetclub-admin-kicker">ARIUNETCLUB</span><h1><?php echo esc_html( $title ); ?></h1><p><?php echo esc_html( $description ); ?></p></header>
+				<nav class="ariunetclub-history-breadcrumb" aria-label="<?php esc_attr_e( 'ناوبری اعتبار باشگاه', 'ariunetclub' ); ?>"><a href="<?php echo esc_url( $back_url ); ?>"><?php esc_html_e( 'بازگشت به اعتبار مشتریان', 'ariunetclub' ); ?></a></nav><?php endif; ?><span class="ariunetclub-admin-kicker">ARIUNETCLUB</span><h1><?php echo esc_html( $title ); ?></h1><p><?php echo esc_html( $description ); ?></p></header>
 				<?php
 	}
 	private function shell_close(): void {
@@ -206,6 +240,18 @@ class WalletAdminPage {
 				<a href="<?php echo esc_url( $url ); ?>" <?php echo $number === $page ? 'aria-current="page"' : ''; ?>><?php echo esc_html( Money::to_persian_digits( (string) $number ) ); ?></a><?php endfor; ?></nav>
 				<?php
 	}
+	/**
+			Jalali expiry label for one lot row.
+			@param string|null $expires_at UTC datetime or null.
+			@return string
+	 */
+	private function lot_expiry_label( $expires_at ): string {
+			if ( ! is_string( $expires_at ) || '' === $expires_at || '0000-00-00 00:00:00' === $expires_at ) {
+						return __( 'بدون انقضا', 'ariunetclub' );
+			}
+			return Money::to_persian_digits( JalaliDate::format( $expires_at ) );
+	}
+
 	private function entry_label( string $type ): string {
 			$labels = array(
 				'credit'  => __( 'اعتبار', 'ariunetclub' ),
@@ -214,6 +260,8 @@ class WalletAdminPage {
 				'capture' => __( 'ثبت مصرف', 'ariunetclub' ),
 				'release' => __( 'آزادسازی', 'ariunetclub' ),
 				'adjust'  => __( 'تنظیم دستی', 'ariunetclub' ),
+																'grant'   => __( 'اعطا', 'ariunetclub' ),
+																'expire'  => __( 'انقضا', 'ariunetclub' ),
 			);
 			return isset( $labels[ $type ] ) ? $labels[ $type ] : $type; }
 }

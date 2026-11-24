@@ -117,3 +117,5 @@
         }
         .ariunetclub-account__panel::before { display: none; }
 }
+/* Phase 6: credit lot rows in the club tab. */
+.ariunetclub-account__lot-held { color: var(--ariunetclub-text-muted); font-size: 12px; font-weight: 500; }

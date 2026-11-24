@@ -20,8 +20,8 @@ namespace AriunetClub\Modules\License;
  */
 final class LicenseGuard {
 
-				const LOCKED_ACTIONS_MESSAGE  = 'تا زمانی که لایسنس فعال نباشد، ساخت و ویرایش قوانین کش‌بک ممکن نیست. کسب و خرج کیف پول مشتریان بدون وقفه ادامه می‌یابد.';
-				const LOCKED_ADJUST_MESSAGE   = 'تا زمانی که لایسنس فعال نباشد، تنظیم دستی موجودی ممکن نیست. کسب و خرج کیف پول مشتریان بدون وقفه ادامه می‌یابد.';
+				const LOCKED_ACTIONS_MESSAGE  = 'تا زمانی که لایسنس فعال نباشد، ساخت و ویرایش قوانین کش‌بک ممکن نیست. کسب و خرج اعتبار باشگاه مشتریان بدون وقفه ادامه می‌یابد.';
+				const LOCKED_ADJUST_MESSAGE   = 'تا زمانی که لایسنس فعال نباشد، تنظیم دستی موجودی ممکن نیست. کسب و خرج اعتبار باشگاه مشتریان بدون وقفه ادامه می‌یابد.';
 				const LOCKED_SETTINGS_MESSAGE = 'تا زمانی که لایسنس فعال نباشد، ذخیرهٔ تنظیمات قفل است؛ مقادیر فعلی بدون تغییر ماندند.';
 				const UNAVAILABLE_MESSAGE     = 'ماژول لایسنس AriunetClub بارگیری نشد؛ برای امنیت، بخش‌های مدیریتی قفل شدند. یک‌بار افزونه را غیرفعال و دوباره فعال کنید.';
 
@@ -118,7 +118,7 @@ final class LicenseGuard {
 		if ( $this->can_manage_rules() ) {
 				return;
 		}
-			wp_die( esc_html__( 'تا زمانی که لایسنس فعال نباشد، ساخت و ویرایش قوانین کش‌بک ممکن نیست. کسب و خرج کیف پول مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ) );
+			wp_die( esc_html__( 'تا زمانی که لایسنس فعال نباشد، ساخت و ویرایش قوانین کش‌بک ممکن نیست. کسب و خرج اعتبار باشگاه مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ) );
 	}
 
 				/**
@@ -132,9 +132,9 @@ final class LicenseGuard {
 				return;
 		}
 		if ( $ajax ) {
-				wp_send_json_error( array( 'message' => __( 'تا زمانی که لایسنس فعال نباشد، تنظیم دستی موجودی ممکن نیست. کسب و خرج کیف پول مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ) ), 403 );
+				wp_send_json_error( array( 'message' => __( 'تا زمانی که لایسنس فعال نباشد، تنظیم دستی موجودی ممکن نیست. کسب و خرج اعتبار باشگاه مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ) ), 403 );
 		}
-			wp_die( esc_html__( 'تا زمانی که لایسنس فعال نباشد، تنظیم دستی موجودی ممکن نیست. کسب و خرج کیف پول مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ) );
+			wp_die( esc_html__( 'تا زمانی که لایسنس فعال نباشد، تنظیم دستی موجودی ممکن نیست. کسب و خرج اعتبار باشگاه مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ) );
 	}
 
 				/**
@@ -243,7 +243,7 @@ final class LicenseGuard {
 												<div class="ariunetclub-lock-screen__card">
 																<svg class="ariunetclub-lock-screen__icon" viewBox="0 0 24 24" width="44" height="44" aria-hidden="true" focusable="false"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm4 7.73V17a1 1 0 1 1-2 0v-2.27a2 1.99 0 1 1 2 0Z" fill="currentColor"/></svg>
 																<h2 id="ariunetclub-lock-title"><?php esc_html_e( 'این بخش با لایسنس فعال باز می‌شود', 'ariunetclub' ); ?></h2>
-																<p><?php esc_html_e( 'برای مدیریت قوانین، تنظیم دستی موجودی و تنظیمات افزونه، ابتدا لایسنس AriunetClub را فعال کنید. کسب کش‌بک و خرج کیف پول مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ); ?></p>
+																<p><?php esc_html_e( 'برای مدیریت قوانین، تنظیم دستی موجودی و تنظیمات افزونه، ابتدا لایسنس AriunetClub را فعال کنید. کسب کش‌بک و خرج اعتبار باشگاه مشتریان بدون وقفه ادامه می‌یابد.', 'ariunetclub' ); ?></p>
 																<a class="button button-primary" href="<?php echo esc_url( self::license_page_url() ); ?>"><?php esc_html_e( 'فعال‌سازی لایسنس', 'ariunetclub' ); ?></a>
 												</div>
 								</div>
