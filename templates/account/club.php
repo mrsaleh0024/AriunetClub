@@ -59,7 +59,7 @@ $club_currency = isset( $data['currency'] ) && is_string( $data['currency'] ) ? 
 										<?php endif; ?></p>
 								</div>
 						<?php endif; ?>
-				<?php if ( ! empty( $data['lots'] ) ) : ?>
+					<?php if ( ! empty( $data['lots'] ) ) : ?>
 												<section class="ariunetclub-account__section" aria-labelledby="ariunetclub-account-lots">
 																<div class="ariunetclub-account__section-head">
 																				<h3 id="ariunetclub-account-lots"><?php esc_html_e( 'ردیف‌های اعتبار باشگاه', 'ariunetclub' ); ?></h3>
@@ -79,7 +79,11 @@ $club_currency = isset( $data['currency'] ) && is_string( $data['currency'] ) ? 
 																								<tbody>
 																								<?php foreach ( $data['lots'] as $club_lot ) : ?>
 																												<tr>
-																																<td class="ariunetclub-account__amount"><span dir="ltr"><?php echo esc_html( $club_lot['remaining_display'] ); ?></span><?php if ( ! empty( $club_lot['held'] ) ) : ?> <span class="ariunetclub-account__lot-held"><?php esc_html_e( '(شامل بخش رزروشده)', 'ariunetclub' ); ?></span><?php endif; ?></td>
+																																<td class="ariunetclub-account__amount"><span dir="ltr"><?php echo esc_html( $club_lot['remaining_display'] ); ?></span>
+																																<?php
+																																if ( ! empty( $club_lot['held'] ) ) :
+																																	?>
+																																	<span class="ariunetclub-account__lot-held"><?php esc_html_e( '(شامل بخش رزروشده)', 'ariunetclub' ); ?></span><?php endif; ?></td>
 																																<td><?php echo esc_html( $club_lot['expires_display'] ); ?></td>
 																																<td><?php echo esc_html( $club_lot['reason'] ); ?></td>
 																												</tr>

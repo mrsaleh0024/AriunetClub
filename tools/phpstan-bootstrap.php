@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         define( 'ABSPATH', __DIR__ . '/wp-stubs/wordpress/' );
 }
 if ( ! defined( 'ARIUNETCLUB_VERSION' ) ) {
-        define( 'ARIUNETCLUB_VERSION', '0.5.0' );
+        define( 'ARIUNETCLUB_VERSION', '0.6.0' );
 }
 if ( ! defined( 'ARIUNETCLUB_FILE' ) ) {
         define( 'ARIUNETCLUB_FILE', dirname( __DIR__ ) . '/ariunetclub.php' );
@@ -26,6 +26,15 @@ if ( ! defined( 'ARIUNETCLUB_PATH' ) ) {
 }
 if ( ! defined( 'ARIUNETCLUB_URL' ) ) {
         define( 'ARIUNETCLUB_URL', 'https://example.test/wp-content/plugins/ariunetclub/' );
+}
+if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
+        define( 'MINUTE_IN_SECONDS', 60 );
+}
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+        define( 'HOUR_IN_SECONDS', 3600 );
+}
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+        define( 'DAY_IN_SECONDS', 86400 );
 }
 if ( ! defined( 'ARIUNETCLUB_TEST_SITE_URL' ) ) {
         define( 'ARIUNETCLUB_TEST_SITE_URL', 'https://www.example.test' );

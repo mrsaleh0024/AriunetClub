@@ -49,7 +49,7 @@ class ClubEndpoint {
 					$this->ledger   = $ledger;
 					$this->rules    = $rules;
 					$this->identity = $identity;
-					$this->lots       = $lots;
+					$this->lots     = $lots;
 	}
 
 	public function register(): void {
@@ -210,14 +210,14 @@ class ClubEndpoint {
 					);
 
 					$view['lots'] = $this->lots_for_view( $user_id );
-					if ( null !== $this->lots ) {
-							$view['lots_total'] = $this->lots->count_lots_for_user( $user_id );
-					}
+		if ( null !== $this->lots ) {
+				$view['lots_total'] = $this->lots->count_lots_for_user( $user_id );
+		}
 					return $view;
 	}
 
 				/**
-				  * Maps one ledger row onto the customer-facing history shape.
+				 * Maps one ledger row onto the customer-facing history shape.
 				 *
 				 * @param array<string,mixed> $row Ledger row.
 				 * @return array<string,mixed>
@@ -293,25 +293,25 @@ class ClubEndpoint {
 				 * @param int $user_id Customer.
 				 * @return array<int,array<string,mixed>>
 				 */
-				private function lots_for_view( int $user_id ): array {
-								if ( null === $this->lots || $user_id <= 0 ) {
-												return array();
-								}
-								$rows = $this->lots->lots_for_user( $user_id, 10 );
-								$out  = array();
-								foreach ( $rows as $row ) {
-												$expires_at = isset( $row['expires_at'] ) && is_string( $row['expires_at'] ) ? $row['expires_at'] : '';
-												$held       = isset( $row['held'] ) && is_numeric( $row['held'] ) ? (float) $row['held'] : 0.0;
-												$out[]      = array(
-																'remaining_display' => Money::format( isset( $row['remaining'] ) && is_numeric( $row['remaining'] ) ? (float) $row['remaining'] : 0.0 ),
-																'expires_display'   => '' === $expires_at ? __( 'بدون انقضا', 'ariunetclub' ) : Money::to_persian_digits( JalaliDate::format( $expires_at ) ),
-																'has_expiry'        => '' !== $expires_at,
-																'held'              => $held > 0.0,
-																'reason'            => isset( $row['reason'] ) && is_string( $row['reason'] ) ? $row['reason'] : '',
-												);
-								}
-								return $out;
-				}
+	private function lots_for_view( int $user_id ): array {
+		if ( null === $this->lots || $user_id <= 0 ) {
+						return array();
+		}
+					$rows = $this->lots->lots_for_user( $user_id, 10 );
+					$out  = array();
+		foreach ( $rows as $row ) {
+						$expires_at = isset( $row['expires_at'] ) && is_string( $row['expires_at'] ) ? $row['expires_at'] : '';
+						$held       = isset( $row['held'] ) && is_numeric( $row['held'] ) ? (float) $row['held'] : 0.0;
+						$out[]      = array(
+							'remaining_display' => Money::format( isset( $row['remaining'] ) && is_numeric( $row['remaining'] ) ? (float) $row['remaining'] : 0.0 ),
+							'expires_display'   => '' === $expires_at ? __( 'بدون انقضا', 'ariunetclub' ) : Money::to_persian_digits( JalaliDate::format( $expires_at ) ),
+							'has_expiry'        => '' !== $expires_at,
+							'held'              => $held > 0.0,
+							'reason'            => isset( $row['reason'] ) && is_string( $row['reason'] ) ? $row['reason'] : '',
+						);
+		}
+					return $out;
+	}
 
 	private static function mask_phone( string $phone ): string {
 					$digits = preg_replace( '/[^0-9]/', '', $phone );

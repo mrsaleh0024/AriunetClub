@@ -21,27 +21,27 @@ require_once ARIUNETCLUB_PATH . 'vendor/autoload.php';
 register_activation_hook( __FILE__, array( '\\AriunetClub\\Core\\Plugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( '\\AriunetClub\\Core\\Plugin', 'deactivate' ) );
 add_action(
-        'before_woocommerce_init',
-        static function () {
-                if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
-                                \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ARIUNETCLUB_FILE, true );
-                }
-        }
+	'before_woocommerce_init',
+	static function () {
+		if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
+						\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ARIUNETCLUB_FILE, true );
+		}
+	}
 );
 add_action(
-        'plugins_loaded',
-        static function () {
-                if ( ! class_exists( 'WooCommerce' ) ) {
-                                add_action(
-                                        'admin_notices',
-                                        static function () {
-                                                                echo '<div class="notice notice-error"><p>'
-                                                                                . esc_html__( 'افزونه AriunetClub برای اجرا به ووکامرس نیاز دارد.', 'ariunetclub' )
-                                                                                . '</p></div>';
-                                        }
-                                );
-                                return;
-                }
-                                ( new \AriunetClub\Core\Plugin() )->boot();
-        }
+	'plugins_loaded',
+	static function () {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+						add_action(
+							'admin_notices',
+							static function () {
+														echo '<div class="notice notice-error"><p>'
+																		. esc_html__( 'افزونه AriunetClub برای اجرا به ووکامرس نیاز دارد.', 'ariunetclub' )
+																		. '</p></div>';
+							}
+						);
+						return;
+		}
+								( new \AriunetClub\Core\Plugin() )->boot();
+	}
 );

@@ -55,7 +55,7 @@ class WalletAdminPage {
 					$now_gmt   = current_time( 'mysql', true );
 					$in_30d    = gmdate( 'Y-m-d H:i:s', time() + 30 * DAY_IN_SECONDS );
 					$liability = $this->lots->liability_summary( $now_gmt, $in_30d );
-					?>
+				?>
 					<section class="ariunetclub-panel ariunetclub-credit-cards" aria-label="<?php esc_attr_e( 'بدهی باشگاه', 'ariunetclub' ); ?>">
 							<div class="ariunetclub-credit-card"><span><?php esc_html_e( 'کل اعتبار باز', 'ariunetclub' ); ?></span><strong><?php echo esc_html( Money::format( $liability['outstanding'] ) ); ?></strong></div>
 							<div class="ariunetclub-credit-card"><span><?php esc_html_e( 'منقضیشونده تا ۳۰ روز', 'ariunetclub' ); ?></span><strong><?php echo esc_html( Money::format( $liability['expiring_30d'] ) ); ?></strong></div>
@@ -124,7 +124,7 @@ class WalletAdminPage {
 							<?php else : ?>
 									<div class="ariunetclub-table-scroll"><table class="ariunetclub-table"><thead><tr><th><?php esc_html_e( 'مانده', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'رزروشده', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'انقضا', 'ariunetclub' ); ?></th><th><?php esc_html_e( 'دلیل', 'ariunetclub' ); ?></th></tr></thead><tbody>
 									<?php foreach ( $user_lots as $user_lot ) : ?>
-											<tr><td class="ariunetclub-balance"><?php echo esc_html( Money::format( (float) $user_lot['remaining'] ) ); ?></td><td class="ariunetclub-balance"><?php echo esc_html( Money::format( (float) $user_lot['held'] ) ); ?></td><td><?php echo esc_html( $this->lot_expiry_label( isset( $user_lot['expires_at'] ) ? (string) $user_lot['expires_at'] : '' ) ); ?></td><td><?php echo esc_html( isset( $user_lot['reason'] ) ? (string) $user_lot['reason'] : '' ); ?></td></tr>
+											<tr><td class="ariunetclub-balance"><?php echo esc_html( Money::format( LotRepository::f( $user_lot['remaining'] ?? null ) ) ); ?></td><td class="ariunetclub-balance"><?php echo esc_html( Money::format( LotRepository::f( $user_lot['held'] ?? null ) ) ); ?></td><td><?php echo esc_html( $this->lot_expiry_label( LotRepository::s( $user_lot['expires_at'] ?? null ) ) ); ?></td><td><?php echo esc_html( LotRepository::s( $user_lot['reason'] ?? null ) ); ?></td></tr>
 									<?php endforeach; ?></tbody></table></div>
 							<?php endif; ?>
 					</section>
@@ -141,9 +141,9 @@ class WalletAdminPage {
 			$this->guard();
 			\AriunetClub\Modules\License\LicenseGuard::instance()->assert_balance_adjustment();
 			check_admin_referer( 'ariunetclub_adjust_balance' );
-			$user_id = isset( $_POST['user_id'] ) ? absint( $_POST['user_id'] ) : 0;
-			$reason  = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
-			$amount  = isset( $_POST['amount'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : 0.0;
+			$user_id     = isset( $_POST['user_id'] ) ? absint( $_POST['user_id'] ) : 0;
+			$reason      = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
+			$amount      = isset( $_POST['amount'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : 0.0;
 			$expiry_days = isset( $_POST['expiry_days'] ) ? absint( $_POST['expiry_days'] ) : 0;
 		if ( $user_id <= 0 || '' === $reason || 0.0 === $amount ) {
 				wp_die( esc_html__( 'مبلغ و دلیل معتبر الزامی هستند.', 'ariunetclub' ) ); }
@@ -152,9 +152,9 @@ class WalletAdminPage {
 				$amount,
 				'manual-adjust:' . wp_generate_uuid4(),
 				array(
-					'note'       => $reason,
-					'ref_type'   => 'manual_adjustment',
-					'created_by' => get_current_user_id(),
+					'note'             => $reason,
+					'ref_type'         => 'manual_adjustment',
+					'created_by'       => get_current_user_id(),
 					'_lot_expiry_days' => $expiry_days,
 				)
 			);
@@ -174,9 +174,9 @@ class WalletAdminPage {
 			$this->guard();
 			\AriunetClub\Modules\License\LicenseGuard::instance()->assert_balance_adjustment( true );
 			check_ajax_referer( 'ariunetclub_adjust_balance', 'nonce' );
-			$user_id = isset( $_POST['user_id'] ) ? absint( $_POST['user_id'] ) : 0;
-			$reason  = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
-			$amount  = isset( $_POST['amount'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : 0.0;
+			$user_id     = isset( $_POST['user_id'] ) ? absint( $_POST['user_id'] ) : 0;
+			$reason      = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
+			$amount      = isset( $_POST['amount'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : 0.0;
 			$expiry_days = isset( $_POST['expiry_days'] ) ? absint( $_POST['expiry_days'] ) : 0;
 		if ( $user_id <= 0 || '' === $reason || 0.0 === $amount ) {
 				wp_send_json_error( array( 'message' => __( 'مبلغ و دلیل معتبر الزامی هستند.', 'ariunetclub' ) ), 400 );
@@ -187,9 +187,9 @@ class WalletAdminPage {
 					$amount,
 					'manual-adjust:' . wp_generate_uuid4(),
 					array(
-						'note'       => $reason,
-						'ref_type'   => 'manual_adjustment',
-						'created_by' => get_current_user_id(),
+						'note'             => $reason,
+						'ref_type'         => 'manual_adjustment',
+						'created_by'       => get_current_user_id(),
 						'_lot_expiry_days' => $expiry_days,
 					)
 				);
@@ -246,9 +246,9 @@ class WalletAdminPage {
 			@return string
 	 */
 	private function lot_expiry_label( $expires_at ): string {
-			if ( ! is_string( $expires_at ) || '' === $expires_at || '0000-00-00 00:00:00' === $expires_at ) {
-						return __( 'بدون انقضا', 'ariunetclub' );
-			}
+		if ( ! is_string( $expires_at ) || '' === $expires_at || '0000-00-00 00:00:00' === $expires_at ) {
+					return __( 'بدون انقضا', 'ariunetclub' );
+		}
 			return Money::to_persian_digits( JalaliDate::format( $expires_at ) );
 	}
 
@@ -260,8 +260,8 @@ class WalletAdminPage {
 				'capture' => __( 'ثبت مصرف', 'ariunetclub' ),
 				'release' => __( 'آزادسازی', 'ariunetclub' ),
 				'adjust'  => __( 'تنظیم دستی', 'ariunetclub' ),
-																'grant'   => __( 'اعطا', 'ariunetclub' ),
-																'expire'  => __( 'انقضا', 'ariunetclub' ),
+				'grant'   => __( 'اعطا', 'ariunetclub' ),
+				'expire'  => __( 'انقضا', 'ariunetclub' ),
 			);
 			return isset( $labels[ $type ] ) ? $labels[ $type ] : $type; }
 }
