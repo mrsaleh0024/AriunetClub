@@ -137,6 +137,8 @@ if ( ! function_exists( 'get_query_var' ) ) {
 }
 if ( ! defined( 'DAY_IN_SECONDS' ) ) {
         define( 'DAY_IN_SECONDS', 86400 );
+        define( 'MINUTE_IN_SECONDS', 60 );
+        define( 'HOUR_IN_SECONDS', 3600 );
 }
 if ( ! function_exists( 'update_option' ) ) {
         function update_option( $option, $value, $autoload = null ) {
@@ -173,6 +175,16 @@ if ( ! function_exists( 'esc_attr' ) ) {
 if ( ! function_exists( 'esc_html__' ) ) {
         function esc_html__( $text, $domain = 'default' ) {
                 return $text;
+        }
+
+        function sanitize_text_field( $str ) {
+                if ( is_object( $str ) || is_array( $str ) ) {
+                        return '';
+                }
+                $str = (string) $str;
+                $str = preg_replace( '/<[a-zA-Z0-9\/][^>]*>/', '', $str );
+                $str = preg_replace( '~[\r\n\t ]+~u', ' ', $str );
+                return trim( $str );
         }
 }
 require_once __DIR__ . '/unit/Fixtures.php';

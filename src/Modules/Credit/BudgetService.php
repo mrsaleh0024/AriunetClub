@@ -279,7 +279,7 @@ class BudgetService {
          * @return void
          */
         private function record_blocked( array $state ): void {
-                $this->logger->warning(
+                $this->logger->info(
                         'Credit budget exhausted; rule grants are blocked for the rest of the month.',
                         array(
                                 'month' => $state['month'],

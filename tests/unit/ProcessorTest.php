@@ -45,7 +45,7 @@ class ProcessorTest extends TestCase {
 		$processor->process_pending();
 
 		$this->assertSame( 'skipped', $gateway->rows[0]['status'] );
-		$this->assertSame( 'سفارش مهمان کیف پول باشگاه ندارد.', $gateway->rows[0]['error'] );
+		$this->assertSame( 'سفارش مهمان اعتبار باشگاه ندارد.', $gateway->rows[0]['error'] );
 	}
 
 	public function test_failures_flip_to_failed_after_three_attempts(): void {

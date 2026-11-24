@@ -465,7 +465,7 @@ $html = capture_render( static function () use ( $guard ) { $guard->render_lock_
 check( 'lock screen renders on a plugin page while locked', false !== strpos( $html, 'ariunetclub-lock-screen' ) );
 check( 'lock screen carries the lock icon SVG', false !== strpos( $html, '<svg class="ariunetclub-lock-screen__icon"' ) );
 check( 'lock screen links to the license page', false !== strpos( $html, 'page=ariunetclub-license' ) );
-check( 'lock screen mentions continuing earning/spending', false !== strpos( $html, 'کسب کش‌بک و خرج کیف پول' ) );
+check( 'lock screen mentions continuing earning/spending', false !== strpos( $html, 'کسب کش‌بک و خرج اعتبار باشگاه' ) );
 
 $_GET['page'] = 'ariunetclub-license';
 $html = capture_render( static function () use ( $guard ) { $guard->render_lock_screen(); } );
@@ -529,7 +529,7 @@ foreach ( $iterator as $file ) {
 }
 check( 'static scan: no network calls in src/', array() === $hits, implode( ', ', $hits ) );
 
-echo "=== 9) Migration 1.4.0 adds the ledger index, idempotently ===\n";
+echo "=== 9) Migration adds the tables and indexes, idempotently ===\n";
 $GLOBALS['ariunetclub_test_settings'] = array();
 $GLOBALS['ariunetclub_test_dbdelta']  = array();
 $GLOBALS['ariunetclub_test_tables']   = array();
@@ -565,9 +565,11 @@ $migrator        = new AriunetClub\Core\Migrator();
 $migrator->migrate();
 check( 'dbDelta received the ledger table', false !== strpos( (string) $GLOBALS['ariunetclub_test_dbdelta'][0], 'wp_ariunetclub_ledger' ) );
 check( 'phase 5 created_at index present in the schema', false !== strpos( (string) $GLOBALS['ariunetclub_test_dbdelta'][0], 'KEY ledger_created_at (created_at)' ) );
-check( 'db version option set to 1.4.0', '1.4.0' === get_option( 'ariunetclub_db_version' ) );
+check( 'db version option set to 1.5.0', '1.5.0' === get_option( 'ariunetclub_db_version' ) );
 $migrator->migrate();
-check( 'second migrate run is harmless', 2 === count( $GLOBALS['ariunetclub_test_dbdelta'] ) && '1.4.0' === get_option( 'ariunetclub_db_version' ) );
+check( 'second migrate run is harmless', 2 === count( $GLOBALS['ariunetclub_test_dbdelta'] ) && '1.5.0' === get_option( 'ariunetclub_db_version' ) );
+check( 'phase 6 credit lots table in the schema', false !== strpos( (string) $GLOBALS['ariunetclub_test_dbdelta'][0], 'wp_ariunetclub_credit_lots' ) );
+check( 'phase 6 lot allocations table in the schema', false !== strpos( (string) $GLOBALS['ariunetclub_test_dbdelta'][0], 'wp_ariunetclub_lot_allocations' ) );
 
 echo "=== 10) Dashboard: real data, charts, escaping, no N+1 ===\n";
 $pdo = new PDO( 'sqlite::memory:' );

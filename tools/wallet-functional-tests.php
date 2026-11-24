@@ -329,7 +329,7 @@ function fresh_world( $settings_overrides = array() ) {
         $checkout->register();
 
         $GLOBALS['ariunetclub_test_settings']['ariunetclub_settings'] = array_merge( array(
-                'wallet_fee_title'        => 'استفاده از کیف پول',
+                'wallet_fee_title'        => 'استفاده از اعتبار باشگاه',
                 'wallet_max_percent'      => 100.0,
                 'wallet_min_order'        => 0.0,
                 'wallet_allowed_gateways' => array(),
@@ -475,11 +475,11 @@ WC()->session->set( CheckoutController::SESSION_SPEND, 95000.0 );
 $checkout->apply_fee( WC()->cart );
 $fee_rows = array();
 foreach ( WC()->cart->get_fees() as $fee_row ) { $fee_rows[] = $fee_row->name; }
-check( 'wallet fee row added', in_array( 'استفاده از کیف پول', $fee_rows, true ) );
+check( 'wallet fee row added', in_array( 'استفاده از اعتبار باشگاه', $fee_rows, true ) );
 check( 'cart total never negative', 0.0 === WC()->cart->cart_total_after_fees() );
 $checkout->apply_fee( WC()->cart );
 $wallet_fee_rows = 0;
-foreach ( WC()->cart->get_fees() as $fee_row ) { if ( 'استفاده از کیف پول' === $fee_row->name ) { $wallet_fee_rows++; } }
+foreach ( WC()->cart->get_fees() as $fee_row ) { if ( 'استفاده از اعتبار باشگاه' === $fee_row->name ) { $wallet_fee_rows++; } }
 check( 'apply_fee twice adds only one wallet fee row (per-request guard)', 1 === $wallet_fee_rows );
 
 echo "=== 8) Checkout validation (allowed gateways) ===\n";
@@ -553,7 +553,7 @@ $gateway = new WalletGateway( $settings );
 // Full coverage: the wallet fee already covers the whole cart.
 WC()->cart->fees     = array();
 WC()->cart->subtotal = 100000.0;
-WC()->cart->add_fee( 'استفاده از کیف پول', -100000.0 );
+WC()->cart->add_fee( 'استفاده از اعتبار باشگاه', -100000.0 );
 WC()->session->set( CheckoutController::SESSION_FLAG, true );
 check( 'gateway available when the wallet covers everything', true === $gateway->is_available() );
 
@@ -562,7 +562,7 @@ list( $gw, $svc, $holds, $checkout, $calc, $settings, $logger ) = fresh_world( a
 $gateway = new WalletGateway( $settings );
 WC()->cart->fees     = array();
 WC()->cart->subtotal = 100000.0;
-WC()->cart->add_fee( 'استفاده از کیف پول', -50000.0 );
+WC()->cart->add_fee( 'استفاده از اعتبار باشگاه', -50000.0 );
 WC()->session->set( CheckoutController::SESSION_FLAG, true );
 check( 'gateway hidden while half the cart is still owed', false === $gateway->is_available() );
 

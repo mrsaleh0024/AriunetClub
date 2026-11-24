@@ -85,13 +85,13 @@ class AriunetClub_PdoWpdb extends wpdb {
                         ++$arg_i;
                         switch ( $next ) {
                                 case 'd':
-                                        $out .= (string) (int) $value;
+                                        $out .= null === $value ? 'NULL' : (string) (int) $value;
                                         break;
                                 case 'f':
-                                        $out .= (string) (float) $value;
+                                        $out .= null === $value ? 'NULL' : (string) (float) $value;
                                         break;
                                 case 's':
-                                        $out .= $this->pdo->quote( (string) $value );
+                                        $out .= null === $value ? 'NULL' : $this->pdo->quote( (string) $value );
                                         break;
                                 default:
                                         $out .= $char . $next;
@@ -160,6 +160,34 @@ class AriunetClub_PdoWpdb extends wpdb {
         }
 
         /**
+         * wpdb-style UPDATE with %d/%s/%f formats.
+         *
+         * @param string              $table
+         * @param array<string,mixed> $data
+         * @param array<string,mixed> $where
+         * @param array<int,string>|null $format
+         * @param array<int,string>|null $where_format
+         * @return int|false
+         */
+        public function update( string $table, array $data, array $where, ?array $format = null, ?array $where_format = null ) {
+                $sets   = array();
+                $keys   = array_keys( $data );
+                foreach ( $keys as $index => $column ) {
+                        $type    = isset( $format[ $index ] ) ? $format[ $index ] : '%s';
+                        $sets[]  = $column . ' = ' . $this->prepare( $type, $data[ $column ] );
+                }
+                $conditions = array();
+                $wkeys      = array_keys( $where );
+                foreach ( $wkeys as $index => $column ) {
+                        $type         = isset( $where_format[ $index ] ) ? $where_format[ $index ] : '%s';
+                        $conditions[] = $column . ' = ' . $this->prepare( $type, $where[ $column ] );
+                }
+                $sql  = 'UPDATE ' . $table . ' SET ' . implode( ', ', $sets ) . ' WHERE ' . implode( ' AND ', $conditions );
+                $rows = $this->run( $sql, false )->rowCount();
+                return $rows > 0 ? $rows : 0;
+        }
+
+        /**
          * Translates MySQL-only syntax for SQLite, runs and counts the query.
          *
          * @param string $query
@@ -186,6 +214,11 @@ class AriunetClub_PdoWpdb extends wpdb {
          * @return string
          */
         private function translate_for_sqlite( string $query ): string {
+                // Transaction control: SQLite spells it BEGIN.
+                if ( 1 === preg_match( '~^\s*START\s+TRANSACTION\s*$~i', $query ) ) {
+                        $query = 'BEGIN IMMEDIATE';
+                }
+
                 // Advisory lock probes: acquire is always granted in the single-process
                 // benchmark; a release is a plain no-op.
                 if ( 1 === preg_match( '~^\s*SELECT\s+GET_LOCK\s*\(~i', $query ) ) {
@@ -198,8 +231,12 @@ class AriunetClub_PdoWpdb extends wpdb {
                 // Strip row locks.
                 $query = (string) preg_replace( '~\s+FOR\s+UPDATE\s*$~i', '', $query );
 
-                // ON DUPLICATE KEY UPDATE (only used with a no-op update column).
-                $query = (string) preg_replace( '~\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+.*$~i', '', $query );
+                // ON DUPLICATE KEY UPDATE (only used with a no-op update column):
+                // SQLite's INSERT OR IGNORE keeps the idempotent behaviour.
+                if ( 1 === preg_match( '~\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+.*$~i', $query ) ) {
+                        $query = preg_replace( '~^(\s*)INSERT\s+INTO~i', '$1INSERT OR IGNORE INTO', $query );
+                        $query = (string) preg_replace( '~\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+.*$~i', '', $query );
+                }
 
                 // UNIX_TIMESTAMP(DATE(col + INTERVAL N MINUTE)) bucket keys.
                 $query = (string) preg_replace_callback(
@@ -283,6 +320,39 @@ class AriunetClub_PdoWpdb extends wpdb {
                                 ends_at TEXT NULL
                         )",
                         "CREATE INDEX IF NOT EXISTS {$prefix}rules_active ON {$prefix}ariunetclub_rules (status, event_type, priority)",
+                        "CREATE TABLE IF NOT EXISTS {$prefix}ariunetclub_credit_lots (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                user_id INTEGER NOT NULL,
+                                source_type TEXT NOT NULL DEFAULT 'rule',
+                                source_ref INTEGER NULL,
+                                ref_type TEXT NULL,
+                                ref_id INTEGER NULL,
+                                rule_id INTEGER NULL,
+                                initial_amount REAL NOT NULL DEFAULT 0,
+                                remaining REAL NOT NULL DEFAULT 0,
+                                held REAL NOT NULL DEFAULT 0,
+                                expires_at TEXT NULL,
+                                status TEXT NOT NULL DEFAULT 'active',
+                                reason TEXT NULL,
+                                campaign_id INTEGER NULL,
+                                created_at TEXT NOT NULL
+                        )",
+                        "CREATE INDEX IF NOT EXISTS {$prefix}lots_user_status ON {$prefix}ariunetclub_credit_lots (user_id, status)",
+                        "CREATE INDEX IF NOT EXISTS {$prefix}lots_expiry ON {$prefix}ariunetclub_credit_lots (status, expires_at)",
+                        "CREATE INDEX IF NOT EXISTS {$prefix}lots_reference ON {$prefix}ariunetclub_credit_lots (ref_type, ref_id)",
+                        "CREATE TABLE IF NOT EXISTS {$prefix}ariunetclub_lot_allocations (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                lot_id INTEGER NOT NULL,
+                                user_id INTEGER NOT NULL,
+                                order_id INTEGER NOT NULL DEFAULT 0,
+                                amount REAL NOT NULL,
+                                state TEXT NOT NULL DEFAULT 'held',
+                                created_at TEXT NOT NULL,
+                                released_at TEXT NULL
+                        )",
+                        "CREATE INDEX IF NOT EXISTS {$prefix}alloc_order ON {$prefix}ariunetclub_lot_allocations (order_id, state)",
+                        "CREATE INDEX IF NOT EXISTS {$prefix}alloc_lot ON {$prefix}ariunetclub_lot_allocations (lot_id, state)",
+                        "CREATE INDEX IF NOT EXISTS {$prefix}alloc_user ON {$prefix}ariunetclub_lot_allocations (user_id)",
                 );
                 if ( ! $this->sqlite ) {
                         // MySQL schema comes from the real Migrator on production-like runs.

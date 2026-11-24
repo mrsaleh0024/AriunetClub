@@ -109,7 +109,7 @@ class LotService {
                                 $this->capture_hold( $entry, $user_id, abs( $delta ) );
                                 break;
                         case 'release':
-                                $this->release_hold( $entry, $user_id, $this->entry_amount( $entry, $delta, $before, $after ) );
+                                $this->release_hold( $entry, $user_id, $this->entry_amount( $entry, $delta, $before, $after ), $after );
                                 break;
                         case 'expire':
                                 $this->expire_lot( $entry, $user_id, abs( $delta ) );
@@ -168,7 +168,9 @@ class LotService {
         /**
          * Creates the lot for a positive credit/grant/adjust entry after paying
          * off any implicit debt (I1): debt := lot_remaining - (available + held)
-         * of the pre-state, clamped at zero.
+         * of the pre-state, clamped at zero. A grant smaller than the debt pays
+         * what it can; the residual debt is then repaid from the user's own
+         * unheld lots so the "no debt while available >= 0" rule always holds.
          *
          * @param array<string,mixed> $entry Entry row.
          * @param int                 $user_id Customer.
@@ -181,8 +183,16 @@ class LotService {
                 if ( $amount <= 0.0 ) {
                         return;
                 }
-                $sums      = $this->lots->sums_for_user( $user_id );
-                $debt      = max( 0.0, $sums['remaining'] - ( (float) $before['available'] + (float) $before['held'] ) );
+                $sums = $this->lots->sums_for_user( $user_id );
+                $debt = max( 0.0, $sums['remaining'] - ( (float) $before['available'] + (float) $before['held'] ) );
+
+                if ( $debt > LotRepository::EPSILON && $amount < $debt - LotRepository::EPSILON ) {
+                        // The grant cannot clear the debt: the leftover is repaid from
+                        // the customer's own unheld credit (never from held amounts).
+                        $this->consume( $user_id, Money::round( $debt - $amount ), $entry );
+                        return;
+                }
+
                 $lot_amount = Money::round( $amount - $debt );
                 if ( $lot_amount <= 0.0 ) {
                         return; // the whole grant repays debt; no live lot is created.
@@ -337,12 +347,20 @@ class LotService {
         /**
          * Frees the recorded allocations of a hold. Pre-upgrade holds have no
          * allocations, so nothing is freed on lots (the amount returns to the
-         * balance level only). Freed amounts on already-expired lots are
-         * expired by the post-commit hook.
+         * balance level only). Two debt rules apply after the freeing:
+         *  - a freed amount on an already-expired lot expires immediately (the
+         *    post-commit hook);
+         *  - when the user still carries implicit debt (reversals exceeded the
+         *    live lots), the freed credit first repays it, so the invariant
+         *    "available >= 0 ⇒ no debt" (I1) always holds.
          *
+         * @param array<string,mixed> $entry Entry row.
+         * @param int                 $user_id Customer.
+         * @param float               $amount Released amount.
+         * @param array{available:float,held:float} $after Post-entry balance.
          * @return void
          */
-        private function release_hold( array $entry, int $user_id, float $amount ): void {
+        private function release_hold( array $entry, int $user_id, float $amount, array $after ): void {
                 $left = Money::round( $amount );
                 if ( $left <= 0.0 ) {
                         return;
@@ -372,6 +390,34 @@ class LotService {
                                 'amount'        => $take,
                         );
                         $left = Money::round( $left - $take );
+                }
+
+                /*
+                 * Debt repayment: the freed lots are unheld now, so consume()
+                 * draws exactly from them; the repaid part is dropped from the
+                 * freed list so the post-commit hook cannot expire it twice.
+                 */
+                $sums_after = $this->lots->sums_for_user( $user_id );
+                $debt_after = $sums_after['remaining'] - ( (float) $after['available'] + (float) $after['held'] );
+                if ( $debt_after > LotRepository::EPSILON ) {
+                        $repay = Money::round( min( $amount, $debt_after ) );
+                        if ( $repay > LotRepository::EPSILON ) {
+                                $this->consume( $user_id, $repay, $entry );
+                                $drop = $repay;
+                                foreach ( $this->release_freed as $index => $freed ) {
+                                        if ( $drop <= LotRepository::EPSILON ) {
+                                                break;
+                                        }
+                                        $take            = min( (float) $freed['amount'], $drop );
+                                        $freed['amount'] = Money::round( (float) $freed['amount'] - $take );
+                                        $drop            = Money::round( $drop - $take );
+                                        if ( $freed['amount'] <= LotRepository::EPSILON ) {
+                                                unset( $this->release_freed[ $index ] );
+                                        } else {
+                                                $this->release_freed[ $index ] = $freed;
+                                        }
+                                }
+                        }
                 }
         }
 

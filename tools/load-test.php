@@ -296,5 +296,117 @@ lt_check(
         number_format( $sum_earned, 2 ) . ' vs ' . number_format( $range_30['earned'], 2 )
 );
 
+// ---------------------------------------------------------------------------
+// 5) Phase 6: one MILLION ledger rows + credit lots, admin pages < 1s
+// ---------------------------------------------------------------------------
+echo "=== 5) Phase 6 credit lots: 1,000,000 ledger rows ===\n";
+
+use AriunetClub\Modules\Credit\LotRepository;
+use AriunetClub\Modules\Credit\ReconciliationJob;
+
+$million_start = microtime( true );
+$pdo->beginTransaction();
+$million_stmt = $pdo->prepare( 'INSERT INTO wp_ariunetclub_ledger (user_id, asset, entry_type, amount, balance_after, ref_type, ref_id, rule_id, idempotency_key, note, created_by, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)' );
+for ( $i = ROWS_TARGET + 1; $i <= 1000000; ++$i ) {
+        $type   = $types[ $i % 8 ];
+        $amount = ( 'debit' === $type || 'capture' === $type ) ? -1 * mt_rand( 100, 90000 ) : mt_rand( 100, 120000 );
+        $million_stmt->execute( array(
+                1 + ( $i % USERS ),
+                'cashback',
+                $type,
+                $amount / 10,
+                0,
+                'order',
+                1000 + ( $i % 900 ),
+                ( 0 === $i % 3 ) ? null : 1 + ( $i % 5 ),
+                'million-' . $i,
+                'load test million row ' . $i,
+                null,
+                gmdate( 'Y-m-d H:i:s', $day_start - mt_rand( 0, 1095 ) * 86400 + mt_rand( 0, 86399 ) ),
+        ) );
+}
+$pdo->commit();
+$total_rows = (int) $pdo->query( 'SELECT COUNT(*) FROM wp_ariunetclub_ledger' )->fetchColumn();
+lt_check( 'ledger grew to 1,000,000 rows', 1000000 === $total_rows, number_format( $total_rows ) . ' rows in ' . lt_ms( microtime( true ) - $million_start ) );
+
+// Credit lots: ~6 per user, a third of them with expiry dates, some held.
+$lot_repo = new LotRepository( $wpdb );
+$pdo->beginTransaction();
+$lot_stmt = $pdo->prepare( 'INSERT INTO wp_ariunetclub_credit_lots (user_id, source_type, source_ref, ref_type, ref_id, rule_id, initial_amount, remaining, held, expires_at, status, reason, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)' );
+for ( $u = 1; $u <= USERS; ++$u ) {
+        for ( $j = 0; $j < 6; ++$j ) {
+                $remaining = mt_rand( 100, 90000 ) / 10;
+                $held      = 0 === $j % 5 ? mt_rand( 0, (int) $remaining ) : 0;
+                $expires   = $j % 3 === 0 ? gmdate( 'Y-m-d H:i:s', $now + mt_rand( 1, 120 ) * 86400 ) : null;
+                $lot_stmt->execute( array(
+                        $u,
+                        0 === $j % 6 ? 'legacy' : 'rule',
+                        $j,
+                        'order',
+                        1000 + $j,
+                        1 + ( $j % 5 ),
+                        $remaining + mt_rand( 0, 500 ),
+                        $remaining,
+                        $held,
+                        $expires,
+                        'active',
+                        'load test lot',
+                        gmdate( 'Y-m-d H:i:s', $now - mt_rand( 0, 200 ) * 86400 ),
+                ) );
+        }
+}
+$pdo->commit();
+$total_lots = (int) $pdo->query( 'SELECT COUNT(*) FROM wp_ariunetclub_credit_lots' )->fetchColumn();
+lt_check( 'credit lots seeded (6 per user)', USERS * 6 === $total_lots, number_format( $total_lots ) . ' lots' );
+
+// Admin page: liability summary card.
+$wpdb->queries = array();
+$t         = microtime( true );
+$liability = $lot_repo->liability_summary( gmdate( 'Y-m-d H:i:s', $now ), gmdate( 'Y-m-d H:i:s', $now + 30 * 86400 ) );
+$elapsed   = microtime( true ) - $t;
+lt_check( 'liability summary under 1s on 1M ledger rows', $elapsed < 1.0, lt_ms( $elapsed ) );
+lt_check( 'liability summary is one query', 1 === count( $wpdb->queries ), count( $wpdb->queries ) . ' queries' );
+lt_check( 'liability numbers are non-zero', $liability['outstanding'] > 0 && $liability['users'] > 0 );
+
+// Admin page: one customer's lots (the admin wallet history view).
+$wpdb->queries = array();
+$t        = microtime( true );
+$user_lots = $lot_repo->lots_for_user( 1234, 20 );
+$lot_count = $lot_repo->count_lots_for_user( 1234 );
+$elapsed  = microtime( true ) - $t;
+lt_check( 'customer lots view under 1s', $elapsed < 1.0, lt_ms( $elapsed ) );
+lt_check( 'customer lots use 2 queries', 2 === count( $wpdb->queries ), count( $wpdb->queries ) . ' queries' );
+lt_check( 'customer lots capped at 20 rows', 6 === count( $user_lots ) && $lot_count === 6, count( $user_lots ) . ' rows, total ' . $lot_count );
+
+// Daily expiry job scans.
+$wpdb->queries = array();
+$t    = microtime( true );
+$due  = $lot_repo->due_lots( gmdate( 'Y-m-d H:i:s', $now ), 200 );
+$elapsed = microtime( true ) - $t;
+lt_check( 'expiry due-lots scan under 1s', $elapsed < 1.0, lt_ms( $elapsed ) . ' (' . count( $due ) . ' due now)' );
+
+$t      = microtime( true );
+$window7 = $lot_repo->lots_expiring_within( gmdate( 'Y-m-d H:i:s', $now + 7 * 86400 ), gmdate( 'Y-m-d H:i:s', $now + 8 * 86400 ), 500 );
+$elapsed = microtime( true ) - $t;
+lt_check( '7-day expiring scan under 1s', $elapsed < 1.0, lt_ms( $elapsed ) . ' (' . count( $window7 ) . ' lots)' );
+
+// Reconciliation: one batch of 1,000 users through the three-way join.
+$recon = new ReconciliationJob( $lot_repo, new AriunetClub\Core\Logger() );
+$t     = microtime( true );
+$batch = $recon->check_batch( 0 );
+$elapsed = microtime( true ) - $t;
+lt_check( 'reconciliation batch (1000 users, 3-way join) under 1s', $elapsed < 1.0, lt_ms( $elapsed ) );
+lt_check( 'reconciliation batch checked 1000 users', 1000 === $batch['checked'], $batch['checked'] . ' users' );
+
+// Budget issued aggregate: the production query only scans the CURRENT MONTH
+// through the ledger_created_at index (never the whole 1M-row history).
+$month_start = gmdate( 'Y-m-01 00:00:00' );
+$wpdb->queries = array();
+$t = microtime( true );
+$sum_all = (float) $pdo->query( "SELECT COALESCE(SUM(CASE WHEN entry_type IN ('credit', 'grant') AND amount > 0 THEN amount ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN entry_type = 'adjust' AND amount < 0 AND (idempotency_key LIKE 'order:%:reversal' OR idempotency_key LIKE 'order:%:refund:%:reversal') THEN -amount ELSE 0 END), 0) + COALESCE(SUM(CASE WHEN entry_type = 'adjust' AND amount > 0 AND idempotency_key LIKE 'wallet:refund:order:%' THEN amount ELSE 0 END), 0) FROM wp_ariunetclub_ledger WHERE created_at >= '" . $month_start . "' AND created_at < '2100-01-01'" )->fetchColumn();
+$elapsed = microtime( true ) - $t;
+lt_check( 'budget issued aggregate (current month, indexed) under 1s on 1M rows', $elapsed < 1.0, lt_ms( $elapsed ) );
+lt_check( 'issued aggregate is non-zero', $sum_all > 0 );
+
 echo "\n================ LOAD TEST PASSED ================\n";
 exit( 0 );
